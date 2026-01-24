@@ -135,6 +135,13 @@ Navigate to https://localhost:5001 and register your first account.
 - [📖 Setup Guide](SETUP_GUIDE.md) – Complete installation & configuration
 - [🔗 API Documentation](https://localhost:7001/swagger) – Interactive Swagger (run backend first)
 
+### AI Agents & Instructions
+- [AGENTS.md](AGENTS.md) – Klíčové instrukce a příkazy pro AI agenty
+- [CLAUDE.md](CLAUDE.md) – Instrukce pro Claude Code
+- [GEMINI.md](GEMINI.md) – Instrukce pro Google Gemini
+- [.github/copilot-instructions.md](.github/copilot-instructions.md) – Pravidla generování kódu
+- `.github/agents/` – definice custom agentů (MCP)
+
 ---
 
 ## 🧪 Testing
@@ -150,6 +157,13 @@ dotnet test tests/MIMM.Tests.Integration
 dotnet test --collect:"XPlat Code Coverage"
 ```
 
+### Demo tests (Minimal API)
+
+```bash
+# WeatherForecast demo API tests
+dotnet test tests/Application.Tests
+```
+
 ---
 
 ## 🐳 Docker Deployment
@@ -163,6 +177,26 @@ docker-compose up -d
 
 # View logs
 docker-compose logs -f backend
+```
+
+---
+
+## 🧩 Demo Minimal API (Application.Web)
+
+Ukázkový Minimal API projekt s endpointem `WeatherForecast`.
+
+```bash
+# Spuštění demo API
+dotnet run --project src/Application.Web/Application.Web.csproj
+
+# Aplikace běží na
+# http://localhost:5150
+
+# OpenAPI (dev)
+# http://localhost:5150/openapi/v1.json
+
+# Endpoint
+# GET http://localhost:5150/api/weatherforecast
 ```
 
 ---
