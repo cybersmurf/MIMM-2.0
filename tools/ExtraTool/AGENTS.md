@@ -1,18 +1,25 @@
 # Agents.md
 
 > **Note**: This is an EXAMPLE configuration for an external tool. Adapt this structure for your own tools.
+> This folder is a template/placeholder for future external tools.
 
-- Code is in `src` folder
-- Code is an ASP.NET Core web application (REST API with Swagger/OpenAPI)
-- Project uses .NET 10.0 (specified in `src/Demolice.csproj`)
+## Example Structure for External Tools
 
-## Prerequisites
-- Verify .NET 10.0 SDK is installed: `dotnet --info`
-- Required packages: Azure.AI.OpenAI, Microsoft.EntityFrameworkCore.Sqlite
+When adding a new tool to this folder, create:
+- `src/` - Source code folder
+- `YourTool.csproj` - Project file
+- `AGENTS.md` - Tool-specific instructions
 
-## Setup & build
-- Install dependencies: `dotnet restore` (run from `src` folder)
-- Rebuild: `dotnet build` (run from `src` folder)
+## Example Prerequisites
+- Verify .NET 9.0 SDK is installed: `dotnet --info`
+- Install required packages: `dotnet restore`
+
+## Example Build Commands
+```bash
+dotnet restore
+dotnet build
+dotnet run
+```
 - Run: `dotnet run --project src/Demolice.csproj` (from repository root) or `dotnet run` (from `src` folder)
 
 ---

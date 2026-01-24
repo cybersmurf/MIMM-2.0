@@ -1,0 +1,15 @@
+{
+  "solution": {
+    "path": "MIMM.sln",
+    "projects": [
+      "src/MIMM.Backend/MIMM.Backend.csproj",
+      "src/MIMM.Frontend/MIMM.Frontend.csproj",
+      "src/MIMM.Shared/MIMM.Shared.csproj",
+      "tests/MIMM.Tests.Unit/MIMM.Tests.Unit.csproj",
+      "tests/MIMM.Tests.Integration/MIMM.Tests.Integration.csproj",
+      "src/Application.Web/Application.Web.csproj",
+      "src/Application.Lib/Application.Lib.csproj",
+      "tests/Application.Tests/Application.Tests.csproj"
+    ]
+  }
+}
