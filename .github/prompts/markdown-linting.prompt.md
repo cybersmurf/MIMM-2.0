@@ -6,7 +6,8 @@ Ověřit, opravit a optimalizovat Markdown dokumenty podle `markdownlint` v0.40.
 
 ## Kontext
 
-Projekt MIMM-2.0 používá `markdownlint-cli` v0.40.0 pro kontrolu kvality dokumentace. Konfigurace je v `.markdownlint.json`:
+Projekt MIMM-2.0 používá VS Code rozšíření `markdownlint` a engine `markdownlint-cli2` pro kontrolu kvality dokumentace.
+Konfigurace globs je v `.markdownlint-cli2.jsonc` a pravidla v `.markdownlint.json`:
 
 - **Line length**: 120 znaků (místo výchozích 80)
 - **Tables**: vyloučeny z kontroly délky řádků
@@ -111,17 +112,28 @@ Viz <https://example.com>
 
 ## Pracovní postup
 
-1. **Spusť kontrolu**:
+1. **Spusť kontrolu v editoru (VS Code)**:
+
+   - Command Palette: „Markdownlint: Lint Workspace“
+   - Formát dokumentu: „Format Document“ nebo „Fix All: markdownlint“
+
+   Alternativně lokálně přes CLI2 (pokud je nainstalováno):
 
    ```bash
-   markdownlint "README.md" "CHANGELOG.md" "AGENTS.md" "docs/*.md"
+   npx markdownlint-cli2 "**/*.md"
    ```
 
-2. **Automatické opravy**:
+2. **Automatické opravy (CLI)**:
 
-   ```bash
-   markdownlint --fix "README.md" "CHANGELOG.md" "AGENTS.md" "docs/*.md"
-   ```
+   - Jednotlivé soubory:
+
+     ```bash
+     markdownlint --fix "README.md" "CHANGELOG.md" "AGENTS.md" "docs/*.md"
+     ```
+
+   - V editoru (doporučeno): „Fix All: markdownlint“ nebo „Format Document“
+
+   - V CI: viz workflow [.github/workflows/markdownlint.yml](.github/workflows/markdownlint.yml)
 
 3. **Ručně ověř zbývající chyby**:
    - MD013 v tabulkách (nelze automaticky)
@@ -137,7 +149,9 @@ Viz <https://example.com>
 
 ## Tipy
 
-- **Suchý běh** (preview bez změn): `markdownlint` bez `--fix`
+- **Suchý běh (CLI2)**: `npx markdownlint-cli2 "**/*.md"`
+- **Editor auto-fix**: Zapni „Format on Save“ a „source.fixAll.markdownlint“ ve VS Code nastavení
+- **Globs**: Uprav [.markdownlint-cli2.jsonc](../../.markdownlint-cli2.jsonc) pro cílení souborů
 - **Konkrétní soubor**: `markdownlint docs/DEVELOPER_GUIDE.md`
 - **Všechny MD soubory**: `markdownlint "**/*.md"`
 - **Ignorace chyby v souboru**: `<!-- markdownlint-disable MDXXX -->`...`<!-- markdownlint-enable MDXXX -->`
