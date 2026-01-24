@@ -31,6 +31,7 @@
 ### MD040 - Fenced code blocks bez jazyka (38 chyb)
 
 Přidány jazykové tagy do všech prázdných ``` bloků:
+
 - **bash**: příkazy (dotnet, docker, npm, git, curl, echo, mkdir, cd, apod.)
 - **text**: ASCII art, diagramy, tabulky bez syntaxe
 - **yaml**: konfigurační soubory s YAML strukturou
@@ -43,6 +44,7 @@ Přidány jazykové tagy do všech prázdných ``` bloků:
 ### MD033 - Inline HTML tagy (3 chyby)
 
 Nahrazeny HTML tagy backticks:
+
 - `<T>` → `` `T` ``
 - `<IPagedList<T>>` → `` `IPagedList<T>` ``
 - `<EntryList />` → `` `EntryList` ``
@@ -50,7 +52,9 @@ Nahrazeny HTML tagy backticks:
 **Počet oprav:** 3/3 (100%)
 
 ### MD013 - Line length > 120 (15 chyb)
+
 Dlouhé řádky (s URL a tabulkami) jsou částečně akceptovány dle zadání:
+
 - DEPLOYMENT_PLAN.md: 2 dlouhé řádky (pro URL a konfiguraci)
 - ACTION_3_COMPLETION_REPORT.md: 8 dlouhých řádků (pro dokumentaci)
 - PROJECT_ANALYSIS_2026.md: 1 dlouhý řádek (pro popis architektury)
@@ -63,6 +67,7 @@ Dlouhé řádky (s URL a tabulkami) jsou částečně akceptovány dle zadání:
 **Počet oprav:** 0/15 (není vyžadováno)
 
 ### Ostatní chyby (102 - MD060)
+
 - **MD060** (table-column-style): Tabulkové formátování - mimo rozsah zadání
 - Zbývajícíchyby jsou z kategorií MD022, MD032, MD029, MD004, MD009, MD038, MD034, MD047, MD031, MD051, MD055, MD056, MD046 - převážně součástí auto-fix procesu
 
@@ -93,9 +98,10 @@ npx -y markdownlint-cli2 "**/*.md"
 ```
 
 ## Soubory s ručními opravami
+
 Byla vytvořena následující Python skripty pro automatizaci:
+
 - `fix_markdown.py` - Automatická detekce jazyka pro ``` bloky
 - `fix_markdown_advanced.py` - Pokročilé opravy (blank lines, URLs, HTML)
 - `fix_md040.py` - Přidání jazykových tagů k code blockům
 - `fix_long_lines.py` - Zalomení dlouhých řádků
-

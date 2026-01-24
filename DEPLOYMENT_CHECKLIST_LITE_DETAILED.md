@@ -3,6 +3,7 @@
 > Copy–paste návod pro jedno VPS (Hetzner Ubuntu 24.04). Každý krok má příkaz a krátké vysvětlení.
 
 **Poznámky:**
+
 - Připoj se přes SSH z Windows (PowerShell nebo PuTTY) / z macOS (Terminal).
 - `IP` nahraď veřejnou IP serveru, `your-domain.com` svou doménou.
 - Pokud se po změně SSH portu odpojíš, připoj se znovu s `-p 2222`.
@@ -37,22 +38,26 @@ Pokud tohle nemáš, zastav se TEĎKA a připrav si to. Jinak budeš deployment 
 ## Fáze A: Základ serveru (15–20 min)
 
 1) Přihlášení jako root
+
 ```bash
 ssh root@IP
 ```
 
-2) Aktualizace balíčků (stáhne a nainstaluje dostupné updaty)
+1) Aktualizace balíčků (stáhne a nainstaluje dostupné updaty)
+
 ```bash
 apt update && apt upgrade -y
 ```
 
-3) Vytvoření uživatele `mimm` a přidání do sudo (aby nemusel používat root)
+1) Vytvoření uživatele `mimm` a přidání do sudo (aby nemusel používat root)
+
 ```bash
 adduser mimm            # nastavte heslo, stačí Enter pro volitelné údaje
 usermod -aG sudo mimm   # dá uživateli práva sudo
 ```
 
-4) SSH hardening (změna portu, zákaz root a hesel)
+1) SSH hardening (změna portu, zákaz root a hesel)
+
 ```bash
 nano /etc/ssh/sshd_config
 # změňte nebo přidejte řádky:
@@ -62,9 +67,11 @@ nano /etc/ssh/sshd_config
 # Uložte: Ctrl+O, Enter, ukončete: Ctrl+X
 systemctl restart sshd
 ```
+
 > Co to dělá: port 2222 sníží šum botů, zakáže login jako root a zakáže hesla (jen klíče).
 
-5) Firewall UFW (povolí jen SSH+HTTP+HTTPS, zbytek blokne)
+1) Firewall UFW (povolí jen SSH+HTTP+HTTPS, zbytek blokne)
+
 ```bash
 ufw allow 2222/tcp
 ufw allow 80/tcp
@@ -73,14 +80,16 @@ ufw enable   # potvrďte "y"
 ufw status verbose
 ```
 
-6) Fail2Ban (ochrana proti brute force na SSH a Nginx)
+1) Fail2Ban (ochrana proti brute force na SSH a Nginx)
+
 ```bash
 apt install -y fail2ban
 systemctl enable --now fail2ban
 fail2ban-client status
 ```
 
-7) Přihlášení jako nový uživatel (otestuj, že vše funguje)
+1) Přihlášení jako nový uživatel (otestuj, že vše funguje)
+
 ```bash
 ssh mimm@IP -p 2222
 ```
@@ -90,24 +99,28 @@ ssh mimm@IP -p 2222
 ## Fáze B: Docker + Nginx (15–20 min)
 
 1) Docker + compose plugin (instalační skript Dockeru + plugin Compose)
+
 ```bash
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 apt install -y docker-compose-plugin
 ```
 
-2) Přidání uživatele do docker group (aby mohl spouštět docker bez sudo)
+1) Přidání uživatele do docker group (aby mohl spouštět docker bez sudo)
+
 ```bash
 sudo usermod -aG docker mimm
 # pak se odhlásit a přihlásit, jinak se skupina neprojeví
 ```
 
-3) Test Dockeru
+1) Test Dockeru
+
 ```bash
 docker run hello-world
 ```
 
-4) Nginx instalace a vypnutí default site
+1) Nginx instalace a vypnutí default site
+
 ```bash
 sudo apt install -y nginx
 sudo rm /etc/nginx/sites-enabled/default
@@ -119,20 +132,24 @@ sudo nginx -t   # test konfigurace (zatím prázdná, ale ok)
 ## Fáze C: Certy (Let's Encrypt, 10 min)
 
 1) Certbot instalace
+
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
 ```
 
-2) Získání certů (NGINX musí běžet)
+1) Získání certů (NGINX musí běžet)
+
 ```bash
 sudo certbot certonly --nginx \
   -d your-domain.com \
   -d www.your-domain.com \
   -d api.your-domain.com
 ```
+
 > Co to dělá: vystaví HTTPS certifikáty pro tři hostname.
 
-3) Ověření obnovy
+1) Ověření obnovy
+
 ```bash
 sudo certbot renew --dry-run
 ```
@@ -142,19 +159,23 @@ sudo certbot renew --dry-run
 ## Fáze D: Aplikace (20–30 min)
 
 1) Repo stáhnout / nahrát
+
 ```bash
 cd /home/mimm
 git clone <repo-url> mimm-app   # nebo nahrát SFTP do /home/mimm/mimm-app
 cd mimm-app
 ```
 
-2) `.env` vytvořit a zamknout (jen na serveru)
+1) `.env` vytvořit a zamknout (jen na serveru)
+
 ```bash
 nano .env
 # vlož hodnoty (viz LITE plán: DB, JWT, URL, atd.)
 chmod 600 .env
 ```
+
 Ukázka obsahu `.env` (nahraď vlastními hodnotami):
+
 ```bash
 POSTGRES_USER=mimmuser
 POSTGRES_PASSWORD=STRONG_DB_PASS
@@ -174,11 +195,13 @@ SENDGRID_API_KEY=
 SENDGRID_FROM_EMAIL=noreply@your-domain.com
 ```
 
-3) Docker Compose (připrav docker-compose.prod.yml; Redis dej jen pokud ho používáš)
+1) Docker Compose (připrav docker-compose.prod.yml; Redis dej jen pokud ho používáš)
+
 - Pokud máš hotový soubor z repa, nic nedělej.
 - Jinak použij šablonu z `DEPLOYMENT_PLAN_LITE.md`.
 
-4) Nginx configy
+1) Nginx configy
+
 ```bash
 # Backend config ulož do /etc/nginx/sites-available/mimm-backend
 # Frontend config ulož do /etc/nginx/sites-available/mimm-frontend
@@ -189,6 +212,7 @@ sudo nginx -s reload
 ```
 
 Minimal backend config (`/etc/nginx/sites-available/mimm-backend`):
+
 ```nginx
 server {
   listen 80;
@@ -238,6 +262,7 @@ server {
 ```
 
 Minimal frontend config (`/etc/nginx/sites-available/mimm-frontend`):
+
 ```nginx
 server {
   listen 80;
@@ -267,12 +292,14 @@ server {
 }
 ```
 
-5) Build & run
+1) Build & run
+
 ```bash
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-6) Migrace databáze
+1) Migrace databáze
+
 ```bash
 docker compose -f docker-compose.prod.yml run --rm backend \
   dotnet ef database update --no-build
@@ -283,14 +310,17 @@ docker compose -f docker-compose.prod.yml run --rm backend \
 ## Fáze E: Smoke test (10 min)
 
 1) Backend health
+
 ```bash
 curl -I https://api.your-domain.com/health   # očekávej HTTP/1.1 200 OK
 ```
 
-2) Frontend
-- Otevři https://your-domain.com v prohlížeči, zkontroluj že se načte bez chyb.
+1) Frontend
 
-3) Login/registrace
+- Otevři <https://your-domain.com> v prohlížeči, zkontroluj že se načte bez chyb.
+
+1) Login/registrace
+
 - Založ testovací účet, přihlášení musí projít.
 
 ---
@@ -298,17 +328,20 @@ curl -I https://api.your-domain.com/health   # očekávej HTTP/1.1 200 OK
 ## Fáze F: Backup (5 min)
 
 1) Složka pro backupy
+
 ```bash
 mkdir -p ~/backups
 ```
 
-2) Jednorázový dump (spusť kdykoli)
+1) Jednorázový dump (spusť kdykoli)
+
 ```bash
 docker exec mimm-postgres pg_dump -U mimmuser mimm | \
   gzip > ~/backups/mimm_db_$(date +%Y%m%d).sql.gz
 ```
 
-3) Denní cron v 2:00
+1) Denní cron v 2:00
+
 ```bash
 crontab -e
 # přidej řádek (pozor na backslashy):
@@ -320,9 +353,11 @@ crontab -e
 ## Fáze G: Minimum monitoringu (5 min)
 
 1) UptimeRobot
+
 - Přidej HTTP(S) check na `https://api.your-domain.com/health`.
 
-2) Rychlé logy
+1) Rychlé logy
+
 ```bash
 docker compose -f docker-compose.prod.yml logs --tail=200
 ```
@@ -330,6 +365,7 @@ docker compose -f docker-compose.prod.yml logs --tail=200
 ---
 
 ## Volitelné (až bude čas)
+
 - Redis přidej, jen pokud appka potřebuje cache/SignalR scale-out.
 - Docker Bench / Lynis (security audit) až později.
 - Off-site backup sync (rsync/S3) až později.
@@ -338,5 +374,6 @@ docker compose -f docker-compose.prod.yml logs --tail=200
 ---
 
 ## Go/No-Go
+
 - [ ] Vše zelené → GO
 - [ ] Něco chybí → NO-GO, doplnit

@@ -5,6 +5,7 @@
 ---
 
 ## 0. Parametry a předpoklady
+
 - VPS: Ubuntu 24.04 (1–2 vCPU, 2–4 GB RAM, 40+ GB disk)
 - Domény: `your-domain.com`, `api.your-domain.com`
 - Stack: Docker, Docker Compose plugin, Nginx na hostu, ASP.NET Core backend v kontejneru, PostgreSQL v kontejneru, Redis **volitelně**
@@ -13,6 +14,7 @@
 ---
 
 ## 1. Rychlý průlet 10 kroky
+
 1) SSH hardening: uživatel `mimm`, zákaz root loginu, port 2222, pouze klíče. UFW: povolit 2222, 80, 443. Fail2Ban pro SSH a Nginx.
 2) Docker + Compose plugin: instalace, přidat `mimm` do `docker` group.
 3) Nginx instalace: vypnout default site, připravit HTTP→HTTPS redirect a proxy na backend 127.0.0.1:5001.
@@ -29,6 +31,7 @@
 ## 2. Konfigurační šablony
 
 ### 2.1 docker-compose.prod.yml (bez Redis)
+
 ```yaml
 version: '3.8'
 
@@ -110,7 +113,9 @@ volumes:
 ```
 
 ### 2.2 Nginx (backend)
+
 Minimalní blok s HTTPS, reverse proxy a WS:
+
 ```nginx
 server {
     listen 80;
@@ -162,6 +167,7 @@ server {
 ```
 
 ### 2.3 Nginx (frontend)
+
 ```nginx
 server {
     listen 80;
@@ -192,6 +198,7 @@ server {
 ```
 
 ### 2.4 .env šablona (jen na serveru)
+
 ```bash
 POSTGRES_USER=mimmuser
 POSTGRES_PASSWORD=STRONG_DB_PASS
@@ -208,6 +215,7 @@ SENDGRID_FROM_EMAIL=noreply@your-domain.com
 ---
 
 ## 3. Zkrácený postup (detailněji)
+
 - VPS update: `apt update && apt upgrade -y`
 - Uživatel + SSH hardening: port 2222, `PermitRootLogin no`, `PasswordAuthentication no`
 - UFW: allow 2222, 80, 443; enable
@@ -224,6 +232,7 @@ SENDGRID_FROM_EMAIL=noreply@your-domain.com
 ---
 
 ## 4. Monitoring (light)
+
 - UptimeRobot ping na `https://api.your-domain.com/health`
 - Ruční kontrola logů: `docker compose -f docker-compose.prod.yml logs --tail=200` a `/var/log/nginx/*.log`
 - `docker stats` pro rychlý přehled
@@ -231,12 +240,14 @@ SENDGRID_FROM_EMAIL=noreply@your-domain.com
 ---
 
 ## 5. Performance (light)
+
 - Jednorázově: `ab -n 100 -c 5 https://api.your-domain.com/health`
 - Pokud vše OK a latence < 300 ms, dál nic neřeš
 
 ---
 
 ## 6. Bezpečnost (minimum)
+
 - SSH hardening + UFW + Fail2Ban
 - HTTPS only, HSTS, security headers
 - Non-root kontejnery, cap_drop ALL, read-only fs kde to dává smysl
@@ -246,6 +257,7 @@ SENDGRID_FROM_EMAIL=noreply@your-domain.com
 ---
 
 ## 7. Backup (light)
+
 - Denní: `pg_dump` → `~/backups/mimm_db_YYYYMMDD.sql.gz`
 - Retence: 30 dní lokálně
 - Off-site: ručně 1× za čas stáhnout na vlastní zařízení (nebo rsync/S3 až později)
@@ -253,6 +265,7 @@ SENDGRID_FROM_EMAIL=noreply@your-domain.com
 ---
 
 ## 8. Troubleshooting (rychlé)
+
 - Backend logy: `docker compose -f docker-compose.prod.yml logs backend --tail=200`
 - DB: `docker exec -it mimm-postgres psql -U mimmuser -d mimm -c "SELECT 1;"`
 - Nginx config test: `nginx -t && nginx -s reload`
@@ -261,10 +274,11 @@ SENDGRID_FROM_EMAIL=noreply@your-domain.com
 ---
 
 ## 9. Co je volitelné / až později
+
 - Docker Bench Security, Lynis, App Insights, status page
 - Redis, pokud zatím nepotřebuješ cache/SignalR scale‑out
 - Škálování (load balancer, více uzlů)
 
 ---
 
-**Hotovo.** Tohle je “MVP subset” pro rychlé a bezpečné nasazení bez enterprise režie. 
+**Hotovo.** Tohle je “MVP subset” pro rychlé a bezpečné nasazení bez enterprise režie.
