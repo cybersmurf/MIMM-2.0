@@ -185,6 +185,16 @@ act -W .github/workflows/ci.yml -j build-and-test
 - Pro stažení otevři konkrétní run v Actions → sekce Artifacts → `coverage-reports`.
 - Pro lokální prohlížení můžeš použít libovolný Cobertura viewer, nebo VS Code pluginy pro coverage.
 
+### Codecov setup (coverage badge)
+- Public repo: běžně nevyžaduje token; stačí připojit repo v Codecov a první CI upload.
+- Private repo: vytvoř GitHub Secret `CODECOV_TOKEN` s hodnotou tokenu z Codecov (Repo → Settings → General → Upload Token).
+- Přidání Secret: GitHub → Repo → Settings → Secrets and variables → Actions → New repository secret → `CODECOV_TOKEN`.
+- Badge v README se aktivuje po prvním úspěšném uploadu a zpracování reportu.
+
+### CI detaily
+- OS matrix: CI běží na `ubuntu`, `windows` a `macos` pro širší kompatibilitu.
+- NuGet cache: CI ukládá balíčky do `~/.nuget/packages` (Linux/macOS) a `C:\Users\runneradmin\.nuget\packages` (Windows) pro rychlejší běhy.
+
 ---
 
 ## 🐳 Docker Deployment
