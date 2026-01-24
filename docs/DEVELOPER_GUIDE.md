@@ -78,6 +78,7 @@ dotnet test MIMM.sln --configuration Release --no-build -v minimal
 ### Copilot prompty pro opakovatelné úlohy
 - Umístění: `.github/prompts/`
 - Obsah: release notes, E2E maintenance, CI fix, feature implementation, security hardening, EF migrations review, API contract review.
+- **[📋 Kompletní katalog promptů](PROMPTS_CATALOG.md)** – tabulka se stručnými popisy a doporučením.
 - Reference: viz také [AGENTS.md](../AGENTS.md) pro přehled agentních instrukcí.
 
 ## Standardy kódu

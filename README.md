@@ -197,13 +197,14 @@ act -W .github/workflows/ci.yml -j build-and-test
 
 ### Copilot prompty
 - Opakovatelné prompty jsou v `.github/prompts/`:
-	- release-notes.prompt.md
-	- e2e-tests-maintenance.prompt.md
-	- ci-fix.prompt.md
-	- feature-implementation.prompt.md
-	- security-hardening.prompt.md
-	- ef-migrations-review.prompt.md
-	- api-contract-review.prompt.md
+  - **[📋 Prompts Catalog](docs/PROMPTS_CATALOG.md)** – přehledná tabulka promptů
+  - release-notes.prompt.md
+  - e2e-tests-maintenance.prompt.md
+  - ci-fix.prompt.md
+  - feature-implementation.prompt.md
+  - security-hardening.prompt.md
+  - ef-migrations-review.prompt.md
+  - api-contract-review.prompt.md
 - Pro agenty jsou odkazy také v [AGENTS.md](AGENTS.md).
 
 ---
