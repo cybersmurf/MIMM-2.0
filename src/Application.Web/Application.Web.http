@@ -1,0 +1,4 @@
+@RootUrl = https://localhost:7267
+
+GET {{RootUrl}}/api/weatherforecast/
+Accept: application/json

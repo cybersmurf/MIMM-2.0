@@ -1,0 +1,70 @@
+## Build artifacts
+bin/
+obj/
+out/
+publish/
+
+## User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+## Visual Studio
+.vs/
+.vscode/
+*.code-workspace
+
+## Rider
+.idea/
+
+## Logs
+logs/
+*.log
+
+## Database
+*.db
+*.db-shm
+*.db-wal
+
+## Environment & Secrets
+.env
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+*.local.json
+secrets.json
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+## Test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+## macOS
+.DS_Store
+._*
+
+## Node (for frontend tools if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+## Docker
+docker-compose.override.yml
+
+## Certificates
+*.pfx
+*.p12
+.https/
+
+## Blazor
+wwwroot/service-worker-assets.js
