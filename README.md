@@ -1,8 +1,8 @@
 # MIMM 2.0 🎵
 
-**Music & Mood Journal** - Enterprise-ready web application for tracking how music affects your emotions and physical sensations.
+**Music & Mood Journal** – Enterprise-ready web application for tracking how music affects emotions and physical sensations.
 
-[![Build](https://github.com/YOUR_USERNAME/MIMM-2.0/workflows/Build%20and%20Test/badge.svg)](https://github.com/YOUR_USERNAME/MIMM-2.0/actions)
+[![Build](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/build.yml/badge.svg)](https://github.com/cybersmurf/MIMM-2.0/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-9.0-purple)](https://dotnet.microsoft.com/)
 
@@ -10,15 +10,15 @@
 
 ## 🌟 Features
 
-- ✅ **User Authentication** - Secure JWT-based login with email verification
-- ✅ **Multi-tenant Architecture** - Each user has isolated journal data
-- ✅ **Russell's Circumplex Model** - 2D mood tracking (Valence × Arousal)
-- ✅ **Multi-source Music Search** - iTunes, Deezer, MusicBrainz, Discogs
-- ✅ **Last.fm Integration** - OAuth login + automatic scrobbling
-- ✅ **Real-time Analytics** - SignalR-powered live updates
-- ✅ **PWA Support** - Installable on mobile devices
-- ✅ **Bilingual** - Czech 🇨🇿 + English 🇬🇧
-- ✅ **Type-safe** - Full C# stack (backend + Blazor frontend)
+- ✅ **User Authentication** – Secure JWT-based login with email verification
+- ✅ **Multi-tenant Architecture** – Each user has isolated journal data
+- ✅ **Russell's Circumplex Model** – 2D mood tracking (Valence × Arousal)
+- ✅ **Multi-source Music Search** – iTunes, Deezer, MusicBrainz, Discogs
+- ✅ **Last.fm Integration** – OAuth login + automatic scrobbling
+- ✅ **Real-time Analytics** – SignalR-powered live updates
+- ✅ **PWA Support** – Installable on mobile devices
+- ✅ **Bilingual** – Czech 🇨🇿 + English 🇬🇧
+- ✅ **Type-safe** – Full C# stack (backend + Blazor frontend)
 
 ---
 
@@ -39,19 +39,19 @@
 ```
 MIMM-2.0/
 ├── src/
-│   ├── MIMM.Backend/          # ASP.NET Core API
-│   │   ├── Controllers/       # REST endpoints
-│   │   ├── Services/          # Business logic
-│   │   ├── Data/              # EF Core DbContext + migrations
-│   │   ├── Hubs/              # SignalR real-time hubs
-│   │   └── Middleware/        # Custom middleware
-│   ├── MIMM.Frontend/         # Blazor WASM
-│   │   ├── Pages/             # Razor pages
-│   │   ├── Components/        # Reusable components
-│   │   └── Services/          # API clients
-│   └── MIMM.Shared/           # Shared DTOs & models
+│   ├── MIMM.Backend/           # ASP.NET Core API
+│   │   ├── Controllers/        # REST endpoints
+│   │   ├── Services/           # Business logic
+│   │   ├── Data/               # EF Core DbContext + migrations
+│   │   ├── Hubs/               # SignalR real-time hubs
+│   │   └── Middleware/         # Custom middleware
+│   ├── MIMM.Frontend/          # Blazor WASM
+│   │   ├── Pages/              # Razor pages
+│   │   ├── Components/         # Reusable components
+│   │   └── Services/           # API clients
+│   └── MIMM.Shared/            # Shared DTOs & models
 ├── tests/
-│   ├── MIMM.Tests.Unit/       # Unit tests
+│   ├── MIMM.Tests.Unit/        # Unit tests
 │   └── MIMM.Tests.Integration/ # Integration tests
 ├── docker-compose.yml
 ├── Dockerfile
@@ -71,7 +71,7 @@ MIMM-2.0/
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/MIMM-2.0.git
+git clone https://github.com/cybersmurf/MIMM-2.0.git
 cd MIMM-2.0
 ```
 
@@ -113,16 +113,16 @@ dotnet run
 
 ### 7. Open in Browser
 
-Navigate to **https://localhost:5001** and register your first account!
+Navigate to https://localhost:5001 and register your first account.
 
 ---
 
 ## 📚 Documentation
 
-- **[Setup Guide](SETUP_GUIDE.md)** - Complete installation & configuration
-- **[Migration Guide](MIGRATION_GUIDE.md)** - Migrate data from MIMM 1.0
-- **[Architecture Spec](MIMM_2.0_SPECIFICATION_DOTNET.md)** - Technical deep dive
-- **[API Documentation](https://localhost:7001/swagger)** - Interactive API docs
+- [Setup Guide](SETUP_GUIDE.md) – Complete installation & configuration
+- [Migration Guide](MIGRATION_GUIDE.md) – Migrate data from MIMM 1.0
+- [Architecture Spec](MIMM_2.0_SPECIFICATION_DOTNET.md) – Technical deep dive
+- [API Documentation](https://localhost:7001/swagger) – Interactive API docs
 
 ---
 
@@ -160,17 +160,17 @@ docker-compose logs -f backend
 
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
-| `ConnectionStrings__DefaultConnection` | PostgreSQL connection | ✅ Yes | - |
-| `Jwt__Key` | JWT signing key (256-bit) | ✅ Yes | - |
+| `ConnectionStrings__DefaultConnection` | PostgreSQL connection | ✅ Yes | – |
+| `Jwt__Key` | JWT signing key (256-bit) | ✅ Yes | – |
 | `Jwt__Issuer` | JWT issuer | ✅ Yes | `https://localhost:7001` |
 | `Jwt__Audience` | JWT audience | ✅ Yes | `mimm-frontend` |
-| `LastFm__ApiKey` | Last.fm API key | ⚠️ Optional | - |
-| `LastFm__SharedSecret` | Last.fm shared secret | ⚠️ Optional | - |
-| `Discogs__Token` | Discogs API token | ⚠️ Optional | - |
-| `SendGrid__ApiKey` | SendGrid email API key | ⚠️ Optional | - |
-| `ConnectionStrings__Redis` | Redis connection | ⚠️ Optional | - |
+| `LastFm__ApiKey` | Last.fm API key | ⚠️ Optional | – |
+| `LastFm__SharedSecret` | Last.fm shared secret | ⚠️ Optional | – |
+| `Discogs__Token` | Discogs API token | ⚠️ Optional | – |
+| `SendGrid__ApiKey` | SendGrid email API key | ⚠️ Optional | – |
+| `ConnectionStrings__Redis` | Redis connection | ⚠️ Optional | – |
 
-See [.env.example](.env.example) for complete list.
+See .env.example for the complete list.
 
 ---
 
@@ -178,9 +178,9 @@ See [.env.example](.env.example) for complete list.
 
 ### Recommended IDEs
 
-- **Visual Studio 2025** (Windows/Mac) - Best experience
-- **VS Code** + C# Dev Kit extension
-- **Rider** (JetBrains)
+- Visual Studio 2025 (Windows/Mac)
+- VS Code + C# Dev Kit
+- Rider (JetBrains)
 
 ### Useful Commands
 
@@ -224,19 +224,19 @@ az webapp create --resource-group mimm-rg --plan mimm-plan --name mimm-app --run
 az webapp deployment source config-zip --resource-group mimm-rg --name mimm-app --src publish.zip
 ```
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+See DEPLOYMENT.md for detailed instructions.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+Contributions are welcome! Please read CONTRIBUTING.md first.
 
 ### Development Workflow
 
 1. Fork the repository
 2. Create feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
+3. Commit changes: `git commit -m "Add amazing feature"`
 4. Push to branch: `git push origin feature/amazing-feature`
 5. Open Pull Request
 
@@ -244,24 +244,24 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
 ## 📜 License
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
+This project is licensed under the MIT License – see LICENSE.
 
 ---
 
 ## 🙏 Acknowledgments
 
-- **MIMM 1.0** - Original localStorage-based MVP
-- **Last.fm API** - Music metadata & scrobbling
-- **Russell's Circumplex Model** - Mood coordinate system
-- **MudBlazor** - Blazor UI components (optional)
+- MIMM 1.0 – Original localStorage-based MVP
+- Last.fm API – Music metadata & scrobbling
+- Russell's Circumplex Model – Mood coordinate system
+- MudBlazor – Blazor UI components (optional)
 
 ---
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/MIMM-2.0/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/MIMM-2.0/discussions)
-- **Email**: support@mimm.example.com
+- Issues: https://github.com/cybersmurf/MIMM-2.0/issues
+- Discussions: https://github.com/cybersmurf/MIMM-2.0/discussions
+- Email: support@mimm.example.com
 
 ---
 
@@ -289,7 +289,7 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
 
 ---
 
-**Built with ❤️ using C# and .NET**
+**Built with love using C# and .NET**
 
 ---
 
@@ -309,5 +309,5 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: 24. ledna 2026
+Version: 1.0.0
+Last Updated: 24. ledna 2026
