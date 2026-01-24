@@ -15,9 +15,11 @@ Implemented full CRUD (Create, Read, Update, Delete) UI for journal entries in t
 ## ✅ Deliverables
 
 ### 1. **HTTP Client Service** (EntryApiService.cs)
+
 ✅ Created `src/MIMM.Frontend/Services/EntryApiService.cs` (138 lines)
 
 **Features:**
+
 - Interface `IEntryApiService` with 6 methods
 - `GetEntriesAsync(PaginationRequest)` → Paginated list of entries
 - `GetEntryByIdAsync(Guid)` → Single entry details
@@ -33,6 +35,7 @@ Implemented full CRUD (Create, Read, Update, Delete) UI for journal entries in t
 ---
 
 ### 2. **Editable Models** (EntryModels.cs)
+
 ✅ Created `src/MIMM.Frontend/Models/EntryModels.cs` (32 lines)
 
 **Purpose:** Bridge between UI components and DTOs (which use `init-only` properties)
@@ -59,17 +62,19 @@ public class UpdateEntryModel {
 ---
 
 ### 3. **Entry List Component** (EntryList.razor)
+
 ✅ Created `src/MIMM.Frontend/Components/EntryList.razor` (202 lines)
 
 **Features:**
+
 - **Paginated table** with MudBlazor components
-- **Columns:** 
+- **Columns:**
   - Album art (MudAvatar with cover image or music note icon)
   - Song title + Artist + Created date
   - Mood chip (color-coded: Happy/Sad/Angry/Calm/Neutral)
   - Edit button (triggers `OnEditEntry` callback)
   - Delete button (soft delete via API)
-- **Loading states:** 
+- **Loading states:**
   - Skeleton loaders while fetching
   - Progress spinner for refresh
 - **Pagination:** MudPagination component with page selector
@@ -77,6 +82,7 @@ public class UpdateEntryModel {
 - **Refresh button:** Manual reload of entries
 
 **API Integration:**
+
 ```csharp
 protected override async Task OnInitializedAsync()
 {
@@ -87,9 +93,11 @@ protected override async Task OnInitializedAsync()
 ---
 
 ### 4. **Entry Create Dialog** (EntryCreateDialog.razor)
+
 ✅ Created `src/MIMM.Frontend/Components/EntryCreateDialog.razor` (239 lines)
 
 **Features:**
+
 - **Form fields:**
   - Song title (required, validated)
   - Artist name (optional)
@@ -108,6 +116,7 @@ protected override async Task OnInitializedAsync()
 - **Callback:** `OnEntryCreated` event to refresh parent list
 
 **Predefined Somatic Tags:**
+
 ```
 Relaxed, Tense, Energetic, Tired, Warm, Cold, Tingling, Heavy, 
 Light, Grounded, Floating, Centered
@@ -116,9 +125,11 @@ Light, Grounded, Floating, Centered
 ---
 
 ### 5. **Entry Edit Dialog** (EntryEditDialog.razor)
+
 ✅ Created `src/MIMM.Frontend/Components/EntryEditDialog.razor` (343 lines)
 
 **Features:**
+
 - **Pre-populated form** from existing entry data
 - All fields editable (same as create dialog)
 - **Delete button** with confirmation dialog
@@ -128,6 +139,7 @@ Light, Grounded, Floating, Centered
 - **Callback:** `OnEntryUpdated` event to refresh parent list
 
 **Entry Loading:**
+
 ```csharp
 protected override async Task OnInitializedAsync()
 {
@@ -142,16 +154,19 @@ protected override async Task OnInitializedAsync()
 ---
 
 ### 6. **Confirm Dialog** (ConfirmDialog.razor)
+
 ✅ Created `src/MIMM.Frontend/Components/ConfirmDialog.razor` (23 lines)
 
 **Purpose:** Reusable confirmation dialog for destructive actions (e.g., delete entry)
 
 **Parameters:**
+
 - `ContentText` (default: "Are you sure?")
 - `ButtonText` (default: "Confirm")
 - `Color` (default: Primary)
 
 **Usage:**
+
 ```csharp
 var dialog = await DialogService.ShowAsync<ConfirmDialog>("Delete entry", parameters);
 var result = await dialog.Result;
@@ -163,15 +178,18 @@ if (result is { Canceled: false }) {
 ---
 
 ### 7. **Dashboard Integration**
+
 ✅ Updated `src/MIMM.Frontend/Pages/Dashboard.razor` (131 lines)
 
 **Changes:**
+
 - Replaced placeholder "No entries yet" list with `<EntryList />` component
 - "New Entry" button now opens `EntryCreateDialog` via MudBlazor dialog service
 - Edit entry callback opens `EntryEditDialog` with selected entry ID
 - `RefreshData()` method reloads entry list after create/update/delete
 
 **Code:**
+
 ```csharp
 private async Task OpenCreateDialog()
 {
@@ -193,6 +211,7 @@ private async Task OpenEditDialog(EntryDto entry)
 ---
 
 ### 8. **DI Registration**
+
 ✅ Updated `src/MIMM.Frontend/Program.cs` (line 37)
 
 ```csharp
@@ -205,11 +224,13 @@ builder.Services.AddScoped<IEntryApiService, EntryApiService>(); // NEW
 ## 🛠️ Technical Decisions
 
 ### 1. **Init-only DTOs + Editable Models**
+
 **Problem:** Backend DTOs use C# 13 `required init` properties for immutability, but Blazor needs mutable properties for `@bind-Value`.
 
 **Solution:** Created `CreateEntryModel` and `UpdateEntryModel` classes with `{ get; set; }` properties. Components bind to these models, then map to DTOs before API calls.
 
 **Example:**
+
 ```csharp
 // In EntryCreateDialog.razor
 private CreateEntryModel Model { get; set; } = new(); // Mutable for binding
@@ -227,6 +248,7 @@ private async Task SubmitAsync() {
 ---
 
 ### 2. **Non-nullable Mood Values**
+
 **Problem:** MudSlider requires non-nullable generic type `T`, but UpdateEntryRequest uses `double?` for optional fields.
 
 **Solution:** UpdateEntryModel uses non-nullable `double` and `int` with default values (0.0, 50). When loading existing entry, values are populated from database. When submitting, backend treats any value as "set" (no distinction between "not changed" and "changed to 0").
@@ -236,9 +258,11 @@ private async Task SubmitAsync() {
 ---
 
 ### 3. **MudBlazor 7.0 Generic Types**
+
 **Problem:** MudBlazor 7 requires explicit generic type parameter `T` for components like `MudChip`, `MudList`, `MudListItem`.
 
 **Solution:** Added `T="string"` to all affected components:
+
 ```razor
 <MudChip T="string" Size="Size.Small" Color="@Color.Success">Happy</MudChip>
 <MudList T="string" Dense>
@@ -249,11 +273,13 @@ private async Task SubmitAsync() {
 ---
 
 ### 4. **Snackbar vs Dialog for Delete Confirmation**
+
 **Problem:** MudBlazor 7 `Snackbar.Add()` doesn't return a result (unlike v6).
 
 **Solution:** Used `DialogService.ShowAsync<ConfirmDialog>()` for delete confirmation instead of snackbar action button. More explicit and better UX.
 
 **Before (v6 style):**
+
 ```csharp
 var confirmed = await Snackbar.Add("Delete?", config => {
     config.Action = "Delete";
@@ -261,6 +287,7 @@ var confirmed = await Snackbar.Add("Delete?", config => {
 ```
 
 **After (v7 compatible):**
+
 ```csharp
 var dialog = await DialogService.ShowAsync<ConfirmDialog>("Delete entry");
 var result = await dialog.Result;
@@ -270,15 +297,18 @@ if (result is { Canceled: false }) { /* delete */ }
 ---
 
 ### 5. **Somatic Tags as Chip Selector**
+
 **Problem:** Backend stores somatic tags as `string[]`, need intuitive UI for adding/removing.
 
-**Solution:** 
+**Solution:**
+
 - 12 predefined tags displayed as chips (click to toggle)
 - Custom tag input field (press Enter or click + icon to add)
 - Selected tags highlighted with filled variant
 - Tags sent as collection expression `[.. SelectedTags]`
 
 **Code:**
+
 ```csharp
 private HashSet<string> SelectedTags { get; set; } = [];
 
@@ -296,6 +326,7 @@ private void ToggleTag(string tag) {
 ## 🐛 Issues Resolved
 
 ### 1. **Compilation Errors (32 → 0)**
+
 - **MudChip/MudList generic type inference** (RZ10001) → Added `T="string"`
 - **Init-only property assignment** (CS8852) → Created mutable models
 - **Missing FromDate/ToDate properties** (CS1061) → Changed to `DateFrom`/`DateTo`
@@ -305,6 +336,7 @@ private void ToggleTag(string tag) {
 ---
 
 ### 2. **MudBlazor Warnings**
+
 - ~~`Image` parameter on MudAvatar (MUD0001)~~ → Changed to `Src` ✅
 - ~~`AlignItems` on MudGrid (MUD0002)~~ → Removed (not needed for vertical grid) ✅
 - Remaining: `Src` warning (false positive from analyzer - attribute exists and works)
@@ -312,6 +344,7 @@ private void ToggleTag(string tag) {
 ---
 
 ### 3. **Security Warning**
+
 - **Moq 4.20.0 low severity vulnerability (NU1901)** → Non-blocking, only affects test projects, will upgrade in future sprint
 
 ---
@@ -319,9 +352,10 @@ private void ToggleTag(string tag) {
 ## 🧪 Testing Status
 
 ### Manual Testing Plan (E2E)
+
 - [x] Build successful (0 errors)
-- [ ] Run backend: `dotnet run --project src/MIMM.Backend` → http://localhost:5001
-- [ ] Run frontend: `dotnet run --project src/MIMM.Frontend` → http://localhost:5000
+- [ ] Run backend: `dotnet run --project src/MIMM.Backend` → <http://localhost:5001>
+- [ ] Run frontend: `dotnet run --project src/MIMM.Frontend` → <http://localhost:5000>
 - [ ] Login with test user: `e2e-auto@example.com` / `Test123!`
 - [ ] Navigate to dashboard → Verify "Recent entries" section loads
 - [ ] Click "New Entry" → Create dialog opens
@@ -336,9 +370,11 @@ private void ToggleTag(string tag) {
 ---
 
 ### Unit Test Coverage
+
 **Current:** 0% for new components (Razor components not testable via xUnit alone)
 
 **Recommended:** Add Playwright or bUnit tests in future sprint for:
+
 - Component rendering
 - Form validation
 - API call mocking
@@ -381,6 +417,7 @@ private void ToggleTag(string tag) {
 ## 🚀 Next Steps
 
 ### Immediate (Action 3 Finalization)
+
 1. **E2E Testing** (30 min)
    - Start backend + frontend locally
    - Create test entry via UI
@@ -393,9 +430,11 @@ private void ToggleTag(string tag) {
 ---
 
 ### Action 4: MoodSelector Component (Next Priority)
+
 **Estimated:** 4-5 hours
 
 **Scope:**
+
 - Create 2D interactive mood selector component
 - Russell's Circumplex Model visualization (Valence × Arousal)
 - Click/drag to select mood coordinates
@@ -403,6 +442,7 @@ private void ToggleTag(string tag) {
 - Visual quadrants: Happy/Excited (top-right), Sad/Depressed (bottom-left), Relaxed/Calm (bottom-right), Angry/Tense (top-left)
 
 **Technical Approach:**
+
 - SVG-based grid with click handlers
 - Coordinate mapping: Canvas coordinates → Valence/Arousal values
 - Real-time preview of selected mood
@@ -413,6 +453,7 @@ private void ToggleTag(string tag) {
 ## 📝 Implementation Notes
 
 ### Code Quality
+
 - ✅ Modern C# 13 syntax (collection expressions `[]`, primary constructors)
 - ✅ Nullable reference types enabled (`#nullable enable`)
 - ✅ Async/await patterns throughout
@@ -421,6 +462,7 @@ private void ToggleTag(string tag) {
 - ✅ Responsive grid layout (xs/sm/md breakpoints)
 
 ### Architecture Patterns
+
 - **Repository Pattern:** HTTP client service (EntryApiService) abstracts API communication
 - **DTO Mapping:** Separate models for UI binding vs API contracts
 - **Event Callbacks:** Parent-child communication via `EventCallback<T>`
@@ -429,6 +471,7 @@ private void ToggleTag(string tag) {
 - **Snackbar Service:** ISnackbar for transient notifications
 
 ### Performance Considerations
+
 - **Pagination:** Default 10 items per page (configurable)
 - **Lazy Loading:** Only fetch visible page
 - **Soft Delete:** `DeletedAt` timestamp instead of hard delete

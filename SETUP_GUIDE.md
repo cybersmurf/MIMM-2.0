@@ -261,6 +261,7 @@ open https://localhost:7001/swagger
 In Swagger UI, try:
 
 1. **POST /api/auth/register**
+
    ```json
    {
      "email": "test@example.com",
@@ -268,15 +269,18 @@ In Swagger UI, try:
      "displayName": "Test User"
    }
    ```
+
    Expected: `200 OK`
 
 2. **POST /api/auth/login**
+
    ```json
    {
      "email": "test@example.com",
      "password": "Test123!"
    }
    ```
+
    Expected: `{ "accessToken": "eyJ...", "user": {...} }`
 
 ---
@@ -381,8 +385,8 @@ docker-compose down
 
 ### Access Services
 
-- **Backend API**: https://localhost:7001
-- **Swagger**: https://localhost:7001/swagger
+- **Backend API**: <https://localhost:7001>
+- **Swagger**: <https://localhost:7001/swagger>
 - **PostgreSQL**: localhost:5432
 - **Redis**: localhost:6379
 
@@ -500,6 +504,7 @@ dotnet dev-certs https --trust
 ### Deploy to Production
 
 See `DEPLOYMENT.md` for:
+
 - Azure App Service deployment
 - Docker production setup
 - Environment variable configuration
@@ -508,13 +513,15 @@ See `DEPLOYMENT.md` for:
 
 ### Connect Last.fm
 
-1. Get API key: https://www.last.fm/api/account/create
+1. Get API key: <https://www.last.fm/api/account/create>
 2. Add to `.env`:
+
    ```
    LastFm__ApiKey=YOUR_KEY
    LastFm__SharedSecret=YOUR_SECRET
    LastFm__CallbackUrl=https://localhost:7001/api/integrations/lastfm/callback
    ```
+
 3. Implement OAuth flow in `LastFmService.cs`
 
 ---
@@ -562,10 +569,10 @@ dotnet publish -c Release -o ./publish     # Publish for deployment
 
 ## Support & Resources
 
-- **GitHub Issues**: https://github.com/YOUR_USERNAME/MIMM-2.0/issues
-- **.NET Documentation**: https://learn.microsoft.com/dotnet/
-- **Entity Framework Core**: https://learn.microsoft.com/ef/core/
-- **Blazor**: https://learn.microsoft.com/aspnet/core/blazor/
+- **GitHub Issues**: <https://github.com/YOUR_USERNAME/MIMM-2.0/issues>
+- **.NET Documentation**: <https://learn.microsoft.com/dotnet/>
+- **Entity Framework Core**: <https://learn.microsoft.com/ef/core/>
+- **Blazor**: <https://learn.microsoft.com/aspnet/core/blazor/>
 
 ---
 

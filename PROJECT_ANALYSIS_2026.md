@@ -9,12 +9,14 @@
 ## 📊 Part 1: Aktuální Stav Projektu
 
 ### Build & Testovací Status
+
 - ✅ **Build**: Všech 5 MIMM projektů kompiluje bez chyb
 - ✅ **Application.Tests**: 17/17 testů projde (Weather API sandbox)
 - ⚠️ **MIMM.Tests**: Struktury připraveny (0 testů = placeholder)
 - ✅ **Dependencies**: .NET 9.0.0 balíčky seřazeny (Refit 7.2.22, Npgsql 9.0.0, etc.)
 
 ### Architektonické Pilíře
+
 ```
 Backend (ASP.NET Core 9)
 ├── Controllers (REST endpoints - TODO)
@@ -36,12 +38,15 @@ Shared (DTOs, Entities)
 ```
 
 ### Database Design (EF Core + PostgreSQL)
+
 **Entities** (Entity Framework Fluent API configured):
+
 - **User**: Id, Email (unique), PasswordHash, DisplayName, Language, TimeZone, EmailVerified, CreatedAt, SoftDelete
 - **JournalEntry**: UserId, SongTitle, ArtistName, AlbumName, SongId (external), CoverUrl, Source (itunes/deezer/lastfm/manual), **Valence** (-1.0 to 1.0), **Arousal** (-1.0 to 1.0), TensionLevel (0-100), SomaticTags (PostgreSQL text[]), Notes, CreatedAt
 - **LastFmToken**: UserId, SessionKey, LastFmUsername, CreatedAt, ExpiresAt
 
 **Indeksy** (pro common queries):
+
 - Users: Email (unique), DeletedAt (soft delete filter)
 - Entries: (UserId, CreatedAt), Source
 
@@ -50,6 +55,7 @@ Shared (DTOs, Entities)
 ## 🔒 Part 2: Security Analysis
 
 ### Authentication Strategy
+
 - ✅ **JWT Bearer**: Program.cs nakonfigurován (TokenValidationParameters, Issuer/Audience check)
 - ✅ **Refresh Tokens**: Config připraven (AccessTokenExpirationMinutes: 60, RefreshTokenExpirationDays: 7)
 - ✅ **SignalR Support**: JwtBearerEvents s OnMessageReceived pro WebSocket auth
@@ -57,12 +63,14 @@ Shared (DTOs, Entities)
 - ✅ **CORS**: Nastaveno pro localhost:5001 (frontend)
 
 ### Configuration & Secrets
+
 - ✅ **User Secrets**: UserSecretsId: "mimm-backend-secrets" v csproj
 - ✅ **Environment-based**: appsettings.json + appsettings.Development.json
 - ✅ **.env.example**: Template pro všechny potřebné klíče
 - ✅ **Serilog**: Logging configured (file + console)
 
 ### Encryption Points
+
 - **PasswordHash**: BCrypt (standard, dobrý výběr)
 - **LastFmToken.SessionKey**: "Encrypted in storage" (TODO: implementovat EncryptionService)
 - **JWT Key**: Musí být 256-bit, .env izoluje prod secret
@@ -72,6 +80,7 @@ Shared (DTOs, Entities)
 ## 🏛️ Part 3: Architektonické Rozhodnutí & Rationale
 
 ### 1. Controller-based (ne Minimal API)
+
 ```
 Zvoleno: Controllers + Services + Data layers
 Důvod:
@@ -88,6 +97,7 @@ Doporučení: Počítat s migracií na Feature-based struktura v Phase 2
 ```
 
 ### 2. Blazor WASM (ne server-side)
+
 ```
 Zvoleno: WebAssembly SPA
 Důvod:
@@ -107,6 +117,7 @@ Vedlejší efekt: Frontend client-side state musí být managed
 ```
 
 ### 3. PostgreSQL + EF Core 9
+
 ```
 Zvoleno: Npgsql driver, EF Core 9 DbContext
 Důvod:
@@ -124,6 +135,7 @@ Consideration: N+1 query problem
 ```
 
 ### 4. Refresh Token Pattern
+
 ```
 Zvoleno: Dual token (AccessToken + RefreshToken)
 AccessToken:
@@ -153,9 +165,11 @@ Security wins:
 ## 🛣️ Part 4: Roadmap Vývoj (12 týdnů)
 
 ### Phase 1: MVP (Týdny 1-4) - AKTUÁLNĚ ZDE
+
 **Cíl**: Fungující auth + entry CRUD + basic UI
 
 #### Týden 1-2: Authentication
+
 ```
 Implementovat:
 1. AuthService.cs
@@ -184,6 +198,7 @@ Implementovat:
 ```
 
 #### Týden 2-3: Entry CRUD
+
 ```
 Implementovat:
 1. EntryService.cs
@@ -212,6 +227,7 @@ Implementovat:
 ```
 
 #### Týden 3-4: Last.fm Integration (v1)
+
 ```
 Implementovat:
 1. LastFmService.cs (placeholder)
@@ -240,6 +256,7 @@ Implementovat:
 ### Phase 2: Social & Analytics (Týdny 5-8)
 
 #### Week 5-6: Music Search (Multi-source)
+
 ```
 Implementovat:
 1. IMusicSearchService implementations:
@@ -257,6 +274,7 @@ Implementovat:
 ```
 
 #### Week 6-7: Real-time Analytics (SignalR)
+
 ```
 Implementovat:
 1. AnalyticsHub.cs (SignalR hub)
@@ -280,6 +298,7 @@ Implementovat:
 ```
 
 #### Week 7-8: Mood Search/Filters
+
 ```
 Implementovat:
 1. EntryService.cs extend:
@@ -296,6 +315,7 @@ Implementovat:
 ### Phase 3: Export & Mobile (Týdny 9-12)
 
 #### Week 9: Data Export
+
 ```
 Implementovat:
 1. ExportService.cs
@@ -312,6 +332,7 @@ Implementovat:
 ```
 
 #### Week 10-11: Mobile App (MAUI)
+
 ```
 Considera:
 - Separate VS project: MIMM.Mobile.Maui
@@ -322,6 +343,7 @@ Considera:
 ```
 
 #### Week 12: Deployment & Polish
+
 ```
 - Azure App Service deployment docs
 - Docker production setup
@@ -335,6 +357,7 @@ Considera:
 ## 🎯 Part 5: Prioritizace & Quick Wins
 
 ### Start Immediately (This Week)
+
 1. **AuthService.cs implementation** (3-4h)
    - Register: Create User + hash password
    - Login: Verify + JWT generation
@@ -352,11 +375,13 @@ Considera:
    - Redirect to dashboard on success
 
 ### Follow-up (Week 2)
+
 4. **Dashboard.razor** (list entries)
 5. **MoodSelector.razor** (2D interactive grid)
 6. **EntryForm.razor** (create/edit with validation)
 
 ### Dependencies to Avoid Blocking
+
 - ❌ DON'T wait for Last.fm OAuth (can mock)
 - ❌ DON'T wait for music search APIs (manual entry first)
 - ✅ DO prioritize authentication (blocks everything else)
@@ -366,22 +391,26 @@ Considera:
 ## ⚠️ Part 6: Known Gaps & Technical Debt
 
 ### Immediate Issues
+
 1. **No password reset flow** → TODO: Email-based reset via SendGrid
 2. **No email verification** → Config flag exists, but SMTP not implemented
 3. **Soft delete** → User.DeletedAt exists, but no "undelete" endpoint
 4. **No role-based access** → All users are creators (no Admin role yet)
 
 ### Database Concerns
+
 1. **N+1 query risk** → Entries endpoint without .Include(u => u.User) will lazy-load
 2. **Pagination not enforced** → No IPagedList<T> interface (implement or use PagedList.Core NuGet)
 3. **No audit logging** → No CreatedBy, ModifiedBy fields for compliance
 
 ### Frontend Concerns
+
 1. **State management** → Using LocalStorage, but no centralized Redux-like store
 2. **Form validation** → DataAnnotations on DTOs, but no client-side validation rules
 3. **Error handling** → Basic try-catch, no retry logic or user-friendly messages
 
 ### Security Gaps
+
 1. **CSRF token** → Standard POST/PUT/DELETE unprotected (implement AntiForgeryToken in ASP.NET Core)
 2. **LastFm session encryption** → Not implemented yet (EncryptionService needed)
 3. **Rate limiting** → No anti-brute-force or DDoS protection
@@ -391,6 +420,7 @@ Considera:
 ## 📌 Part 7: Best Practices & Code Review Checklist
 
 ### Before Implementing Each Feature
+
 - [ ] Write failing unit test first (TDD)
 - [ ] Implement service layer (business logic)
 - [ ] Add controller endpoint (HTTP binding)
@@ -400,6 +430,7 @@ Considera:
 - [ ] Document API in Swagger comments
 
 ### Git Workflow
+
 ```bash
 # For each feature
 git checkout -b feature/auth-system
@@ -417,6 +448,7 @@ git push origin feature/auth-system
 ```
 
 ### Testing Pattern
+
 ```csharp
 public class AuthServiceTests
 {
@@ -453,6 +485,7 @@ public class AuthServiceTests
 ## 🚀 Part 8: Success Criteria (End of Phase 1)
 
 ✅ **Fully Functional MVP**:
+
 - Register new user with email + password
 - Login with credentials, receive AccessToken
 - Refresh token when expired
@@ -463,16 +496,19 @@ public class AuthServiceTests
 - No Last.fm yet (manual entry only)
 
 ✅ **Testing**:
+
 - 100+ unit tests (services + controllers)
 - 20+ integration tests (end-to-end auth flow)
 - Code coverage >70%
 
 ✅ **Deployment**:
+
 - Docker build succeeds
 - docker-compose up works end-to-end
 - GitHub Actions CI/CD pipeline passes
 
 ✅ **Documentation**:
+
 - README updated with quick start
 - API Swagger docs complete
 - Database schema documented
@@ -502,12 +538,14 @@ public class AuthServiceTests
 ## 🎓 Conclusion: Jak Pokračovat
 
 ### Strategie Vývoje
+
 1. **Solo dev + AI pair programming** → Vstup: "Implementuj AuthService s testy" → Copilot vygeneruje
 2. **Feature branches** → 1 feature = 1 branch = 1 PR = Code review (sám sobě 😄)
 3. **Regular testing** → `dotnet test` před každým commitem
 4. **Documentation** → README + API comments v kódu
 
 ### Next Immediate Step
+
 ```bash
 cd /Users/petrsramek/AntigravityProjects/MIMM-2.0
 
@@ -532,6 +570,7 @@ git push origin feature/auth-implementation
 ```
 
 ### Resources Pro Inspiraci
+
 - **Refit docs** (HTTP client): Learn.Microsoft.com/dotnet/api/refit
 - **EF Core pagination** (GetPagedAsync extension): GitHub autocodes.io
 - **Blazor auth** (AuthenticationStateProvider): Learn.Microsoft.com/aspnet/core/blazor/security

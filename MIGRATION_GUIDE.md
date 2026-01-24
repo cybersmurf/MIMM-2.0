@@ -104,6 +104,7 @@ Open MIMM 1.0 in your browser and run this script in the **Developer Console** (
 
 1. Open the downloaded `mimm-export-YYYY-MM-DD.json` file
 2. Verify structure:
+
 ```json
 {
   "version": "1.0",
@@ -150,12 +151,14 @@ Open MIMM 1.0 in your browser and run this script in the **Developer Console** (
 ### Step 3: Review Import
 
 The system will:
+
 - Validate JSON structure
 - Check for duplicate entries (by date + song)
 - Transform data to MIMM 2.0 format
 - Insert entries into database
 
 You'll see a summary:
+
 ```
 ✅ Import Complete
 
@@ -225,10 +228,12 @@ curl -X POST https://mimm.example.com/api/v1-migration/import \
 ### Cleanup Old Data
 
 **Option A: Keep MIMM 1.0 as backup**
+
 - Leave localStorage data intact
 - Bookmark old Vercel URL
 
 **Option B: Delete MIMM 1.0 data**
+
 - Open Developer Console (F12)
 - Run: `localStorage.removeItem('mimm_entries')`
 - Verify: `localStorage.getItem('mimm_entries')` → `null`
@@ -246,6 +251,7 @@ curl -X POST https://mimm.example.com/api/v1-migration/import \
 ### Problem: Export script doesn't work
 
 **Solution**:
+
 1. Ensure you're on the MIMM 1.0 page (not 2.0)
 2. Check browser console for errors
 3. Verify localStorage is not empty: `localStorage.getItem('mimm_entries')`
@@ -253,14 +259,16 @@ curl -X POST https://mimm.example.com/api/v1-migration/import \
 ### Problem: Import fails with "Invalid format"
 
 **Solution**:
+
 1. Open JSON file in text editor
-2. Validate JSON syntax: https://jsonlint.com/
+2. Validate JSON syntax: <https://jsonlint.com/>
 3. Ensure `version` field exists: `"version": "1.0"`
 4. Check `entries` is an array
 
 ### Problem: Some entries missing after import
 
 **Solution**:
+
 1. Check import summary for errors
 2. Look for duplicate timestamps (system skips exact duplicates)
 3. Manually add missing entries via UI
@@ -268,6 +276,7 @@ curl -X POST https://mimm.example.com/api/v1-migration/import \
 ### Problem: Mood coordinates wrong
 
 **Solution**:
+
 - MIMM 1.0 used different scale? Check original values
 - Valence/Arousal should be between -1.0 and 1.0
 - Contact support with sample entry
@@ -422,7 +431,7 @@ A: No. Last.fm uses OAuth which can't be exported. You'll need to reconnect in M
 
 ---
 
-**Support**: If you encounter issues, open an issue on GitHub or contact support@mimm.example.com
+**Support**: If you encounter issues, open an issue on GitHub or contact <support@mimm.example.com>
 
 **Document Version**: 1.0  
 **Last Updated**: 24. ledna 2026

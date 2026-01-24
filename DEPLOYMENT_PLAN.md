@@ -26,6 +26,7 @@
 ## 1. Přehled Architektury
 
 ### Současná Lokální Struktura
+
 ```
 ┌─────────────────────┐
 │   Blazor Frontend   │
@@ -46,6 +47,7 @@
 ```
 
 ### Produkční Architektura na VPS
+
 ```
 Internet (Port 80/443)
          │
@@ -141,6 +143,7 @@ ClientAliveCountMax 2
 ```
 
 Restart SSH:
+
 ```bash
 systemctl restart sshd
 ```
@@ -431,6 +434,7 @@ LASTFM_SHARED_SECRET=your-lastfm-secret
 ```
 
 **⚠️ Bezpečnost .env souboru:**
+
 ```bash
 chmod 600 /home/mimm/mimm-app/.env
 chown mimm:mimm /home/mimm/mimm-app/.env
@@ -1006,6 +1010,7 @@ jobs:
 ```
 
 **GitHub Secrets potřebné:**
+
 - `VPS_HOST`: IP adresa VPS
 - `VPS_USERNAME`: `mimm`
 - `VPS_SSH_KEY`: Privátní SSH klíč
@@ -1247,7 +1252,7 @@ aws s3 sync /home/mimm/backups/ s3://your-bucket/mimm-backups/
 - [ ] Let's Encrypt certifikáty jsou získány
 - [ ] HTTPS redirect funguje
 - [ ] HSTS header je nastaven
-- [ ] SSL Labs test = A+ rating (https://www.ssllabs.com/ssltest/)
+- [ ] SSL Labs test = A+ rating (<https://www.ssllabs.com/ssltest/>)
 
 ### Deployment
 

@@ -10,6 +10,7 @@
 ## 🎯 Mission: Get Database Running & Test E2E Auth Flow
 
 ### Why This Matters
+
 - **60% MVP complete**, but wszystko běží v in-memory DB (fake data)
 - Bez real PostgreSQL **nemůžeme testovat production auth flow**
 - Frontend + Backend nikdy **nebyly testovány společně**
@@ -38,6 +39,7 @@ docker logs mimm-postgres --tail 20
 ```
 
 **Troubleshooting**:
+
 - Error: "port 5432 already in use"
   → Solution: `lsof -i :5432` a kill existing PostgreSQL proces
 - Error: "permission denied"
@@ -65,6 +67,7 @@ Open `src/MIMM.Backend/appsettings.Development.json`:
 ```
 
 **Verify**:
+
 - Host: `localhost` (ne 127.0.0.1, Docker network může mít problémy)
 - Port: `5432` (default PostgreSQL)
 - Database: `mimm` (podle docker-compose.yml)
@@ -72,6 +75,7 @@ Open `src/MIMM.Backend/appsettings.Development.json`:
 - Password: `mimmpass` (podle docker-compose.yml)
 
 **Security Note**: JWT Key je placeholder - pro production použij:
+
 ```bash
 openssl rand -base64 64
 ```
@@ -147,6 +151,7 @@ ls -la Data/Migrations/
 ```
 
 **Migration File Contents** (auto-generated):
+
 - Creates `Users` table (Id, Email, PasswordHash, DisplayName, etc.)
 - Creates `JournalEntries` table (Id, UserId, SongTitle, Valence, Arousal, etc.)
 - Creates `LastFmTokens` table (Id, UserId, SessionKey, etc.)
@@ -178,6 +183,7 @@ docker exec -it mimm-postgres psql -U mimmuser -d mimm -c "\dt"
 ```
 
 **Check Table Schema**:
+
 ```sql
 -- Run in psql
 \d "Users"
@@ -235,6 +241,7 @@ app.Run();
 ```
 
 Run backend:
+
 ```bash
 dotnet run
 
@@ -266,8 +273,10 @@ open https://localhost:7001/swagger
 ```
 
 **Test Auth Endpoint in Swagger**:
+
 1. Click `/api/auth/register` → Try it out
 2. Request body:
+
    ```json
    {
      "email": "swagger@example.com",
@@ -276,6 +285,7 @@ open https://localhost:7001/swagger
      "language": "en"
    }
    ```
+
 3. Execute
 4. Expected: 200 OK, response with `accessToken` and `refreshToken`
 
@@ -288,6 +298,7 @@ open https://localhost:7001/swagger
 ### Step 2.1: Start Backend & Frontend Together (5 min)
 
 **Terminal 1 (Backend)**:
+
 ```bash
 cd /Users/petrsramek/AntigravityProjects/MIMM-2.0/src/MIMM.Backend
 dotnet run
@@ -296,6 +307,7 @@ dotnet run
 ```
 
 **Terminal 2 (Frontend)**:
+
 ```bash
 cd /Users/petrsramek/AntigravityProjects/MIMM-2.0/src/MIMM.Frontend
 dotnet run
@@ -309,7 +321,7 @@ dotnet run
 
 ### Step 2.2: Test User Registration (5 min)
 
-1. Open browser: https://localhost:5001
+1. Open browser: <https://localhost:5001>
 2. Expected: Login page s toggle "Don't have an account? Register"
 3. Click **"Register"** tab
 4. Fill form:
@@ -325,6 +337,7 @@ dotnet run
    - Redirect to `/dashboard`
 
 **If fails**:
+
 - Check browser DevTools Console (F12) for errors
 - Check Network tab: POST `/api/auth/register` should be 200 OK
 - Check Terminal 1 (backend logs) for exceptions
@@ -336,6 +349,7 @@ dotnet run
 After successful registration, you should see:
 
 **Dashboard Page** (`/dashboard`):
+
 - MudAppBar with "MIMM 2.0" title
 - MudDrawer (left sidebar) with navigation
 - Main content area with placeholder cards:
@@ -345,6 +359,7 @@ After successful registration, you should see:
 - Logout button (top-right)
 
 **Check localStorage** (DevTools → Application → Local Storage):
+
 - Key: `mimm_access_token`
 - Value: JWT token (long string starting with `eyJ...`)
 - Key: `mimm_refresh_token`
@@ -371,15 +386,18 @@ After successful registration, you should see:
 ### Step 2.5: Test Protected Route Access (5 min)
 
 **Scenario A: User logged in**
-1. Navigate to: https://localhost:5001/dashboard
+
+1. Navigate to: <https://localhost:5001/dashboard>
 2. Expected: Dashboard loads normally
 
 **Scenario B: User logged out**
+
 1. Click Logout
-2. Manually navigate to: https://localhost:5001/dashboard
+2. Manually navigate to: <https://localhost:5001/dashboard>
 3. Expected: **Redirect to `/login`** (auth guard working)
 
 **Scenario C: Invalid token**
+
 1. Open DevTools → Application → Local Storage
 2. Edit `mimm_access_token` → change last character
 3. Refresh page
@@ -412,10 +430,12 @@ SELECT COUNT(*) FROM "JournalEntries";
 ### Step 2.7: Test API with cURL (Optional, 10 min)
 
 **Get Access Token First**:
+
 1. Login via frontend
 2. Copy `mimm_access_token` from localStorage
 
 **Test Protected Endpoint**:
+
 ```bash
 # Replace YOUR_TOKEN with actual token
 curl -X GET "https://localhost:7001/api/auth/me" \
@@ -433,6 +453,7 @@ curl -X GET "https://localhost:7001/api/auth/me" \
 ```
 
 **Test Entries Endpoint**:
+
 ```bash
 curl -X GET "https://localhost:7001/api/entries?page=1&pageSize=10" \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -470,16 +491,20 @@ Before proceeding to Entry CRUD UI (tomorrow), verify:
 ## 🚨 Common Issues & Solutions
 
 ### Issue 1: "Connection refused to localhost:5432"
+
 **Cause**: PostgreSQL container not running  
 **Solution**:
+
 ```bash
 docker-compose up -d postgres
 docker logs mimm-postgres
 ```
 
 ### Issue 2: "The ConnectionString property has not been initialized"
+
 **Cause**: Missing appsettings.Development.json  
 **Solution**:
+
 ```bash
 cd src/MIMM.Backend
 ls -la appsettings.*
@@ -487,16 +512,20 @@ ls -la appsettings.*
 ```
 
 ### Issue 3: "Table 'Users' doesn't exist"
+
 **Cause**: Migration not applied  
 **Solution**:
+
 ```bash
 cd src/MIMM.Backend
 dotnet ef database update
 ```
 
 ### Issue 4: "CORS policy blocked"
+
 **Cause**: Frontend origin not allowed  
 **Solution**: Check `Program.cs`:
+
 ```csharp
 builder.Services.AddCors(options =>
 {
@@ -514,8 +543,10 @@ builder.Services.AddCors(options =>
 ```
 
 ### Issue 5: "401 Unauthorized on /api/auth/me"
+
 **Cause**: JWT token not sent in Authorization header  
 **Solution**: Check `AuthorizationMessageHandler.cs`:
+
 ```csharp
 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 ```
@@ -527,20 +558,23 @@ request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 **Tomorrow's Focus**: Entry CRUD UI Implementation
 
 **Action 3.1 & 3.2** (4 hours):
+
 - Create `EntryApiService.cs` (HTTP wrapper pro entries endpoints)
 - Create `EntryList.razor` (main dashboard s entry list)
 - MudDataGrid s pagination
 - Search filters (text, date range)
 
 **By end of tomorrow**:
+
 - Dashboard zobrazuje entry list (prázdný, ale funkční)
 - "New Entry" button naviguje na `/entries/create`
 
 ---
 
-## 🎉 Congratulations!
+## 🎉 Congratulations
 
 Po dokončení dnešních akcí máš:
+
 - ✅ **Real PostgreSQL database** s 3 tabulkami
 - ✅ **End-to-end auth flow** tested and working
 - ✅ **Frontend + Backend integration** verified

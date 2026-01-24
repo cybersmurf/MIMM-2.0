@@ -1,4 +1,4 @@
-# 🎯 MIMM 2.0 - Ready for New Repository!
+# 🎯 MIMM 2.0 - Ready for New Repository
 
 **Status**: ✅ Complete Scaffold Ready  
 **Created**: 24. ledna 2026  
@@ -12,6 +12,7 @@
 ### ✅ Part A: Complete Project Scaffold
 
 **Solution Structure**:
+
 ```
 MIMM-2.0/
 ├── MIMM.sln                          # Visual Studio solution
@@ -58,6 +59,7 @@ MIMM-2.0/
 ```
 
 **Key Features**:
+
 - ✅ Entity Framework Core with PostgreSQL
 - ✅ JWT authentication configured
 - ✅ Swagger/OpenAPI documentation
@@ -73,6 +75,7 @@ MIMM-2.0/
 **File**: `MIGRATION_GUIDE.md`
 
 **Contents**:
+
 - 📤 Export script for localStorage data (JavaScript)
 - 📥 Import API endpoint specification (C#)
 - 🔄 Data transformation logic
@@ -80,6 +83,7 @@ MIMM-2.0/
 - 📊 Statistics & verification
 
 **Export Script**: `scripts/export-from-v1.js`
+
 - Run in MIMM 1.0 browser console
 - Exports to JSON file
 - Validates data structure
@@ -92,6 +96,7 @@ MIMM-2.0/
 **File**: `SETUP_GUIDE.md`
 
 **Covers**:
+
 1. ✅ Prerequisites check (.NET, Docker, Git)
 2. ✅ Database setup (Docker Compose)
 3. ✅ Configuration (.env, user secrets)
@@ -105,6 +110,7 @@ MIMM-2.0/
 11. ✅ Command cheat sheet
 
 **Quick Setup Script**: `scripts/setup.sh`
+
 - Automated setup process
 - Checks prerequisites
 - Starts Docker
@@ -116,6 +122,7 @@ MIMM-2.0/
 ### ✅ Documentation
 
 **Files**:
+
 - `README.md` - Project overview, quick start, features
 - `SETUP_GUIDE.md` - Step-by-step installation (Part C)
 - `MIGRATION_GUIDE.md` - MIMM 1.0 → 2.0 migration (Part B)
@@ -128,7 +135,7 @@ MIMM-2.0/
 
 ### Option 1: GitHub Web Interface
 
-1. **Go to**: https://github.com/new
+1. **Go to**: <https://github.com/new>
 2. **Repository name**: `MIMM-2.0`
 3. **Description**: `Music & Mood Journal 2.0 - Enterprise C# .NET stack with Blazor WASM`
 4. **Visibility**: Public (or Private)
@@ -219,6 +226,7 @@ dotnet build
 ### 2. Implement Authentication
 
 Priority 1 features:
+
 - [ ] `AuthService.cs` - Register, Login, Refresh JWT
 - [ ] `AuthController.cs` - API endpoints
 - [ ] `Validators/` - FluentValidation rules
@@ -227,6 +235,7 @@ Priority 1 features:
 ### 3. Implement Entry CRUD
 
 Priority 2 features:
+
 - [ ] `EntryService.cs` - Create, Read, Update, Delete
 - [ ] `EntriesController.cs` - REST endpoints
 - [ ] `AnalyticsService.cs` - Mood aggregation
@@ -235,6 +244,7 @@ Priority 2 features:
 ### 4. Frontend Components
 
 Priority 3 features:
+
 - [ ] `Pages/Login.razor` - Login form
 - [ ] `Pages/Register.razor` - Registration form
 - [ ] `Pages/Index.razor` - Dashboard with entries
@@ -245,6 +255,7 @@ Priority 3 features:
 ## 📊 Project Statistics
 
 **Code Statistics**:
+
 - **Projects**: 5 (.csproj files)
 - **Configuration**: 7 files (appsettings, docker-compose, etc.)
 - **Documentation**: 5 markdown files
@@ -253,6 +264,7 @@ Priority 3 features:
 - **Total Files**: 55+
 
 **Ready for**:
+
 - ✅ Development on macOS, Windows, Linux
 - ✅ Visual Studio 2025, VS Code, Rider
 - ✅ Docker development environment
@@ -283,6 +295,7 @@ Priority 3 features:
 ## 💡 Tips for First Commit
 
 **Good commit practices**:
+
 ```bash
 # Make meaningful commits
 git commit -m "feat: implement user registration endpoint
@@ -294,6 +307,7 @@ git commit -m "feat: implement user registration endpoint
 ```
 
 **Branch strategy**:
+
 ```bash
 # Create feature branch
 git checkout -b feature/auth-system
@@ -313,12 +327,14 @@ git push origin feature/auth-system
 ## 🎉 Summary
 
 **You now have**:
+
 1. ✅ **Complete .NET 9 scaffold** (Part A)
 2. ✅ **Migration guide from MIMM 1.0** (Part B)
 3. ✅ **Step-by-step setup guide** (Part C)
 4. ✅ **Ready to push to new GitHub repo**
 
 **What's working**:
+
 - Projects compile
 - Database migrations ready
 - Docker environment configured
@@ -326,6 +342,7 @@ git push origin feature/auth-system
 - CI/CD pipeline defined
 
 **What's next**:
+
 1. Create GitHub repository
 2. Push scaffold
 3. Start implementing features (auth first)

@@ -566,9 +566,9 @@ docker compose -f docker-compose.prod.yml up -d
 
 ### Online nástroje
 
-- **SSL Test:** https://www.ssllabs.com/ssltest/
-- **Security Headers:** https://securityheaders.com/
-- **Uptime Monitoring:** https://uptimerobot.com/
+- **SSL Test:** <https://www.ssllabs.com/ssltest/>
+- **Security Headers:** <https://securityheaders.com/>
+- **Uptime Monitoring:** <https://uptimerobot.com/>
 
 ### Dokumentace
 

@@ -8,6 +8,7 @@
 ## 🚀 Services Status
 
 ### ✅ Backend API
+
 ```
 Service: ASP.NET Core 9
 Port: 7001 (HTTPS)
@@ -32,6 +33,7 @@ Endpoints Available:
 ```
 
 ### ✅ Frontend Application
+
 ```
 Service: Blazor WebAssembly 9
 Port: 5000 (HTTP)
@@ -46,6 +48,7 @@ Pages Available:
 ```
 
 ### ✅ Database
+
 ```
 Service: PostgreSQL 16
 Port: 5432
@@ -62,7 +65,8 @@ Tables: Users, Entries, LastFmTokens
 ### Test 1: User Registration (READY TO TEST)
 
 **Manual Steps**:
-1. Navigate to: http://localhost:5000/login
+
+1. Navigate to: <http://localhost:5000/login>
 2. Click "Register" toggle/tab
 3. Fill form:
    - Email: `e2e-test@example.com`
@@ -73,12 +77,14 @@ Tables: Users, Entries, LastFmTokens
 4. Click "Register" button
 
 **Expected Results**:
+
 - ✅ No error message
 - ✅ Success snackbar: "Registration successful"
 - ✅ Redirect to `/dashboard`
 - ✅ User appears in database (verify with psql)
 
 **Database Verification**:
+
 ```bash
 docker exec -it mimm-postgres psql -U mimmuser -d mimm
 SELECT "Email", "DisplayName", "CreatedAt" FROM "Users" WHERE "Email" = 'e2e-test@example.com';
@@ -89,20 +95,23 @@ SELECT "Email", "DisplayName", "CreatedAt" FROM "Users" WHERE "Email" = 'e2e-tes
 ### Test 2: JWT Token Storage (AFTER REGISTRATION)
 
 **Browser DevTools**:
+
 1. Press F12 (Developer Tools)
-2. Go to Application → Local Storage → http://localhost:5000
+2. Go to Application → Local Storage → <http://localhost:5000>
 3. Look for:
    - `mimm_access_token` (should be JWT string)
    - `mimm_refresh_token` (should be UUID or JWT)
 
 **Expected**:
+
 - ✅ Both tokens present
 - ✅ Access token starts with `eyJ`
 - ✅ Tokens are non-empty
 
 **JWT Decoder (Optional)**:
+
 - Copy `mimm_access_token` value
-- Paste at https://jwt.io to see claims
+- Paste at <https://jwt.io> to see claims
 - Should show: `sub` (user ID), `email`, `iat` (issued at)
 
 ---
@@ -110,10 +119,12 @@ SELECT "Email", "DisplayName", "CreatedAt" FROM "Users" WHERE "Email" = 'e2e-tes
 ### Test 3: Dashboard Access (AFTER LOGIN)
 
 **Navigation**:
+
 1. You should see dashboard automatically (redirect from login)
-2. URL should be: http://localhost:5000/dashboard
+2. URL should be: <http://localhost:5000/dashboard>
 
 **Expected UI**:
+
 - ✅ MudAppBar with "MIMM 2.0" title
 - ✅ User greeting (if implemented)
 - ✅ Navigation menu
@@ -125,6 +136,7 @@ SELECT "Email", "DisplayName", "CreatedAt" FROM "Users" WHERE "Email" = 'e2e-tes
 ### Test 4: Login with Credentials (NEW SESSION)
 
 **Steps**:
+
 1. Click Logout button
 2. Verify redirect to login page
 3. localStorage cleared (DevTools check)
@@ -134,6 +146,7 @@ SELECT "Email", "DisplayName", "CreatedAt" FROM "Users" WHERE "Email" = 'e2e-tes
 5. Click "Login"
 
 **Expected**:
+
 - ✅ Success snackbar: "Welcome back!"
 - ✅ Redirect to dashboard
 - ✅ New token in localStorage
@@ -144,11 +157,13 @@ SELECT "Email", "DisplayName", "CreatedAt" FROM "Users" WHERE "Email" = 'e2e-tes
 ### Test 5: Protected Route Guard (OPTIONAL)
 
 **Steps**:
+
 1. Click Logout
-2. Manually type in browser: http://localhost:5000/dashboard
+2. Manually type in browser: <http://localhost:5000/dashboard>
 3. Press Enter
 
 **Expected**:
+
 - ✅ Auto-redirect to /login (route guard working)
 - ✅ Dashboard NOT accessible without token
 
@@ -157,6 +172,7 @@ SELECT "Email", "DisplayName", "CreatedAt" FROM "Users" WHERE "Email" = 'e2e-tes
 ### Test 6: API /me Endpoint (OPTIONAL - WITH CURL)
 
 **Terminal Command**:
+
 ```bash
 # Step 1: Get token from browser localStorage (copy mimm_access_token)
 # Step 2: Replace YOUR_TOKEN with actual value
@@ -182,6 +198,7 @@ curl -X GET "https://localhost:7001/api/auth/me" \
 After manually running tests, mark complete:
 
 ### Registration Flow
+
 - [ ] Registration page loads
 - [ ] Form submission works
 - [ ] Success message appears
@@ -190,6 +207,7 @@ After manually running tests, mark complete:
 - [ ] Token in localStorage
 
 ### Login Flow  
+
 - [ ] Login page loads
 - [ ] Form submission works
 - [ ] Success message appears
@@ -197,12 +215,14 @@ After manually running tests, mark complete:
 - [ ] Dashboard displays
 
 ### Logout Flow
+
 - [ ] Logout button works
 - [ ] Redirect to login
 - [ ] Tokens cleared
 - [ ] localStorage empty
 
 ### Protection
+
 - [ ] Dashboard redirect when not auth
 - [ ] API returns 401 without token
 - [ ] API returns 200 with token
@@ -211,14 +231,16 @@ After manually running tests, mark complete:
 
 ## 🔗 Quick Links
 
-**Frontend**: http://localhost:5000/login  
-**Backend Swagger**: https://localhost:7001/swagger  
+**Frontend**: <http://localhost:5000/login>  
+**Backend Swagger**: <https://localhost:7001/swagger>  
 **PostgreSQL CLI**:
+
 ```bash
 docker exec -it mimm-postgres psql -U mimmuser -d mimm
 ```
 
 **DevTools Instructions**:
+
 1. Press F12
 2. Go to Console (for errors)
 3. Go to Network (for API calls)
@@ -229,6 +251,7 @@ docker exec -it mimm-postgres psql -U mimmuser -d mimm
 ## 🎯 What Happens When Test Passes
 
 ✅ **Validates**:
+
 1. Frontend + Backend communication works
 2. Database integration working
 3. JWT token flow correct
@@ -236,6 +259,7 @@ docker exec -it mimm-postgres psql -U mimmuser -d mimm
 5. Protected routes enforced
 
 ✅ **Proves**:
+
 - 60% → 100% of critical path complete
 - Database is functional
 - API responds correctly
@@ -251,6 +275,7 @@ After successfully running all 6 tests:
 **Status**: ✅ **E2E TEST PASSED**
 
 This means:
+
 - ✅ MVP foundation is solid
 - ✅ Backend + Frontend + Database integrated
 - ✅ Authentication system working
@@ -261,30 +286,39 @@ This means:
 ## 🚨 Troubleshooting
 
 ### Issue: "Cannot GET /login"
+
 **Solution**: Frontend not started, try:
+
 ```bash
 cd src/MIMM.Frontend && dotnet run
 ```
 
 ### Issue: "Connection refused" on backend API
+
 **Solution**: Backend not started, try:
+
 ```bash
 cd src/MIMM.Backend && dotnet run
 ```
 
 ### Issue: "CORS error" in console
+
 **Solution**: This is expected for localhost dev. CORS should allow localhost:5000 and localhost:5001.
 Check `src/MIMM.Backend/Program.cs` for CORS policy.
 
 ### Issue: "Database connection failed"
+
 **Solution**: PostgreSQL not running:
+
 ```bash
 docker-compose up -d postgres
 docker logs mimm-postgres
 ```
 
 ### Issue: User not created in database
+
 **Solution**: Check backend logs for SQL errors. Run:
+
 ```bash
 docker exec -it mimm-postgres psql -U mimmuser -d mimm
 # Then query: SELECT * FROM "Users";

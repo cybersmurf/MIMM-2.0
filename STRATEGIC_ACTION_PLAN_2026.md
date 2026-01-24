@@ -12,6 +12,7 @@
 ### Co Je Hotovo (✅ 60%)
 
 **Backend API - REST Endpoints (100% complete)**:
+
 - ✅ AuthController (6 endpoints: register, login, refresh, verify, /me, logout)
 - ✅ EntriesController (7 endpoints: CRUD + search + statistics)
 - ✅ JWT authentication s refresh token pattern
@@ -20,12 +21,14 @@
 - ✅ CORS konfigurace pro localhost frontend
 
 **Business Logic - Services (100% complete)**:
+
 - ✅ AuthService (17 unit testů, všechny passing)
 - ✅ EntryService (18 unit testů, všechny passing)
 - ✅ 35/35 testů prochází (100% success rate)
 - ✅ EF Core ApplicationDbContext s 3 entitami (User, JournalEntry, LastFmToken)
 
 **Frontend - Authentication UI (80% complete)**:
+
 - ✅ Login.razor (dual login/register mode s MudBlazor)
 - ✅ Dashboard.razor (protected page s placeholder UI)
 - ✅ AuthApiService (HTTP API wrapper)
@@ -35,6 +38,7 @@
 - ⚠️ Index.razor (jen redirect na login)
 
 **Infrastruktura (100% complete)**:
+
 - ✅ Docker Compose (PostgreSQL + Redis)
 - ✅ EF Core migrations připraveny (0 migrations aktuálně)
 - ✅ Build pipeline (dotnet build uspěšný, 0 errors)
@@ -43,6 +47,7 @@
 ### Co Chybí (⏳ 40%)
 
 **Frontend - Entry Management UI (0%)**:
+
 - ⏳ EntryList.razor (zobrazení seznamu záznamů)
 - ⏳ EntryCreate.razor (formulář pro nový záznam)
 - ⏳ EntryEdit.razor (editace existujícího záznamu)
@@ -50,17 +55,20 @@
 - ⏳ MoodSelector.razor (2D Valence-Arousal grid komponenta)
 
 **External Integrations (0%)**:
+
 - ⏳ Last.fm OAuth flow (login + token exchange)
 - ⏳ Last.fm scrobbling service
 - ⏳ Music search (iTunes, Deezer, MusicBrainz, Discogs)
 - ⏳ Album art fetching
 
 **Database (0%)**:
+
 - ⏳ První EF Core migration (InitialCreate)
 - ⏳ Seed data (test users)
 - ⏳ PostgreSQL running v Docker
 
 **Testing (20%)**:
+
 - ✅ Backend unit tests (35 testů)
 - ⏳ Integration tests (0 testů)
 - ⏳ E2E tests (0 testů)
@@ -73,6 +81,7 @@
 ### 1. Aktuální Stav Kódové Báze
 
 **Statistiky**:
+
 - 60 souborů (.cs + .razor)
 - ~2,879 řádků C# kódu (bez tests)
 - 5 projektů (.csproj)
@@ -82,6 +91,7 @@
 - 0 Razor komponenty (MoodSelector chybí)
 
 **Silné Stránky**:
+
 1. **Clean Architecture**: Controllers → Services → Data layer separation
 2. **Type Safety**: C# 13 s nullable reference types enabled
 3. **Modern Stack**: .NET 9, EF Core 9, Blazor WASM
@@ -89,6 +99,7 @@
 5. **Security**: JWT Bearer + refresh token, password hashing (BCrypt)
 
 **Slabá Místa**:
+
 1. **Zero integračních testů**: Backend API netestován end-to-end
 2. **Database chybí**: Žádná migrace neproběhla, žádný PostgreSQL
 3. **Frontend neúplný**: Dashboard má jen placeholders, chybí entry CRUD UI
@@ -99,6 +110,7 @@
 ### 2. Technický Dluh
 
 **Vysoká Priorita** (blokuje MVP):
+
 1. **Database Migration**: Bez DB nelze testovat registraci/login
 2. **Entry CRUD UI**: Dashboard je prázdný bez entry list
 3. **MoodSelector Component**: Kritický pro vytváření záznamu
@@ -132,6 +144,7 @@
 ### ⚡ KRITICKÉ (Start Immediately)
 
 #### Action 1: Database Setup & First Migration
+
 **Why**: Bez DB nemůžeme testovat real auth flow  
 **Estimate**: 1-2h  
 **Owner**: Dev  
@@ -158,6 +171,7 @@ docker exec -it mimm-postgres psql -U mimmuser -d mimm -c "\dt"
 ```
 
 **Success Criteria**:
+
 - ✅ 3 tables created in PostgreSQL
 - ✅ Seed data možný (optional: create test user)
 - ✅ Backend startup bez errors
@@ -165,6 +179,7 @@ docker exec -it mimm-postgres psql -U mimmuser -d mimm -c "\dt"
 ---
 
 #### Action 2: End-to-End Authentication Test
+
 **Why**: Ověřit že frontend + backend fungují spolu  
 **Estimate**: 30min  
 **Owner**: Dev  
@@ -199,6 +214,7 @@ dotnet run
 ```
 
 **Success Criteria**:
+
 - ✅ Registrace vytvoří uživatele v DB
 - ✅ Login vrací JWT token
 - ✅ Dashboard page načte user data
@@ -206,7 +222,8 @@ dotnet run
 - ✅ Protected page redirectuje na /login při missing token
 
 **Fix If Fails**:
-- CORS error → Check Program.cs CORS policy includes http://localhost:5000 AND https://localhost:5001
+
+- CORS error → Check Program.cs CORS policy includes <http://localhost:5000> AND <https://localhost:5001>
 - 401 Unauthorized → Check JWT token v Authorization header (DevTools Network tab)
 - Redirect loop → Check AuthStateService.IsAuthenticatedAsync() logic
 
@@ -215,6 +232,7 @@ dotnet run
 ### 🚀 HIGH PRIORITY (Week 1)
 
 #### Action 3: Entry CRUD UI Implementation
+
 **Why**: Dashboard je prázdný bez entry list - hlavní feature MVP  
 **Estimate**: 8-10h  
 **Owner**: Dev  
@@ -227,6 +245,7 @@ dotnet run
 ```
 
 **Interface & Implementation**:
+
 ```csharp
 public interface IEntryApiService
 {
@@ -250,6 +269,7 @@ public interface IEntryApiService
 ```
 
 **Komponenta Features**:
+
 - MudTable nebo MudDataGrid s paginací
 - Columns: Song Title, Artist, Album, Mood (Valence/Arousal), Created Date
 - Actions: Edit button, Delete button (s confirm dialog)
@@ -263,6 +283,7 @@ public interface IEntryApiService
 ```
 
 **Form Fields**:
+
 - Song Title (MudTextField, required)
 - Artist Name (MudTextField, required)
 - Album Name (MudTextField, optional)
@@ -288,11 +309,13 @@ public interface IEntryApiService
 **Step 3.5: Integration & Routing**
 
 Update `src/MIMM.Frontend/Program.cs`:
+
 ```csharp
 builder.Services.AddScoped<IEntryApiService, EntryApiService>();
 ```
 
 Update `src/MIMM.Frontend/App.razor` (add routes):
+
 ```razor
 <Route Path="/entries" Component="@typeof(EntryList)" />
 <Route Path="/entries/create" Component="@typeof(EntryCreate)" />
@@ -300,9 +323,11 @@ Update `src/MIMM.Frontend/App.razor` (add routes):
 ```
 
 Update `Dashboard.razor`:
+
 - Replace placeholder cards s <EntryList /> component
 
 **Success Criteria**:
+
 - ✅ Dashboard zobrazuje seznam entries (prázdný pokud žádné)
 - ✅ Klik "New Entry" → naviguje na /entries/create
 - ✅ Vyplnění formuláře + Submit → vytvoří entry v DB
@@ -313,6 +338,7 @@ Update `Dashboard.razor`:
 ---
 
 #### Action 4: MoodSelector Component (2D Circumplex Grid)
+
 **Why**: Hlavní differentiátor MIMM - Russell's Circumplex Model  
 **Estimate**: 4-5h  
 **Owner**: Dev  
@@ -323,6 +349,7 @@ Update `Dashboard.razor`:
 ```
 
 **UI Design**:
+
 ```
          High Arousal (+1.0)
               ^
@@ -338,6 +365,7 @@ Negative -----+-----> Positive  (Valence)
 ```
 
 **Features**:
+
 - SVG canvas 400x400px
 - 2 ose: Valence (X), Arousal (Y)
 - Clickable: klik na grid nastaví Valence + Arousal
@@ -347,10 +375,12 @@ Negative -----+-----> Positive  (Valence)
 - Output: `@bind-Valence` a `@bind-Arousal` parametry (double, -1.0 to 1.0)
 
 **Integration**:
+
 - Use in `EntryCreate.razor` a `EntryEdit.razor`
 - Replace placeholder input fields pro Valence/Arousal
 
 **Success Criteria**:
+
 - ✅ Klik na grid aktualizuje Valence + Arousal values
 - ✅ Visual dot indicator zobrazuje current selection
 - ✅ Two-way binding funguje (change in form updates grid, change in grid updates form)
@@ -360,6 +390,7 @@ Negative -----+-----> Positive  (Valence)
 ### 📈 MEDIUM PRIORITY (Week 2)
 
 #### Action 5: Integration Tests (Backend API)
+
 **Why**: Unit testy nemají pokrytí API layer + DB interactions  
 **Estimate**: 6-8h  
 **Owner**: Dev  
@@ -368,6 +399,7 @@ Negative -----+-----> Positive  (Valence)
 **Step 5.1: Setup WebApplicationFactory**
 
 Create `tests/MIMM.Tests.Integration/CustomWebApplicationFactory.cs`:
+
 ```csharp
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
@@ -391,6 +423,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 **Step 5.2: Auth Integration Tests**
 
 Create `tests/MIMM.Tests.Integration/Controllers/AuthControllerTests.cs`:
+
 ```csharp
 public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
 {
@@ -414,6 +447,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
 **Step 5.3: Entries Integration Tests**
 
 Create `tests/MIMM.Tests.Integration/Controllers/EntriesControllerTests.cs`:
+
 ```csharp
 public class EntriesControllerTests : IClassFixture<CustomWebApplicationFactory>
 {
@@ -435,6 +469,7 @@ public class EntriesControllerTests : IClassFixture<CustomWebApplicationFactory>
 ```
 
 **Success Criteria**:
+
 - ✅ 10+ integration tests (Auth + Entries)
 - ✅ Všechny projdou (`dotnet test MIMM.sln`)
 - ✅ Tests používají in-memory DB (ne real PostgreSQL)
@@ -442,6 +477,7 @@ public class EntriesControllerTests : IClassFixture<CustomWebApplicationFactory>
 ---
 
 #### Action 6: Frontend Error Handling & Loading States
+
 **Why**: Lepší UX při API call failures  
 **Estimate**: 3-4h  
 **Owner**: Dev  
@@ -450,6 +486,7 @@ public class EntriesControllerTests : IClassFixture<CustomWebApplicationFactory>
 **Step 6.1: Error Boundary Component**
 
 Create `src/MIMM.Frontend/Components/ErrorBoundary.razor`:
+
 ```razor
 <ErrorBoundary @ref="errorBoundary">
     <ChildContent>
@@ -468,6 +505,7 @@ Wrap `App.razor` RouteView v ErrorBoundary.
 **Step 6.2: Global Loading Indicator**
 
 Create `src/MIMM.Frontend/Components/LoadingIndicator.razor`:
+
 ```razor
 @if (IsLoading)
 {
@@ -480,6 +518,7 @@ Create `src/MIMM.Frontend/Components/LoadingIndicator.razor`:
 **Step 6.3: API Call Wrapper with Try-Catch**
 
 Update all `*ApiService.cs` methods:
+
 ```csharp
 public async Task<JournalEntryDto?> GetEntryByIdAsync(int id)
 {
@@ -500,6 +539,7 @@ public async Task<JournalEntryDto?> GetEntryByIdAsync(int id)
 ```
 
 **Success Criteria**:
+
 - ✅ Unhandled exceptions zobrazí error boundary, ne white screen
 - ✅ API failures zobrazí snackbar error message
 - ✅ Loading spinner během API calls
@@ -509,6 +549,7 @@ public async Task<JournalEntryDto?> GetEntryByIdAsync(int id)
 ### 🎨 LOWER PRIORITY (Week 3)
 
 #### Action 7: Music Search Integration (Multi-source)
+
 **Why**: Better UX než manual entry, ale MVP funguje i bez  
 **Estimate**: 10-12h  
 **Owner**: Dev  
@@ -517,12 +558,14 @@ public async Task<JournalEntryDto?> GetEntryByIdAsync(int id)
 **Step 7.1: Refit Clients**
 
 Install Refit NuGet package:
+
 ```bash
 cd src/MIMM.Backend
 dotnet add package Refit --version 7.2.22
 ```
 
 Create interfaces:
+
 ```csharp
 // Services/ExternalApis/IItunesApi.cs
 public interface IItunesApi
@@ -540,6 +583,7 @@ public interface IDeezerApi
 ```
 
 Register in Program.cs:
+
 ```csharp
 builder.Services.AddRefitClient<IItunesApi>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://itunes.apple.com"));
@@ -551,6 +595,7 @@ builder.Services.AddRefitClient<IDeezerApi>()
 **Step 7.2: MusicSearchService**
 
 Implement `Services/MusicSearchService.cs`:
+
 ```csharp
 public class MusicSearchService : IMusicSearchService
 {
@@ -573,6 +618,7 @@ public class MusicSearchService : IMusicSearchService
 **Step 7.3: SearchController**
 
 Create `Controllers/SearchController.cs`:
+
 ```csharp
 [ApiController]
 [Route("api/[controller]")]
@@ -593,6 +639,7 @@ public class SearchController : ControllerBase
 **Step 7.4: Frontend Music Search Component**
 
 Create `src/MIMM.Frontend/Components/MusicSearch.razor`:
+
 ```razor
 <MudAutocomplete T="TrackSearchResult"
                  Label="Search Song"
@@ -614,10 +661,12 @@ Create `src/MIMM.Frontend/Components/MusicSearch.razor`:
 **Step 7.5: Integration with EntryCreate**
 
 Update `EntryCreate.razor`:
+
 - Replace manual Song Title/Artist/Album inputs s `<MusicSearch />`
 - OnTrackSelected → pre-populate form fields
 
 **Success Criteria**:
+
 - ✅ MusicSearch autocomplete funguje s >3 characters
 - ✅ Results zobrazují album art + song title + artist
 - ✅ Klik na result → populate EntryCreate form
@@ -626,15 +675,17 @@ Update `EntryCreate.razor`:
 ---
 
 #### Action 8: Last.fm OAuth Integration
+
 **Why**: Social feature, optional pro MVP  
 **Estimate**: 8-10h  
 **Owner**: Dev  
 **Deadline**: 10. února 2026
 
 **Prerequisites**:
+
 1. Zaregistrovat MIMM 2.0 na Last.fm API website
 2. Získat API Key + Shared Secret
-3. Set callback URL: https://localhost:7001/api/integrations/lastfm/callback
+3. Set callback URL: <https://localhost:7001/api/integrations/lastfm/callback>
 
 **Step 8.1: LastFmHttpClient (Refit)**
 
@@ -714,6 +765,7 @@ public class IntegrationsController : ControllerBase
 **Step 8.4: Frontend Last.fm Connect**
 
 Create `src/MIMM.Frontend/Components/LastFmConnect.razor`:
+
 ```razor
 @if (IsConnected)
 {
@@ -731,6 +783,7 @@ else
 ```
 
 **Success Criteria**:
+
 - ✅ Klik "Connect Last.fm" → otevře Last.fm OAuth consent page
 - ✅ Po approve → redirect zpět na MIMM settings page
 - ✅ LastFmToken uložen v DB
@@ -739,6 +792,7 @@ else
 ---
 
 #### Action 9: Advanced Dashboard Analytics
+
 **Why**: Mood patterns visualization - cool feature, ne critical  
 **Estimate**: 6-8h  
 **Owner**: Dev  
@@ -795,29 +849,34 @@ public class AnalyticsController : ControllerBase
 **Step 9.3: Frontend Analytics Charts**
 
 Install Blazor charting library:
+
 ```bash
 cd src/MIMM.Frontend
 dotnet add package Blazor.Extensions.Canvas
 ```
 
 Create `src/MIMM.Frontend/Components/MoodChart.razor`:
+
 - Scatter plot: X = Valence, Y = Arousal
 - Each point = journal entry
 - Color by date (gradient: old → new)
 - Hover shows song title + artist
 
 Create `src/MIMM.Frontend/Components/TopArtistsChart.razor`:
+
 - Horizontal bar chart
 - Top 10 artists by entry count
 
 **Step 9.4: Update Dashboard**
 
 Replace placeholder cards v `Dashboard.razor` s:
+
 - `<MoodChart />`
 - `<TopArtistsChart />`
 - `<RecentEntriesList />` (last 5 entries)
 
 **Success Criteria**:
+
 - ✅ Dashboard zobrazuje mood scatter plot
 - ✅ Dashboard zobrazuje top artists bar chart
 - ✅ Charts se updatují po vytvoření nového entry
@@ -827,6 +886,7 @@ Replace placeholder cards v `Dashboard.razor` s:
 ### 📦 DEPLOYMENT (Week 4)
 
 #### Action 10: Production Readiness Checklist
+
 **Why**: MVP musí být deploynutelný na cloud  
 **Estimate**: 4-6h  
 **Owner**: Dev  
@@ -835,6 +895,7 @@ Replace placeholder cards v `Dashboard.razor` s:
 **Step 10.1: Docker Production Build**
 
 Create `Dockerfile.production`:
+
 ```dockerfile
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
@@ -851,6 +912,7 @@ ENTRYPOINT ["dotnet", "MIMM.Backend.dll"]
 ```
 
 Test Docker build:
+
 ```bash
 docker build -f Dockerfile.production -t mimm-backend:1.0.0 .
 docker run -p 7001:8080 mimm-backend:1.0.0
@@ -859,6 +921,7 @@ docker run -p 7001:8080 mimm-backend:1.0.0
 **Step 10.2: Azure App Service Setup**
 
 Azure CLI commands:
+
 ```bash
 # Login
 az login
@@ -901,6 +964,7 @@ az webapp config connection-string set \
 **Step 10.3: GitHub Actions CI/CD**
 
 Create `.github/workflows/deploy.yml`:
+
 ```yaml
 name: Deploy to Azure
 
@@ -947,6 +1011,7 @@ jobs:
 - [ ] Setup Azure Monitor alerts
 
 **Success Criteria**:
+
 - ✅ Docker image builds successfully
 - ✅ App deploynut na Azure App Service
 - ✅ PostgreSQL Flexible Server running
@@ -959,81 +1024,104 @@ jobs:
 ## 📅 Sprint Schedule (3 Weeks)
 
 ### Sprint 1 (24. - 28. ledna)
+
 **Theme**: Database + E2E Testing + Entry CRUD UI
 
 **Mon 24.1**:
+
 - ✅ Action 1: Database setup (1-2h)
 - ✅ Action 2: E2E auth test (30min)
 
 **Tue 25.1**:
+
 - 🚧 Action 3.1-3.2: EntryApiService + EntryList.razor (4h)
 
 **Wed 26.1**:
+
 - 🚧 Action 3.3-3.4: EntryCreate + EntryEdit (4h)
 
 **Thu 27.1**:
+
 - 🚧 Action 3.5: Integration & routing (2h)
 - 🚧 Action 4: MoodSelector component (4h)
 
 **Fri 28.1**:
+
 - ✅ Sprint review
 - ✅ Test all entry CRUD flows
 
 ---
 
 ### Sprint 2 (29. ledna - 4. února)
+
 **Theme**: Testing + Error Handling + Music Search
 
 **Mon 29.1**:
+
 - 🚧 Action 5.1-5.2: Integration tests setup + Auth tests (4h)
 
 **Tue 30.1**:
+
 - 🚧 Action 5.3: Entries integration tests (3h)
 
 **Wed 31.1**:
+
 - 🚧 Action 6: Error handling + loading states (4h)
 
 **Thu 1.2**:
+
 - 🚧 Action 7.1-7.3: Music search backend (Refit + Service + Controller) (5h)
 
 **Fri 2.2**:
+
 - 🚧 Action 7.4-7.5: Music search frontend (MusicSearch component + integration) (5h)
 
 ---
 
 ### Sprint 3 (5. - 14. února)
+
 **Theme**: Last.fm + Analytics + Deployment
 
 **Mon 5.2**:
+
 - 🚧 Action 8.1-8.2: Last.fm OAuth backend (4h)
 
 **Tue 6.2**:
+
 - 🚧 Action 8.3-8.4: Last.fm OAuth frontend (3h)
 
 **Wed 7.2**:
+
 - 🚧 Action 9.1-9.2: Analytics service + controller (4h)
 
 **Thu 8.2**:
+
 - 🚧 Action 9.3-9.4: Analytics charts + dashboard update (4h)
 
 **Fri 9.2** (Buffer Day):
+
 - ✅ Bug fixes
 - ✅ Polish UI
 - ✅ Write deployment docs
 
 **Mon 10.2**:
+
 - 🚧 Action 10.1: Docker production build (2h)
 
 **Tue 11.2**:
+
 - 🚧 Action 10.2: Azure setup (3h)
 
 **Wed 12.2**:
+
 - 🚧 Action 10.3: CI/CD pipeline (2h)
 
 **Thu 13.2**:
+
 - 🚧 Action 10.4: Security hardening (2h)
 
 **Fri 14.2** (**MVP LAUNCH**):
+
 - ✅ Final testing
 - ✅ Deploy to production
 - 🎉 **MVP Release 1.0.0**
@@ -1111,20 +1199,20 @@ jobs:
 
 ### External APIs
 
-- **Last.fm API**: https://www.last.fm/api
-- **iTunes Search API**: https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/
-- **Deezer API**: https://developers.deezer.com/api
-- **MusicBrainz API**: https://musicbrainz.org/doc/MusicBrainz_API
-- **Discogs API**: https://www.discogs.com/developers
+- **Last.fm API**: <https://www.last.fm/api>
+- **iTunes Search API**: <https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/>
+- **Deezer API**: <https://developers.deezer.com/api>
+- **MusicBrainz API**: <https://musicbrainz.org/doc/MusicBrainz_API>
+- **Discogs API**: <https://www.discogs.com/developers>
 
 ### .NET Resources
 
-- **.NET 9 Docs**: https://learn.microsoft.com/dotnet/
-- **EF Core 9**: https://learn.microsoft.com/ef/core/
-- **Blazor WASM**: https://learn.microsoft.com/aspnet/core/blazor/
-- **MudBlazor**: https://mudblazor.com/
-- **Refit**: https://github.com/reactiveui/refit
-- **xUnit**: https://xunit.net/
+- **.NET 9 Docs**: <https://learn.microsoft.com/dotnet/>
+- **EF Core 9**: <https://learn.microsoft.com/ef/core/>
+- **Blazor WASM**: <https://learn.microsoft.com/aspnet/core/blazor/>
+- **MudBlazor**: <https://mudblazor.com/>
+- **Refit**: <https://github.com/reactiveui/refit>
+- **xUnit**: <https://xunit.net/>
 
 ---
 
@@ -1133,11 +1221,13 @@ jobs:
 ### Immediate Actions (Today - 24. ledna)
 
 1. **Start Docker PostgreSQL**:
+
    ```bash
    docker-compose up -d postgres
    ```
 
 2. **Create first EF Core migration**:
+
    ```bash
    cd src/MIMM.Backend
    dotnet ef migrations add InitialCreate
@@ -1145,6 +1235,7 @@ jobs:
    ```
 
 3. **Run E2E test** (backend + frontend together):
+
    ```bash
    # Terminal 1
    cd src/MIMM.Backend && dotnet run
@@ -1157,6 +1248,7 @@ jobs:
    ```
 
 4. **Verify all tests pass**:
+
    ```bash
    dotnet test MIMM.sln
    # Expected: 35/35 tests passing
