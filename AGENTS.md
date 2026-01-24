@@ -8,6 +8,24 @@
 - [README.md](./README.md) - základní informace o projektu
 - [copilot-instructions](./.github/copilot-instructions.md) - pravidla generování kódu
 
+## CI & Coverage pro agenty
+
+- CI stav: viz badge nahoře a detailní běhy v GitHub Actions.
+- Lokální CI parita:
+
+```bash
+# Restore + Build (Release)
+dotnet restore MIMM.sln
+dotnet build MIMM.sln --configuration Release --no-restore
+
+# Testy s minimálním logem
+dotnet test MIMM.sln --configuration Release --no-build -v minimal
+```
+
+- Coverage artefakty: v CI se nahrávají jako `coverage-reports`. Lokálně můžeš vygenerovat HTML report:
+
+```bash
+
 ## Konfigurační soubory
 
 - `global.json` - Verze .NET SDK (9.0.100) s rollForward policy
@@ -19,6 +37,8 @@
 - Ověření instalace: `dotnet --version`
 
 ## Struktura projektu
+
+- Codecov: nastavení tokenu a badge je popsáno v README (sekce „Codecov setup“).
 
 Toto je ASP.NET Core Minimal API projekt s následující strukturou:
 
