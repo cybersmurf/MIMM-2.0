@@ -30,7 +30,7 @@
 
 ## 📈 Progress Update
 
-```
+```bash
 Phase 1 MVP Completion: 60% → 62% (+2%)
 
 Backend API              [████████████████████] 100% ✅
@@ -145,7 +145,7 @@ cd src/MIMM.Frontend && dotnet run
 
 ### Operational Services
 
-```
+```text
 ✅ Docker Desktop           (v29.1.3)
 ✅ PostgreSQL 16            (running, listening on :5432)
 ✅ .NET 9 SDK              (ready for projects)
@@ -156,7 +156,7 @@ cd src/MIMM.Frontend && dotnet run
 
 ### Database Verification
 
-```
+```bash
 ✅ Database: mimm
 ✅ User: mimmuser
 ✅ Tables: Users, Entries, LastFmTokens, __EFMigrationsHistory
@@ -167,7 +167,7 @@ cd src/MIMM.Frontend && dotnet run
 
 ### Development Environment
 
-```
+```text
 ✅ VS Code ready
 ✅ Terminals available
 ✅ Git tracking enabled
@@ -180,7 +180,7 @@ cd src/MIMM.Frontend && dotnet run
 
 ### Sprint 1: Database + E2E + Entry CRUD (24-28 Jan)
 
-```
+```bash
 Mon 24.1  [████████████████████] 100%  ✅ Database + Actions complete
 Tue 25.1  [░░░░░░░░░░░░░░░░░░░░] 0%    📅 Entry CRUD UI starts
 Wed 26.1  [░░░░░░░░░░░░░░░░░░░░] 0%
@@ -190,7 +190,7 @@ Fri 28.1  [░░░░░░░░░░░░░░░░░░░░] 0%    �
 
 ### Sprint 2: Testing + Music Search (29 Jan - 4 Feb)
 
-```
+```text
 Status: 📅 Scheduled (not started)
 Capacity: 30 hours available
 Tasks: Integration tests, Error handling, Music search
@@ -198,7 +198,7 @@ Tasks: Integration tests, Error handling, Music search
 
 ### Sprint 3: Last.fm + Analytics + Deploy (5-14 Feb)
 
-```
+```bash
 Status: 📅 Scheduled (not started)
 Capacity: 30 hours available
 Tasks: Last.fm OAuth, Analytics, Azure deployment

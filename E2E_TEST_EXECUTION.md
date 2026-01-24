@@ -9,7 +9,7 @@
 
 ### ✅ Backend API
 
-```
+```bash
 Service: ASP.NET Core 9
 Port: 7001 (HTTPS)
 Status: ✅ RUNNING
@@ -34,7 +34,7 @@ Endpoints Available:
 
 ### ✅ Frontend Application
 
-```
+```bash
 Service: Blazor WebAssembly 9
 Port: 5000 (HTTP)
 Status: ✅ RUNNING
@@ -49,7 +49,7 @@ Pages Available:
 
 ### ✅ Database
 
-```
+```yaml
 Service: PostgreSQL 16
 Port: 5432
 Database: mimm

@@ -17,7 +17,7 @@
 
 ### Architektonické Pilíře
 
-```
+```text
 Backend (ASP.NET Core 9)
 ├── Controllers (REST endpoints - TODO)
 ├── Services (IAuthService, IEntryService, etc.)
@@ -81,7 +81,7 @@ Shared (DTOs, Entities)
 
 ### 1. Controller-based (ne Minimal API)
 
-```
+```bash
 Zvoleno: Controllers + Services + Data layers
 Důvod:
 - MIMM má komplexní business logic (Last.fm, multiple music sources)
@@ -98,7 +98,7 @@ Doporučení: Počítat s migracií na Feature-based struktura v Phase 2
 
 ### 2. Blazor WASM (ne server-side)
 
-```
+```text
 Zvoleno: WebAssembly SPA
 Důvod:
 - PWA support (offline journal entries)
@@ -118,7 +118,7 @@ Vedlejší efekt: Frontend client-side state musí být managed
 
 ### 3. PostgreSQL + EF Core 9
 
-```
+```bash
 Zvoleno: Npgsql driver, EF Core 9 DbContext
 Důvod:
 - PostgreSQL: JSON/array support (text[] pro SomaticTags)
@@ -136,7 +136,7 @@ Consideration: N+1 query problem
 
 ### 4. Refresh Token Pattern
 
-```
+```text
 Zvoleno: Dual token (AccessToken + RefreshToken)
 AccessToken:
 - Short-lived (60 min default)
@@ -170,7 +170,7 @@ Security wins:
 
 #### Týden 1-2: Authentication
 
-```
+```text
 Implementovat:
 1. AuthService.cs
    ├── Register(email, password, displayName) → User + PasswordHash
@@ -199,7 +199,7 @@ Implementovat:
 
 #### Týden 2-3: Entry CRUD
 
-```
+```bash
 Implementovat:
 1. EntryService.cs
    ├── CreateAsync(userId, request) → JournalEntry
@@ -228,7 +228,7 @@ Implementovat:
 
 #### Týden 3-4: Last.fm Integration (v1)
 
-```
+```bash
 Implementovat:
 1. LastFmService.cs (placeholder)
    ├── GetAuthUrlAsync() → OAuth consent URL
@@ -257,7 +257,7 @@ Implementovat:
 
 #### Week 5-6: Music Search (Multi-source)
 
-```
+```text
 Implementovat:
 1. IMusicSearchService implementations:
    ├── ItunesSearchClient (Refit)
@@ -275,7 +275,7 @@ Implementovat:
 
 #### Week 6-7: Real-time Analytics (SignalR)
 
-```
+```bash
 Implementovat:
 1. AnalyticsHub.cs (SignalR hub)
    - BroadcastMoodStatistics() → avg Valence, Arousal
@@ -299,7 +299,7 @@ Implementovat:
 
 #### Week 7-8: Mood Search/Filters
 
-```
+```bash
 Implementovat:
 1. EntryService.cs extend:
    ├── SearchAsync(userId, filters) → ValenceRange, ArousalRange, DateRange, Artist
@@ -316,7 +316,7 @@ Implementovat:
 
 #### Week 9: Data Export
 
-```
+```text
 Implementovat:
 1. ExportService.cs
    ├── ExportAsCsvAsync(userId) → CSV bytes
@@ -333,7 +333,7 @@ Implementovat:
 
 #### Week 10-11: Mobile App (MAUI)
 
-```
+```bash
 Considera:
 - Separate VS project: MIMM.Mobile.Maui
 - Share MIMM.Shared (entities, DTOs)
@@ -344,7 +344,7 @@ Considera:
 
 #### Week 12: Deployment & Polish
 
-```
+```text
 - Azure App Service deployment docs
 - Docker production setup
 - Database backups & monitoring
@@ -376,9 +376,9 @@ Considera:
 
 ### Follow-up (Week 2)
 
-4. **Dashboard.razor** (list entries)
-5. **MoodSelector.razor** (2D interactive grid)
-6. **EntryForm.razor** (create/edit with validation)
+1. **Dashboard.razor** (list entries)
+2. **MoodSelector.razor** (2D interactive grid)
+3. **EntryForm.razor** (create/edit with validation)
 
 ### Dependencies to Avoid Blocking
 
@@ -400,7 +400,7 @@ Considera:
 ### Database Concerns
 
 1. **N+1 query risk** → Entries endpoint without .Include(u => u.User) will lazy-load
-2. **Pagination not enforced** → No IPagedList<T> interface (implement or use PagedList.Core NuGet)
+2. **Pagination not enforced** → No `IPagedList<T>` interface (implement or use PagedList.Core NuGet)
 3. **No audit logging** → No CreatedBy, ModifiedBy fields for compliance
 
 ### Frontend Concerns

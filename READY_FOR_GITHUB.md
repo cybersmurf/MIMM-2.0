@@ -13,7 +13,7 @@
 
 **Solution Structure**:
 
-```
+```bash
 MIMM-2.0/
 ├── MIMM.sln                          # Visual Studio solution
 ├── src/

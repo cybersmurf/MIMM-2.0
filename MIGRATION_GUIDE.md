@@ -159,7 +159,7 @@ The system will:
 
 You'll see a summary:
 
-```
+```python
 ✅ Import Complete
 
 - Total entries in file: 127

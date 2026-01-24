@@ -45,7 +45,7 @@
 
 #### 1.5 Database Tables Created
 
-```
+```bash
 ✅ Users table (13 columns: Id, Email, PasswordHash, DisplayName, etc.)
 ✅ Entries table (17 columns: Id, UserId, SongTitle, Valence, Arousal, etc.)
 ✅ LastFmTokens table (4 columns: Id, UserId, SessionKey, etc.)
@@ -76,7 +76,7 @@
 
 ### Database Layer ✅
 
-```
+```text
 ✓ PostgreSQL 16 running in Docker
 ✓ Database schema created from EF Core model
 ✓ All required tables with proper indices
@@ -86,7 +86,7 @@
 
 ### Backend API Setup ✅
 
-```
+```bash
 ✓ EF Core DbContext wired to real database
 ✓ Connection string verified
 ✓ Migrations framework ready
@@ -95,7 +95,7 @@
 
 ### Frontend Setup ✅
 
-```
+```text
 ✓ MudBlazor components integrated
 ✓ Authentication services ready
 ✓ API client configured to backend base URL

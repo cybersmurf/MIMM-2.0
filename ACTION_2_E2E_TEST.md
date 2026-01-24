@@ -45,7 +45,7 @@ dotnet run
 
 **Expected Output**:
 
-```
+```bash
 info: Microsoft.Hosting.Lifetime[14]
       Now listening on: https://localhost:7001
       Now listening on: http://localhost:5001
@@ -68,7 +68,7 @@ dotnet run
 
 **Expected Output**:
 
-```
+```yaml
 info: Microsoft.Hosting.Lifetime[14]
       Now listening on: https://localhost:5001
 ```

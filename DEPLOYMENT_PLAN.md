@@ -27,7 +27,7 @@
 
 ### Současná Lokální Struktura
 
-```
+```bash
 ┌─────────────────────┐
 │   Blazor Frontend   │
 │   (Port 5000)       │
@@ -48,7 +48,7 @@
 
 ### Produkční Architektura na VPS
 
-```
+```bash
 Internet (Port 80/443)
          │
          ▼

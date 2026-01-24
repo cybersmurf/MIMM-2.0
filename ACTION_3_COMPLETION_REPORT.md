@@ -117,7 +117,7 @@ protected override async Task OnInitializedAsync()
 
 **Predefined Somatic Tags:**
 
-```
+```csharp
 Relaxed, Tense, Energetic, Tired, Warm, Cold, Tingling, Heavy, 
 Light, Grounded, Floating, Centered
 ```

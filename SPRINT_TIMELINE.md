@@ -1,6 +1,6 @@
 # 🗓️ MIMM 2.0 - Sprint Timeline Visualization
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                    MVP DEVELOPMENT: 3 WEEKS (21 DAYS)                    │
 │                    Start: 24.1.2026  →  Launch: 14.2.2026                │

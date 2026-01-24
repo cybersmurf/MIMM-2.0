@@ -516,7 +516,7 @@ See `DEPLOYMENT.md` for:
 1. Get API key: <https://www.last.fm/api/account/create>
 2. Add to `.env`:
 
-   ```
+   ```bash
    LastFm__ApiKey=YOUR_KEY
    LastFm__SharedSecret=YOUR_SECRET
    LastFm__CallbackUrl=https://localhost:7001/api/integrations/lastfm/callback

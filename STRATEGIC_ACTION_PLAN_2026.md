@@ -105,7 +105,7 @@
 3. **Frontend neúplný**: Dashboard má jen placeholders, chybí entry CRUD UI
 4. **External API integrce**: Last.fm, iTunes, Deezer, MusicBrainz, Discogs - nic neimplementováno
 5. **No real-time**: SignalR konfigurace existuje, ale žádné huby
-6. **No pagination**: IPagedList<T> není implementován v EntryService
+6. **No pagination**: `IPagedList<T>` není implementován v EntryService
 
 ### 2. Technický Dluh
 
@@ -324,7 +324,7 @@ Update `src/MIMM.Frontend/App.razor` (add routes):
 
 Update `Dashboard.razor`:
 
-- Replace placeholder cards s <EntryList /> component
+- Replace placeholder cards s `EntryList` component
 
 **Success Criteria**:
 
@@ -350,7 +350,7 @@ Update `Dashboard.razor`:
 
 **UI Design**:
 
-```
+```text
          High Arousal (+1.0)
               ^
               |
