@@ -13,10 +13,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup .NET 9
+      - name: Setup .NET 9 (with NuGet cache)
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
+          cache: true
+          cache-dependency-path: '**/*.csproj'
 
       - name: Restore
         run: dotnet restore MIMM.sln
@@ -24,5 +26,15 @@ jobs:
       - name: Build
         run: dotnet build MIMM.sln --configuration Release --no-restore
 
-      - name: Test
-        run: dotnet test MIMM.sln --configuration Release --no-build -v minimal
+      - name: Test with coverage
+        run: dotnet test MIMM.sln --configuration Release --no-build -v minimal --collect:"XPlat Code Coverage"
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-reports
+          path: |
+            **/TestResults/**/coverage.cobertura.xml
+            **/TestResults/**/coverage.json
+          if-no-files-found: warn
