@@ -15,6 +15,16 @@
   - security-hardening.prompt.md
   - ef-migrations-review.prompt.md
   - api-contract-review.prompt.md
+  - markdown-linting.prompt.md
+- `.markdownlint.json` - konfigurace pro markdownlint v0.40.0
+
+## Markdown Linting (Documentation Quality)
+
+- Tool: `markdownlint-cli` (v0.40.0)
+- Konfigurace: `.markdownlint.json` s pravidly pro projekt
+- Běžné chyby: hard tabs, chybějící blank lines, dlouhé řádky, chybějící language tagy
+- Oprava: `markdownlint --fix "**/*.md"` (auto-oprava) nebo ručně
+- Ověření: `markdownlint "README.md" "CHANGELOG.md" "AGENTS.md" "docs/*.md"`
 
 ## CI & Coverage pro agenty
 

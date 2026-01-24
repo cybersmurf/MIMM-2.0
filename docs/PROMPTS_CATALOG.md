@@ -14,6 +14,8 @@ lze je používat při běžných úlohách vývoje, testování a údržby.
 | **Security Hardening** | `security-hardening.prompt.md` | Kontrola AuthN/AuthZ, CORS, JWT, input | Bezpečnostní audit |
 | **EF Migrations Review** | `ef-migrations-review.prompt.md` | Validace migrací a konsistentnosti | Code review DB schématu |
 | **API Contract Review** | `api-contract-review.prompt.md` | Validace API surface: DTOs, endpoints | Přidání endpointu |
+| **Markdown Linting** | `markdown-linting.prompt.md` | Kontrola a oprava MD souborů (v0.40.0) | Audit dokumentace |
+| **API Contract Review** | `api-contract-review.prompt.md` | Validace API surface: DTOs, endpoints | Přidání endpointu |
 
 ## Jak používat
 

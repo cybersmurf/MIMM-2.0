@@ -214,6 +214,21 @@ act -W .github/workflows/ci.yml -j build-and-test
   - security-hardening.prompt.md
   - ef-migrations-review.prompt.md
   - api-contract-review.prompt.md
+  - markdown-linting.prompt.md
+
+### Documentation Quality (Markdown Linting)
+
+- Všechny dokumenty jsou validovány pomocí `markdownlint-cli` v0.40.0
+- Konfigurace: `.markdownlint.json` (line length 120, bez hard tabs, blank lines kolem headings)
+- Spuštění: `markdownlint "README.md" "CHANGELOG.md" "AGENTS.md" "docs/*.md"`
+- Automatické opravy: `markdownlint --fix "**/*.md"`
+- Prompt pro Copilota: [📝 markdown-linting.prompt.md](.github/prompts/markdown-linting.prompt.md)
+  - e2e-tests-maintenance.prompt.md
+  - ci-fix.prompt.md
+  - feature-implementation.prompt.md
+  - security-hardening.prompt.md
+  - ef-migrations-review.prompt.md
+  - api-contract-review.prompt.md
 - Pro agenty jsou odkazy také v [AGENTS.md](AGENTS.md).
 
 ---

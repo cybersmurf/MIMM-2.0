@@ -89,10 +89,18 @@ dotnet test MIMM.sln --configuration Release --no-build -v minimal
 
 - Umístění: `.github/prompts/`
 - Obsah: release notes, E2E maintenance, CI fix, feature implementation, security hardening,
-  EF migrations review, API contract review.
+  EF migrations review, API contract review, markdown linting.
 - **[📋 Kompletní katalog promptů](PROMPTS_CATALOG.md)** – tabulka se stručnými popisy
   a doporučením.
 - Reference: viz také [AGENTS.md](../AGENTS.md) pro přehled agentních instrukcí.
+
+## Markdown Linting
+
+- Tool: `markdownlint-cli` v0.40.0
+- Konfigurace: `.markdownlint.json` (line length 120, tables excluded, emphasis as heading disabled)
+- Kontrola: `markdownlint "README.md" "CHANGELOG.md" "AGENTS.md" "docs/*.md"`
+- Oprava: `markdownlint --fix "**/*.md"` (automatické opravy) nebo [markdown-linting.prompt.md](.github/prompts/markdown-linting.prompt.md)
+- Běžné chyby: hard tabs (MD010), chybějící blank lines (MD022, MD031, MD032), dlouhé řádky (MD013)
 
 ## Standardy kódu
 
