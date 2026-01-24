@@ -4,6 +4,7 @@
 
 [![Build](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/build.yml/badge.svg)](https://github.com/cybersmurf/MIMM-2.0/actions)
 [![CI](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/ci.yml/badge.svg)](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/cybersmurf/MIMM-2.0/branch/main/graph/badge.svg)](https://codecov.io/gh/cybersmurf/MIMM-2.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-9.0-purple)](https://dotnet.microsoft.com/)
 
