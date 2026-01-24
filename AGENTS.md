@@ -1,18 +1,21 @@
 # AGENTS.md
 
+[![CI](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/ci.yml/badge.svg)](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/ci.yml)
+
 - zde jsou klíčové instrukce pro všechny AI agenty
 - **níže jsou uvedeny další instrukční soubory, které je nutné respektovat**
 
 - [README.md](./README.md) - základní informace o projektu
 - [copilot-instructions](./.github/copilot-instructions.md) - pravidla generování kódu
 
-
 ## Konfigurační soubory
-- `global.json` - Verze .NET SDK (10.0.100) s rollForward policy
+
+- `global.json` - Verze .NET SDK (9.0.100) s rollForward policy
 - `.editorconfig` - Pravidla pro formátování a styl kódu
 
 ## Požadavky
-- .NET 10.0 SDK (verze 10.0.100 nebo kompatibilní díky rollForward)
+
+- .NET 9.0 SDK (verze 9.0.100 nebo kompatibilní díky rollForward)
 - Ověření instalace: `dotnet --version`
 
 ## Struktura projektu
@@ -24,6 +27,7 @@ Toto je ASP.NET Core Minimal API projekt s následující strukturou:
 - `tests/Application.Tests/` - xUnit testovací projekt
 
 ## Klíčové balíčky
+
 - Microsoft.AspNetCore.OpenApi 10.0.0
 - xUnit 2.9.3 (testovací framework)
 - Microsoft.NET.Test.Sdk 17.14.1
@@ -31,6 +35,7 @@ Toto je ASP.NET Core Minimal API projekt s následující strukturou:
 ## Běžné příkazy
 
 ### Build & Restore
+
 ```bash
 dotnet restore          # Obnovení závislostí (z rootu repozitáře)
 dotnet build           # Build celého solution (z rootu repozitáře)
@@ -38,18 +43,21 @@ dotnet clean           # Vyčištění build artefaktů
 ```
 
 ### Spuštění aplikace
+
 ```bash
 dotnet run --project src/Application.Web/Application.Web.csproj   # Z rootu repozitáře
 cd src/Application.Web && dotnet run                               # Ze složky Web projektu
 ```
 
 ### Testování
+
 ```bash
 dotnet test            # Spuštění všech testů (z rootu repozitáře)
 dotnet test --no-build # Spuštění testů bez rebuildu
 ```
 
 ### Vývoj
+
 - Aplikace běží na: `http://localhost:5150` (výchozí)
 - OpenAPI endpoint (pouze dev): `/openapi/v1.json`
 - Weather API endpoint: `/api/weatherforecast`
@@ -57,12 +65,15 @@ dotnet test --no-build # Spuštění testů bez rebuildu
 ## Ladění (Debugging)
 
 ### VS Code
+
 Repozitář obsahuje `.vscode/launch.json` konfiguraci pro ladění:
+
 - **Launch Web API** - Spustí Application.Web s připojeným debuggerem
 - Breakpointy lze nastavit v jakémkoliv `.cs` souboru
 - Použij F5 pro spuštění ladění z VS Code
 
 ### CLI Debugging
+
 ```bash
 # Spuštění s podporou debuggeru
 dotnet run --project src/Application.Web/Application.Web.csproj --debug

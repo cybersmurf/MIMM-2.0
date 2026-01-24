@@ -157,11 +157,25 @@ dotnet test tests/MIMM.Tests.Integration
 dotnet test --collect:"XPlat Code Coverage"
 ```
 
-### Demo tests (Minimal API)
+### Run CI locally
+
+Pro lokální ověření toho, co běží v CI, spusť:
 
 ```bash
-# WeatherForecast demo API tests
-dotnet test tests/Application.Tests
+# Restore + Build (Release)
+dotnet restore MIMM.sln
+dotnet build MIMM.sln --configuration Release --no-restore
+
+# Testy (Release)
+dotnet test MIMM.sln --configuration Release --no-build -v minimal
+```
+
+Volitelné: spouštění GitHub Actions lokálně pomocí `act` (pokud ho používáš):
+
+```bash
+# Nainstaluj act dle dokumentace: https://github.com/nektos/act
+# Spusť CI workflow lokálně
+act -W .github/workflows/ci.yml -j build-and-test
 ```
 
 ---
@@ -177,26 +191,6 @@ docker-compose up -d
 
 # View logs
 docker-compose logs -f backend
-```
-
----
-
-## 🧩 Demo Minimal API (Application.Web)
-
-Ukázkový Minimal API projekt s endpointem `WeatherForecast`.
-
-```bash
-# Spuštění demo API
-dotnet run --project src/Application.Web/Application.Web.csproj
-
-# Aplikace běží na
-# http://localhost:5150
-
-# OpenAPI (dev)
-# http://localhost:5150/openapi/v1.json
-
-# Endpoint
-# GET http://localhost:5150/api/weatherforecast
 ```
 
 ---
