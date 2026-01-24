@@ -7,6 +7,7 @@
 
 - [README.md](./README.md) - základní informace o projektu
 - [copilot-instructions](./.github/copilot-instructions.md) - pravidla generování kódu
+- `.github/prompts/` - opakovatelné prompty pro Copilot (release notes, E2E maintenance, CI fix, feature pattern)
 
 ## CI & Coverage pro agenty
 
