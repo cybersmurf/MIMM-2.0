@@ -23,8 +23,8 @@ Projekt MIMM-2.0 používá `markdownlint-cli` v0.40.0 pro kontrolu kvality doku
 ```markdown
 # Špatně:
 - Item 1
-	- Nested (hard tab - MD010)
-	   - Another (3 mezery - MD007)
+ - Nested (hard tab - MD010)
+    - Another (3 mezery - MD007)
 
 # Správně:
 - Item 1
@@ -42,19 +42,21 @@ Projekt MIMM-2.0 používá `markdownlint-cli` v0.40.0 pro kontrolu kvality doku
 # Špatně:
 ## Heading
 - Item 1
-```markdown
+text bez blank line
+
+```text
 code
 ```
 
-# Správně:
-## Heading
+## Správně
 
 - Item 1
 
-```markdown
+```text
 code
 ```
-```
+
+```markdown
 
 **Řešení**: `markdownlint --fix` přidá automaticky.
 
@@ -70,21 +72,26 @@ Dlouhý řádek bez mezer sem sem sem sem sem
 <!-- markdownlint-enable MD013 -->
 ```
 
+**Řešení**: Rozdělit na více řádků nebo vyloučit pravidlo.
+
 ### MD040 - Missing language in code block
 
 **Problém**: Code block bez specifikace jazyka.
 
-```markdown
+```text
 # Špatně:
-```
+
+```text
 dotnet build
 ```
 
-# Správně:
+## Správně (correct)
+
 ```bash
 dotnet build
 ```
-```
+
+```text
 
 **Řešení**: Přidat jazyk (`bash`, `csharp`, `markdown`, `text`, apod.) nebo `text`.
 
@@ -105,11 +112,13 @@ Viz <https://example.com>
 ## Pracovní postup
 
 1. **Spusť kontrolu**:
+
    ```bash
    markdownlint "README.md" "CHANGELOG.md" "AGENTS.md" "docs/*.md"
    ```
 
 2. **Automatické opravy**:
+
    ```bash
    markdownlint --fix "README.md" "CHANGELOG.md" "AGENTS.md" "docs/*.md"
    ```
@@ -119,6 +128,7 @@ Viz <https://example.com>
    - MD036 (dekorativní text - není chyba)
 
 4. **Commitni opravy**:
+
    ```bash
    git add README.md CHANGELOG.md AGENTS.md docs/
    git commit -m "style: markdown linting fixes (md013, md010, md022, etc.)"
