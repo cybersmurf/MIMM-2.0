@@ -195,6 +195,17 @@ act -W .github/workflows/ci.yml -j build-and-test
 - OS matrix: CI běží na `ubuntu`, `windows` a `macos` pro širší kompatibilitu.
 - NuGet cache: CI ukládá balíčky do `~/.nuget/packages` (Linux/macOS) a `C:\Users\runneradmin\.nuget\packages` (Windows) pro rychlejší běhy.
 
+### Copilot prompty
+- Opakovatelné prompty jsou v `.github/prompts/`:
+	- release-notes.prompt.md
+	- e2e-tests-maintenance.prompt.md
+	- ci-fix.prompt.md
+	- feature-implementation.prompt.md
+	- security-hardening.prompt.md
+	- ef-migrations-review.prompt.md
+	- api-contract-review.prompt.md
+- Pro agenty jsou odkazy také v [AGENTS.md](AGENTS.md).
+
 ---
 
 ## 🐳 Docker Deployment

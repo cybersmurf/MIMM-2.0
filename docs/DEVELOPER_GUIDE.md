@@ -75,6 +75,11 @@ dotnet build MIMM.sln --configuration Release --no-restore
 dotnet test MIMM.sln --configuration Release --no-build -v minimal
 ```
 
+### Copilot prompty pro opakovatelné úlohy
+- Umístění: `.github/prompts/`
+- Obsah: release notes, E2E maintenance, CI fix, feature implementation, security hardening, EF migrations review, API contract review.
+- Reference: viz také [AGENTS.md](../AGENTS.md) pro přehled agentních instrukcí.
+
 ## Standardy kódu
 - C# 13, `net9.0`, nullable enabled.
 - DTOs jako `record`, `required` properties.
