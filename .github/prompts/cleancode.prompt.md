@@ -10,7 +10,7 @@ Navrhni u vybraného kódu takové změny, které:
 - sníží duplicity a zlepší strukturu
 - dodrží best practices pro daný programovací jazyk a framework
 
-Nenavrhuj techncký refaktoring, přidávání handlování chyb nebo optimalizace či cokoliv jiného mimo čistoty kódu. 
+Nenavrhuj techncký refaktoring, přidávání handlování chyb nebo optimalizace či cokoliv jiného mimo čistoty kódu.
 
 Zaměř se pouze na zásadnější nedostatky v kódu. Do výsledku vypiš základní nedostatky kódu (⚠️) a následně navrhni kompletní refaktorovaný kód.
 

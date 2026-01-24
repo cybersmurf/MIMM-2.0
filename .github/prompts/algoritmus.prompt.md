@@ -11,7 +11,7 @@ Analyzuj algoritmus ve vybraném kódu:
 2. Jaká je jeho časová složitost O(n)
 3. Jaká je jeho prostorová složitost
 
-Uveď celkové hodnocení efektivity algoritmu na základě nalezených informací. Jiné aspekty při hodnocení efektivity nezohledňuj. 
+Uveď celkové hodnocení efektivity algoritmu na základě nalezených informací. Jiné aspekty při hodnocení efektivity nezohledňuj.
 
 Problémy doplň emoji podle závažnosti (⚠️, ❗). Co je správně označ emoji ✅. Doporučení doplň emoji 💡.
 

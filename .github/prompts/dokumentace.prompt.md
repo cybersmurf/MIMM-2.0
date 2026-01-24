@@ -15,4 +15,4 @@ Pokud některá z částí není relevantní, vynech ji.
 
 Nadpis dokumentace bude vždy název funkcionality, modulu, třídy, metody nebo toho, co je dokumentováno.
 
-Dokumentuj pouze public API. Zachovej styl dokumentace používaný v projektu. Pokud některá část 
+Dokumentuj pouze public API. Zachovej styl dokumentace používaný v projektu. Pokud některá část

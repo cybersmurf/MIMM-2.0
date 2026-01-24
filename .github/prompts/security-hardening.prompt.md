@@ -3,6 +3,7 @@
 Goal: Identify and address security gaps before release.
 
 Checklist:
+
 - AuthN/AuthZ: JWT validity, issuer/audience, key length (>=256-bit), token expiry; ensure `[Authorize]` on protected endpoints.
 - Secrets: No secrets in repo; use user-secrets/env vars; validate appsettings samples.
 - CORS: Restrict allowed origins to frontend; allow credentials only if needed.
@@ -14,6 +15,7 @@ Checklist:
 - Dependency scan: check `dotnet list package --vulnerable`.
 
 Actions:
+
 1. Scan code for missing `[Authorize]` and weak CORS.
 2. Verify JWT configuration and key length.
 3. Propose CSP/headers middleware and minimal configuration.
