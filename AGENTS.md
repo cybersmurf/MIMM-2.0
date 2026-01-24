@@ -8,13 +8,13 @@
 - [README.md](./README.md) - základní informace o projektu
 - [copilot-instructions](./.github/copilot-instructions.md) - pravidla generování kódu
 - `.github/prompts/` - opakovatelné prompty pro Copilot (release notes, E2E maintenance, CI fix, feature pattern)
-	- release-notes.prompt.md
-	- e2e-tests-maintenance.prompt.md
-	- ci-fix.prompt.md
-	- feature-implementation.prompt.md
-	- security-hardening.prompt.md
-	- ef-migrations-review.prompt.md
-	- api-contract-review.prompt.md
+  - release-notes.prompt.md
+  - e2e-tests-maintenance.prompt.md
+  - ci-fix.prompt.md
+  - feature-implementation.prompt.md
+  - security-hardening.prompt.md
+  - ef-migrations-review.prompt.md
+  - api-contract-review.prompt.md
 
 ## CI & Coverage pro agenty
 

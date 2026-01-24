@@ -38,7 +38,7 @@
 
 ### Project Structure
 
-```
+```text
 MIMM-2.0/
 ├── src/
 │   ├── MIMM.Backend/           # ASP.NET Core API
@@ -115,28 +115,32 @@ dotnet run
 
 ### 7. Open in Browser
 
-Navigate to https://localhost:5001 and register your first account.
+Navigate to <https://localhost:5001> and register your first account.
 
 ---
 
 ## 📚 Documentation
 
 ### Getting Started & Development
+
 - [📍 **TODAY'S ACTION PLAN**](TODAY_ACTION_PLAN.md) – 🔥 **START HERE** - Database setup + E2E test (2-3h)
-- [✅ Action 1 Completion](ACTION_1_COMPLETION.md) – Database setup done ✅ 
+- [✅ Action 1 Completion](ACTION_1_COMPLETION.md) – Database setup done ✅
 - [🧪 Action 2: E2E Test](ACTION_2_E2E_TEST.md) – Test auth flow (30 min)
 
 ### Planning & Strategic
+
 - [📊 Strategic Action Plan](STRATEGIC_ACTION_PLAN_2026.md) – Comprehensive 3-week MVP roadmap
 - [🗓️ Sprint Timeline](SPRINT_TIMELINE.md) – Visual timeline & progress tracker
 - [🔬 Project Analysis](PROJECT_ANALYSIS_2026.md) – Technical deep dive & architecture
 
 ### Migration & APIs
+
 - [🔄 Migration Guide](MIGRATION_GUIDE.md) – Migrate data from MIMM 1.0
 - [📖 Setup Guide](SETUP_GUIDE.md) – Complete installation & configuration
 - [🔗 API Documentation](https://localhost:7001/swagger) – Interactive Swagger (run backend first)
 
 ### AI Agents & Instructions
+
 - [AGENTS.md](AGENTS.md) – Klíčové instrukce a příkazy pro AI agenty
 - [CLAUDE.md](CLAUDE.md) – Instrukce pro Claude Code
 - [GEMINI.md](GEMINI.md) – Instrukce pro Google Gemini
@@ -180,22 +184,27 @@ act -W .github/workflows/ci.yml -j build-and-test
 ```
 
 ### CI artifacts & coverage
+
 - Výstup coverage je ukládán jako artefakt `coverage-reports` v GitHub Actions runu.
 - Obsahuje soubory `coverage.cobertura.xml` a `coverage.json` pod `**/TestResults/**`.
 - Pro stažení otevři konkrétní run v Actions → sekce Artifacts → `coverage-reports`.
 - Pro lokální prohlížení můžeš použít libovolný Cobertura viewer, nebo VS Code pluginy pro coverage.
 
 ### Codecov setup (coverage badge)
+
 - Public repo: běžně nevyžaduje token; stačí připojit repo v Codecov a první CI upload.
 - Private repo: vytvoř GitHub Secret `CODECOV_TOKEN` s hodnotou tokenu z Codecov (Repo → Settings → General → Upload Token).
 - Přidání Secret: GitHub → Repo → Settings → Secrets and variables → Actions → New repository secret → `CODECOV_TOKEN`.
 - Badge v README se aktivuje po prvním úspěšném uploadu a zpracování reportu.
 
 ### CI detaily
+
 - OS matrix: CI běží na `ubuntu`, `windows` a `macos` pro širší kompatibilitu.
-- NuGet cache: CI ukládá balíčky do `~/.nuget/packages` (Linux/macOS) a `C:\Users\runneradmin\.nuget\packages` (Windows) pro rychlejší běhy.
+- NuGet cache: CI ukládá balíčky do `~/.nuget/packages` (Linux/macOS) a
+  `C:\Users\runneradmin\.nuget\packages` (Windows) pro rychlejší běhy.
 
 ### Copilot prompty
+
 - Opakovatelné prompty jsou v `.github/prompts/`:
   - **[📋 Prompts Catalog](docs/PROMPTS_CATALOG.md)** – přehledná tabulka promptů
   - release-notes.prompt.md
@@ -327,15 +336,16 @@ This project is licensed under the MIT License – see LICENSE.
 
 ## 📞 Support
 
-- Issues: https://github.com/cybersmurf/MIMM-2.0/issues
-- Discussions: https://github.com/cybersmurf/MIMM-2.0/discussions
-- Email: support@mimm.example.com
+- Issues: <https://github.com/cybersmurf/MIMM-2.0/issues>
+- Discussions: <https://github.com/cybersmurf/MIMM-2.0/discussions>
+- Email: <support@mimm.example.com>
 
 ---
 
 ## 📈 Roadmap
 
 ### Phase 1: MVP (Current)
+
 - [x] User authentication
 - [x] Entry CRUD
 - [x] Music search (multi-source)
@@ -344,12 +354,14 @@ This project is licensed under the MIT License – see LICENSE.
 - [ ] Last.fm scrobbling
 
 ### Phase 2: Social Features
+
 - [ ] Public user profiles
 - [ ] Artist leaderboards
 - [ ] Share entries
 - [ ] Friend system
 
 ### Phase 3: Premium
+
 - [ ] Subscription tiers
 - [ ] Export data (PDF, CSV)
 - [ ] Advanced analytics
@@ -364,15 +376,19 @@ This project is licensed under the MIT License – see LICENSE.
 ## Screenshots
 
 ### Login Page
+
 ![Login](docs/screenshots/login.png)
 
 ### Dashboard
+
 ![Dashboard](docs/screenshots/dashboard.png)
 
 ### Mood Selector
+
 ![Mood Selector](docs/screenshots/mood-selector.png)
 
 ### Analytics
+
 ![Analytics](docs/screenshots/analytics.png)
 
 ---

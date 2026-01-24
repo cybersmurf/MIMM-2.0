@@ -5,13 +5,14 @@ Všechny významné změny v tomto demo projektu budou zaznamenány v tomto soub
 ## [v26.1.17] - 17. ledna 2026
 
 ### Added
+
 - Ukázka `.github/skills` pro custom skills
 - Verzování tohoto demo projektu
-
 
 ## [v26.1.7] - 7. ledna 2026
 
 ### Added
+
 - Základní struktura Repository Starter Kit
 - Složka `.github` s copilot-instructions.md
 - Složka `.github/instructions` pro pattern-based instrukce
