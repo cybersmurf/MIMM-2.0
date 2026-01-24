@@ -1,0 +1,17 @@
+@inherits LayoutComponentBase
+
+<MudLayout Class="app-shell">
+    <MudAppBar Elevation="0" Dense Color="Color.Transparent" Class="glass-bar">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+        <MudText Typo="Typo.h6" Class="brand">MIMM 2.0</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" />
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="page-container">
+            <MudPaper Elevation="3" Class="page-surface">
+                @Body
+            </MudPaper>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>

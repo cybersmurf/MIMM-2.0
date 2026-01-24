@@ -1,0 +1,342 @@
+@using MIMM.Shared.Dtos
+@using MIMM.Frontend.Services
+@using MIMM.Frontend.Models
+@inject IEntryApiService EntryApi
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+        @if (_isLoading)
+        {
+            <MudProgressCircular Indeterminate />
+        }
+        else if (Model != null)
+        {
+            <MudForm @ref="_form" @bind-IsValid="@_isFormValid">
+                <MudStack Spacing="3">
+                    <MudTextField @bind-Value="Model.SongTitle" 
+                                  Label="Song title" 
+                                  Required 
+                                  RequiredError="Song title is required" />
+
+                    <MudTextField @bind-Value="Model.ArtistName" Label="Artist" />
+
+                    <MudTextField @bind-Value="Model.AlbumName" Label="Album" />
+
+                    <MudDivider Class="my-2" />
+
+                    <MudText Typo="Typo.subtitle2">Mood</MudText>
+
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.body2">
+                            Valence: @Model.Valence.ToString("F2") 
+                            <MudChip T="string" Size="Size.Small" Color="@GetValenceColor(Model.Valence)">
+                                @GetValenceLabel(Model.Valence)
+                            </MudChip>
+                        </MudText>
+                        <MudSlider @bind-Value="Model.Valence" 
+                                   Min="-1" 
+                                   Max="1" 
+                                   Step="0.1" 
+                                   Color="Color.Primary">
+                            Sad ← → Happy
+                        </MudSlider>
+                    </MudStack>
+
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.body2">
+                            Arousal: @Model.Arousal.ToString("F2")
+                            <MudChip T="string" Size="Size.Small" Color="@GetArousalColor(Model.Arousal)">
+                                @GetArousalLabel(Model.Arousal)
+                            </MudChip>
+                        </MudText>
+                        <MudSlider @bind-Value="Model.Arousal" 
+                                   Min="-1" 
+                                   Max="1" 
+                                   Step="0.1" 
+                                   Color="Color.Secondary">
+                            Calm ← → Energetic
+                        </MudSlider>
+                    </MudStack>
+
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.body2">Tension level: @Model.TensionLevel</MudText>
+                        <MudSlider @bind-Value="Model.TensionLevel" 
+                                   Min="0" 
+                                   Max="100" 
+                                   Step="5" 
+                                   Color="Color.Tertiary" />
+                    </MudStack>
+
+                    <MudDivider Class="my-2" />
+
+                    <MudText Typo="Typo.subtitle2">Somatic tags</MudText>
+                    <MudStack Row Wrap="Wrap.Wrap" Spacing="1">
+                        @foreach (var tag in CommonSomaticTags)
+                        {
+                            <MudChip T="string" Size="Size.Small" 
+                                     Color="@(SelectedTags.Contains(tag) ? Color.Primary : Color.Default)"
+                                     Variant="@(SelectedTags.Contains(tag) ? Variant.Filled : Variant.Outlined)"
+                                     OnClick="@(() => ToggleTag(tag))">
+                                @tag
+                            </MudChip>
+                        }
+                    </MudStack>
+
+                    <MudTextField @bind-Value="CustomTag" 
+                                  Label="Add custom tag" 
+                                  Adornment="Adornment.End" 
+                                  AdornmentIcon="@Icons.Material.Filled.Add"
+                                  OnAdornmentClick="AddCustomTag" 
+                                  OnKeyDown="OnCustomTagKeyDown" />
+
+                    <MudTextField @bind-Value="Model.Notes" 
+                                  Label="Notes (optional)" 
+                                  Lines="4" 
+                                  MaxLength="2000"
+                                  Counter="2000" />
+                </MudStack>
+            </MudForm>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Error" 
+                   Variant="Variant.Outlined" 
+                   OnClick="HandleDeleteAsync" 
+                   Disabled="@_isSubmitting">
+            Delete
+        </MudButton>
+        <MudButton Color="Color.Primary" 
+                   Variant="Variant.Filled" 
+                   OnClick="SubmitAsync" 
+                   Disabled="@(!_isFormValid || _isSubmitting)">
+            @if (_isSubmitting)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate Class="mr-2" />
+            }
+            Save changes
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public Guid EntryId { get; set; }
+
+    [Parameter]
+    public EventCallback OnEntryUpdated { get; set; }
+
+    private MudForm _form = null!;
+    private bool _isFormValid;
+    private bool _isSubmitting;
+    private bool _isLoading = true;
+
+    private UpdateEntryModel Model { get; set; } = new();
+    private HashSet<string> SelectedTags { get; set; } = [];
+    private string CustomTag { get; set; } = string.Empty;
+
+    private static readonly string[] CommonSomaticTags =
+    [
+        "Relaxed", "Tense", "Energetic", "Tired", 
+        "Warm", "Cold", "Tingling", "Heavy", 
+        "Light", "Grounded", "Floating", "Centered"
+    ];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEntryAsync();
+    }
+
+    private async Task LoadEntryAsync()
+    {
+        _isLoading = true;
+
+        try
+        {
+            var entry = await EntryApi.GetEntryByIdAsync(EntryId);
+
+            if (entry != null)
+            {
+                Model = new UpdateEntryModel
+                {
+                    SongTitle = entry.SongTitle,
+                    ArtistName = entry.ArtistName,
+                    AlbumName = entry.AlbumName,
+                    Valence = entry.Valence,
+                    Arousal = entry.Arousal,
+                    TensionLevel = entry.TensionLevel,
+                    SomaticTags = entry.SomaticTags,
+                    Notes = entry.Notes
+                };
+
+                if (entry.SomaticTags != null)
+                {
+                    SelectedTags = [.. entry.SomaticTags];
+                }
+            }
+            else
+            {
+                Snackbar.Add("Failed to load entry", Severity.Error);
+                MudDialog.Cancel();
+            }
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void ToggleTag(string tag)
+    {
+        if (SelectedTags.Contains(tag))
+        {
+            SelectedTags.Remove(tag);
+        }
+        else
+        {
+            SelectedTags.Add(tag);
+        }
+    }
+
+    private void AddCustomTag()
+    {
+        if (!string.IsNullOrWhiteSpace(CustomTag))
+        {
+            SelectedTags.Add(CustomTag.Trim());
+            CustomTag = string.Empty;
+        }
+    }
+
+    private void OnCustomTagKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            AddCustomTag();
+        }
+    }
+
+    private async Task SubmitAsync()
+    {
+        await _form.Validate();
+
+        if (!_isFormValid)
+        {
+            return;
+        }
+
+        _isSubmitting = true;
+
+        try
+        {
+            var request = new UpdateEntryRequest
+            {
+                SongTitle = Model.SongTitle,
+                ArtistName = Model.ArtistName,
+                AlbumName = Model.AlbumName,
+                Valence = Model.Valence,
+                Arousal = Model.Arousal,
+                TensionLevel = Model.TensionLevel,
+                SomaticTags = [.. SelectedTags],
+                Notes = Model.Notes
+            };
+
+            var result = await EntryApi.UpdateEntryAsync(EntryId, request);
+
+            if (result != null)
+            {
+                Snackbar.Add("Entry updated successfully", Severity.Success);
+                await OnEntryUpdated.InvokeAsync();
+                MudDialog.Close(DialogResult.Ok(result));
+            }
+            else
+            {
+                Snackbar.Add("Failed to update entry", Severity.Error);
+            }
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private async Task HandleDeleteAsync()
+    {
+        var parameters = new DialogParameters
+        {
+            { "ContentText", "Are you sure you want to delete this entry? This action cannot be undone." },
+            { "ButtonText", "Delete" },
+            { "Color", Color.Error }
+        };
+
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>("Delete entry", parameters);
+        var result = await dialog.Result;
+
+        if (result is { Canceled: false })
+        {
+            _isSubmitting = true;
+
+            try
+            {
+                var success = await EntryApi.DeleteEntryAsync(EntryId);
+
+                if (success)
+                {
+                    Snackbar.Add("Entry deleted successfully", Severity.Success);
+                    await OnEntryUpdated.InvokeAsync();
+                    MudDialog.Close(DialogResult.Ok(true));
+                }
+                else
+                {
+                    Snackbar.Add("Failed to delete entry", Severity.Error);
+                }
+            }
+            finally
+            {
+                _isSubmitting = false;
+            }
+        }
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private Color GetValenceColor(double valence) => valence switch
+    {
+        > 0.3 => Color.Success,
+        < -0.3 => Color.Error,
+        _ => Color.Default
+    };
+
+    private string GetValenceLabel(double valence) => valence switch
+    {
+        > 0.5 => "Very Happy",
+        > 0.3 => "Happy",
+        > 0.1 => "Slightly Happy",
+        < -0.5 => "Very Sad",
+        < -0.3 => "Sad",
+        < -0.1 => "Slightly Sad",
+        _ => "Neutral"
+    };
+
+    private Color GetArousalColor(double arousal) => arousal switch
+    {
+        > 0.3 => Color.Warning,
+        < -0.3 => Color.Info,
+        _ => Color.Default
+    };
+
+    private string GetArousalLabel(double arousal) => arousal switch
+    {
+        > 0.5 => "Very Energetic",
+        > 0.3 => "Energetic",
+        > 0.1 => "Slightly Energetic",
+        < -0.5 => "Very Calm",
+        < -0.3 => "Calm",
+        < -0.1 => "Slightly Calm",
+        _ => "Neutral"
+    };
+}

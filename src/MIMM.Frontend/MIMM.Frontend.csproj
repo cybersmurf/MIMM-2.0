@@ -18,7 +18,7 @@
     
     <!-- HTTP Client -->
     <PackageReference Include="System.Net.Http.Json" Version="9.0.0" />
-    <PackageReference Include="Refit" Version="7.0.0" />
+    <PackageReference Include="Refit" Version="7.2.22" />
     
     <!-- UI Component Library (optional - můžeš vybrat jinou nebo vlastní CSS) -->
     <PackageReference Include="MudBlazor" Version="7.0.0" />

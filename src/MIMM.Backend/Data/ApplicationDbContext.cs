@@ -49,7 +49,7 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.SongTitle).HasMaxLength(255).IsRequired();
-            entity.Property(e => e.ArtistName).HasMaxLength(255).IsRequired();
+            entity.Property(e => e.ArtistName).HasMaxLength(255).IsRequired(false);
             entity.Property(e => e.AlbumName).HasMaxLength(255).IsRequired();
             entity.Property(e => e.SongId).HasMaxLength(100);
             entity.Property(e => e.CoverUrl).HasMaxLength(500);

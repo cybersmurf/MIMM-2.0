@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Refit;
 using Serilog;
 using System.Text;
 using MIMM.Backend.Data;
@@ -167,10 +168,10 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/error");
-    app.UseHsts();
+    app.UseHsts(); // Only enforce HSTS in production
 }
 
-app.UseHttpsRedirection();
+// No HTTPS redirect – backend listens on HTTP only in dev
 app.UseCors("AllowFrontend");
 
 // Custom middleware

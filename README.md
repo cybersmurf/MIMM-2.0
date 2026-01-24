@@ -3,6 +3,7 @@
 **Music & Mood Journal** – Enterprise-ready web application for tracking how music affects emotions and physical sensations.
 
 [![Build](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/build.yml/badge.svg)](https://github.com/cybersmurf/MIMM-2.0/actions)
+[![CI](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/ci.yml/badge.svg)](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-9.0-purple)](https://dotnet.microsoft.com/)
 
@@ -119,10 +120,20 @@ Navigate to https://localhost:5001 and register your first account.
 
 ## 📚 Documentation
 
-- [Setup Guide](SETUP_GUIDE.md) – Complete installation & configuration
-- [Migration Guide](MIGRATION_GUIDE.md) – Migrate data from MIMM 1.0
-- [Architecture Spec](MIMM_2.0_SPECIFICATION_DOTNET.md) – Technical deep dive
-- [API Documentation](https://localhost:7001/swagger) – Interactive API docs
+### Getting Started & Development
+- [📍 **TODAY'S ACTION PLAN**](TODAY_ACTION_PLAN.md) – 🔥 **START HERE** - Database setup + E2E test (2-3h)
+- [✅ Action 1 Completion](ACTION_1_COMPLETION.md) – Database setup done ✅ 
+- [🧪 Action 2: E2E Test](ACTION_2_E2E_TEST.md) – Test auth flow (30 min)
+
+### Planning & Strategic
+- [📊 Strategic Action Plan](STRATEGIC_ACTION_PLAN_2026.md) – Comprehensive 3-week MVP roadmap
+- [🗓️ Sprint Timeline](SPRINT_TIMELINE.md) – Visual timeline & progress tracker
+- [🔬 Project Analysis](PROJECT_ANALYSIS_2026.md) – Technical deep dive & architecture
+
+### Migration & APIs
+- [🔄 Migration Guide](MIGRATION_GUIDE.md) – Migrate data from MIMM 1.0
+- [📖 Setup Guide](SETUP_GUIDE.md) – Complete installation & configuration
+- [🔗 API Documentation](https://localhost:7001/swagger) – Interactive Swagger (run backend first)
 
 ---
 

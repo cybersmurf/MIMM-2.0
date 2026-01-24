@@ -13,13 +13,11 @@ public class JournalEntry
     [MaxLength(255)]
     public string SongTitle { get; set; } = null!;
     
-    [Required]
     [MaxLength(255)]
-    public string ArtistName { get; set; } = null!;
+    public string? ArtistName { get; set; }
     
-    [Required]
     [MaxLength(255)]
-    public string AlbumName { get; set; } = null!;
+    public string AlbumName { get; set; } = "Unknown Album";
     
     [MaxLength(100)]
     public string? SongId { get; set; } // iTunes/Deezer/MusicBrainz ID
@@ -29,7 +27,7 @@ public class JournalEntry
     
     [Required]
     [MaxLength(50)]
-    public string Source { get; set; } = null!; // "itunes", "deezer", "musicbrainz", "manual", "lastfm"
+    public string Source { get; set; } = "manual"; // "itunes", "deezer", "musicbrainz", "manual", "lastfm"
     
     // Mood (Russell Circumplex Model)
     [Range(-1.0, 1.0)]
@@ -51,6 +49,8 @@ public class JournalEntry
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
     public DateTime? UpdatedAt { get; set; }
+    
+    public DateTime? DeletedAt { get; set; } // Soft delete flag
     
     public bool ScrobbledToLastFm { get; set; }
     

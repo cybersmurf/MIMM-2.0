@@ -1,3 +1,7 @@
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -6,7 +10,17 @@
     <NotFound>
         <PageTitle>Not found</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
+            <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8">
+                <MudPaper Elevation="2" Class="pa-8">
+                    <MudText Typo="Typo.h4" Color="Color.Error" Class="mb-4">404 - Not Found</MudText>
+                    <MudText Typo="Typo.body1" Class="mb-4">
+                        Sorry, there's nothing at this address.
+                    </MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/">
+                        Go Home
+                    </MudButton>
+                </MudPaper>
+            </MudContainer>
         </LayoutView>
     </NotFound>
 </Router>

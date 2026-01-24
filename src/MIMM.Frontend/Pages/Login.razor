@@ -1,0 +1,221 @@
+@page "/login"
+@using MIMM.Shared.Dtos
+@using MIMM.Frontend.Services
+@inject IAuthApiService AuthApi
+@inject IAuthStateService AuthState
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Login - MIMM</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Elevation="3" Class="pa-8">
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">
+            🎵 Music & Mood Journal
+        </MudText>
+        <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary" Class="mb-6">
+            @(isLoginMode ? "Welcome Back" : "Create Account")
+        </MudText>
+
+        <EditForm Model="@model" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+
+            @if (!isLoginMode)
+            {
+                <MudTextField @bind-Value="model.DisplayName"
+                              Label="Display Name"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              For="@(() => model.DisplayName)"
+                              Class="mb-3" />
+            }
+
+            <MudTextField @bind-Value="model.Email"
+                          Label="Email"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          InputType="InputType.Email"
+                          For="@(() => model.Email)"
+                          Class="mb-3" />
+
+            <MudTextField @bind-Value="model.Password"
+                          Label="Password"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          InputType="@passwordInputType"
+                          For="@(() => model.Password)"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@passwordIcon"
+                          OnAdornmentClick="TogglePasswordVisibility"
+                          Class="mb-3" />
+
+            @if (!isLoginMode)
+            {
+                <MudTextField @bind-Value="model.ConfirmPassword"
+                              Label="Confirm Password"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              InputType="@passwordInputType"
+                              For="@(() => model.ConfirmPassword)"
+                              Class="mb-3" />
+
+                <MudSelect @bind-Value="model.Language"
+                           Label="Preferred Language"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           Class="mb-4">
+                    <MudSelectItem Value="@("en")">English</MudSelectItem>
+                    <MudSelectItem Value="@("cs")">Čeština</MudSelectItem>
+                    <MudSelectItem Value="@("de")">Deutsch</MudSelectItem>
+                    <MudSelectItem Value="@("fr")">Français</MudSelectItem>
+                </MudSelect>
+            }
+
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       FullWidth="true"
+                       Size="Size.Large"
+                       Disabled="@isSubmitting"
+                       Class="mb-4">
+                @if (isSubmitting)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                    <span>Processing...</span>
+                }
+                else
+                {
+                    <span>@(isLoginMode ? "Sign In" : "Create Account")</span>
+                }
+            </MudButton>
+
+            <ValidationSummary />
+        </EditForm>
+
+        <MudDivider Class="my-4" />
+
+        <MudText Align="Align.Center">
+            @if (isLoginMode)
+            {
+                <span>Don't have an account?</span>
+                <MudLink Color="Color.Primary" @onclick="ToggleMode" Class="ml-1" Style="cursor: pointer;">
+                    Sign Up
+                </MudLink>
+            }
+            else
+            {
+                <span>Already have an account?</span>
+                <MudLink Color="Color.Primary" @onclick="ToggleMode" Class="ml-1" Style="cursor: pointer;">
+                    Sign In
+                </MudLink>
+            }
+        </MudText>
+
+        @if (!isLoginMode)
+        {
+            <MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary" Class="mt-4">
+                Password must be at least 8 characters with uppercase, lowercase, and number.
+            </MudText>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private LoginFormModel model = new();
+    private bool isLoginMode = true;
+    private bool isSubmitting = false;
+    private bool showPassword = false;
+
+    private string passwordIcon => showPassword ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
+    private InputType passwordInputType => showPassword ? InputType.Text : InputType.Password;
+
+    private void TogglePasswordVisibility()
+    {
+        showPassword = !showPassword;
+    }
+
+    private void ToggleMode()
+    {
+        isLoginMode = !isLoginMode;
+        model = new LoginFormModel { Language = "en" };
+    }
+
+    private async Task HandleSubmit()
+    {
+        isSubmitting = true;
+
+        try
+        {
+            AuthenticationResponse? response = null;
+
+            if (isLoginMode)
+            {
+                // Login
+                var loginRequest = new LoginRequest
+                {
+                    Email = model.Email,
+                    Password = model.Password
+                };
+
+                response = await AuthApi.LoginAsync(loginRequest);
+            }
+            else
+            {
+                // Register
+                if (model.Password != model.ConfirmPassword)
+                {
+                    Snackbar.Add("Passwords do not match", Severity.Error);
+                    return;
+                }
+
+                var registerRequest = new RegisterRequest
+                {
+                    Email = model.Email,
+                    Password = model.Password,
+                    DisplayName = model.DisplayName ?? model.Email.Split('@')[0],
+                    Language = model.Language ?? "en"
+                };
+
+                response = await AuthApi.RegisterAsync(registerRequest);
+            }
+
+            if (response != null)
+            {
+                // Store tokens
+                await AuthState.SetTokensAsync(response.AccessToken, response.RefreshToken);
+
+                Snackbar.Add(
+                    isLoginMode ? "Welcome back!" : "Account created successfully!",
+                    Severity.Success
+                );
+
+                // Redirect to dashboard
+                Navigation.NavigateTo("/dashboard");
+            }
+            else
+            {
+                Snackbar.Add(
+                    isLoginMode ? "Invalid email or password" : "Registration failed. Email may already be in use.",
+                    Severity.Error
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private class LoginFormModel
+    {
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
+        public string? ConfirmPassword { get; set; }
+        public string? DisplayName { get; set; }
+        public string? Language { get; set; } = "en";
+    }
+}

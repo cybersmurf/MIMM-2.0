@@ -32,6 +32,12 @@ public class User
     
     public DateTime? DeletedAt { get; set; } // Soft delete
     
+    // Refresh token for token rotation
+    [MaxLength(500)]
+    public string? RefreshToken { get; set; }
+    
+    public DateTime? RefreshTokenExpiresAt { get; set; }
+    
     // Navigation properties
     public ICollection<JournalEntry> Entries { get; set; } = new List<JournalEntry>();
     public LastFmToken? LastFmToken { get; set; }

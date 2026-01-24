@@ -23,19 +23,16 @@
     
     <!-- Authentication & Security -->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     
     <!-- Validation -->
     <PackageReference Include="FluentValidation" Version="11.9.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
     
-    <!-- SignalR -->
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="9.0.0" />
-    
     <!-- HTTP Client -->
-    <PackageReference Include="Refit" Version="7.0.0" />
-    <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
+    <PackageReference Include="Refit" Version="7.2.22" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.2.22" />
     
     <!-- Logging -->
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
@@ -43,7 +40,7 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     
     <!-- Email -->
-    <PackageReference Include="SendGrid" Version="10.0.0" />
+    <PackageReference Include="SendGrid" Version="9.29.3" />
     
     <!-- Caching (optional) -->
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.0" />
