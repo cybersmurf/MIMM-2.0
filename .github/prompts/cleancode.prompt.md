@@ -12,6 +12,7 @@ Navrhni u vybraného kódu takové změny, které:
 
 Nenavrhuj techncký refaktoring, přidávání handlování chyb nebo optimalizace či cokoliv jiného mimo čistoty kódu.
 
-Zaměř se pouze na zásadnější nedostatky v kódu. Do výsledku vypiš základní nedostatky kódu (⚠️) a následně navrhni kompletní refaktorovaný kód.
+Zaměř se pouze na zásadnější nedostatky v kódu.
+Do výsledku vypiš základní nedostatky kódu (⚠️) a následně navrhni kompletní refaktorovaný kód.
 
 Nedává-li jakákkoliv změna smysl, pouze odpověd stručně: "❌ Není potřeba kód refaktorovat."

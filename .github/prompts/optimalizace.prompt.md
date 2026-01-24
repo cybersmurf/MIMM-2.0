@@ -13,7 +13,8 @@ Optimalizuj vybraný kód z hlediska výkonu.
 
 Optimalizuj pouze tam, kde to dává smysl. Zachovej čitelnost a udržovatelnost kódu.
 
-💡 Začátek odpovědi napiš stručné hodnocení jednou větou a doplň score optimalizace na škále od 0 do 10. Následovat budou Identifikované problémy (⚠️) a nakonec navrheš optimalizovaný kód.
+💡 Začátek odpovědi napiš stručné hodnocení jednou větou a doplň score optimalizace na škále od 0 do 10.
+Následovat budou Identifikované problémy (⚠️) a nakonec navrheš optimalizovaný kód.
 
 Je-li vybraný kód příliš rozsáhlý, nic neměň a vrať stručně zprávu "❌ Kód je příliš rozsáhlý na optimalizaci."
 
