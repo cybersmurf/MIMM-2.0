@@ -266,20 +266,20 @@ Navigate to <https://localhost:5001> and test the application.
 
 ### 🔥 Analysis & Planning (NEW)
 
-- **[00_DOCUMENTATION_INDEX.md](00_DOCUMENTATION_INDEX.md)** – Master index for all analysis
-- **[EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md](EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md)** – For business decision-makers (30 min read)
-- **[MANAGEMENT_QUICK_START_CZ.md](MANAGEMENT_QUICK_START_CZ.md)** – Non-technical overview (Czech)
-- **[QUICK_REFERENCE_CARD.md](QUICK_REFERENCE_CARD.md)** – One-page cheat sheet
-- **[TECHNICAL_ANALYSIS_DEEP_DIVE.md](TECHNICAL_ANALYSIS_DEEP_DIVE.md)** – For technical leads (90 min read)
-- **[FEATURE_STATUS_AND_ROADMAP.md](FEATURE_STATUS_AND_ROADMAP.md)** – Feature matrix & timelines
-- **[ANALYSIS_SUMMARY.md](ANALYSIS_SUMMARY.md)** – Financial projections & risk analysis
+- **[docs/analysis/00_DOCUMENTATION_INDEX.md](docs/analysis/00_DOCUMENTATION_INDEX.md)** – Master index for all analysis
+- **[docs/analysis/EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md](docs/analysis/EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md)** – For business decision-makers (30 min read)
+- **[docs/analysis/MANAGEMENT_QUICK_START_CZ.md](docs/analysis/MANAGEMENT_QUICK_START_CZ.md)** – Non-technical overview (Czech)
+- **[docs/analysis/QUICK_REFERENCE_CARD.md](docs/analysis/QUICK_REFERENCE_CARD.md)** – One-page cheat sheet
+- **[docs/analysis/TECHNICAL_ANALYSIS_DEEP_DIVE.md](docs/analysis/TECHNICAL_ANALYSIS_DEEP_DIVE.md)** – For technical leads (90 min read)
+- **[docs/analysis/FEATURE_STATUS_AND_ROADMAP.md](docs/analysis/FEATURE_STATUS_AND_ROADMAP.md)** – Feature matrix & timelines
+- **[docs/analysis/ANALYSIS_SUMMARY.md](docs/analysis/ANALYSIS_SUMMARY.md)** – Financial projections & risk analysis
 
 ### 🎯 Development
 
 - **[AGENTS.md](AGENTS.md)** – Instructions for AI agents (Copilot, Claude, Gemini)
-- **[TODAY_ACTION_PLAN.md](TODAY_ACTION_PLAN.md)** – Current sprint priorities
-- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** – Complete installation guide
-- **[DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)** – Development workflow & standards
+- **[docs/TODAY_ACTION_PLAN.md](docs/TODAY_ACTION_PLAN.md)** – Current sprint priorities
+- **[docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)** – Complete installation guide
+- **[docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)** – Development workflow & standards
 
 ### 📋 Prompts & Instructions
 
@@ -289,9 +289,9 @@ Navigate to <https://localhost:5001> and test the application.
 
 ### 🚀 Deployment
 
-- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** – Full deployment guide
-- **[DEPLOYMENT_PLAN.md](DEPLOYMENT_PLAN.md)** – Strategy & timeline
-- **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** – Migrate from MIMM 1.0
+- **[docs/deployment/DEPLOYMENT_CHECKLIST.md](docs/deployment/DEPLOYMENT_CHECKLIST.md)** – Full deployment guide
+- **[docs/deployment/DEPLOYMENT_PLAN.md](docs/deployment/DEPLOYMENT_PLAN.md)** – Strategy & timeline
+- **[docs/MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md)** – Migrate from MIMM 1.0
 
 ---
 
