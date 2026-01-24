@@ -178,6 +178,12 @@ Volitelné: spouštění GitHub Actions lokálně pomocí `act` (pokud ho použ�
 act -W .github/workflows/ci.yml -j build-and-test
 ```
 
+### CI artifacts & coverage
+- Výstup coverage je ukládán jako artefakt `coverage-reports` v GitHub Actions runu.
+- Obsahuje soubory `coverage.cobertura.xml` a `coverage.json` pod `**/TestResults/**`.
+- Pro stažení otevři konkrétní run v Actions → sekce Artifacts → `coverage-reports`.
+- Pro lokální prohlížení můžeš použít libovolný Cobertura viewer, nebo VS Code pluginy pro coverage.
+
 ---
 
 ## 🐳 Docker Deployment
