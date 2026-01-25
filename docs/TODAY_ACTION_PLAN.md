@@ -1,9 +1,9 @@
-# ⚡ TODAY'S ACTION PLAN - 24. ledna 2026
+# ⚡ TODAY'S ACTION PLAN - 25. ledna 2026
 
-**Current Time**: Start of Sprint 1  
-**Priority**: 🔴 CRITICAL PATH - Database Setup  
-**Estimated Time**: 2-3 hours total  
-**Blocker Status**: These tasks must complete before any other development
+**Current Time**: Sprint 1 continues  
+**Priority**: 🔴 CRITICAL PATH - Auth + Entries MVP  
+**Test Status**: dotnet test MIMM.sln -v minimal → 37/37 passing (25. ledna)  
+**DB Schema Sanity**: Users (Email unique, soft delete), Entries (SongTitle required, Source required, text[] SomaticTags, indexes on UserId+CreatedAt, Source), LastFmTokens (1:1 per user, unique UserId)
 
 ---
 

@@ -58,5 +58,60 @@ public class AuthE2ETests : IClassFixture<TestWebApplicationFactory>
         me.DisplayName.Should().Be("E2E User");
     }
 
+    [Fact]
+    public async Task RefreshToken_Flow_Succeeds()
+    {
+        var email = $"refresh_{Guid.NewGuid():N}@example.com";
+        var password = "Test123!";
+
+        // Register
+        var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", new
+        {
+            Email = email,
+            Password = password,
+            DisplayName = "Refresh User"
+        });
+        registerResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+
+        // Login to get refresh token
+        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new
+        {
+            Email = email,
+            Password = password
+        });
+        loginResponse.EnsureSuccessStatusCode();
+
+        var login = await loginResponse.Content.ReadFromJsonAsync<MIMM.Shared.Dtos.AuthenticationResponse>();
+        login.Should().NotBeNull();
+        login!.RefreshToken.Should().NotBeNullOrWhiteSpace();
+
+        // Refresh
+        var refreshResponse = await _client.PostAsJsonAsync("/api/auth/refresh", new
+        {
+            RefreshToken = login.RefreshToken
+        });
+        refreshResponse.EnsureSuccessStatusCode();
+
+        var refreshed = await refreshResponse.Content.ReadFromJsonAsync<MIMM.Shared.Dtos.AuthenticationResponse>();
+        refreshed.Should().NotBeNull();
+        refreshed!.AccessToken.Should().NotBeNullOrWhiteSpace();
+        refreshed.RefreshToken.Should().NotBe(login.RefreshToken); // rotated
+    }
+
+    [Fact]
+    public async Task Login_InvalidCredentials_ReturnsUnauthorized()
+    {
+        var email = $"invalid_{Guid.NewGuid():N}@example.com";
+
+        // Ensure user is not registered, attempt login
+        var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", new
+        {
+            Email = email,
+            Password = "WrongPassword!"
+        });
+
+        loginResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+    }
+
     // Use shared DTOs
 }

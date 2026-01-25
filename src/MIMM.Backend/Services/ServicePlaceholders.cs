@@ -5,14 +5,12 @@ namespace MIMM.Backend.Services;
 public interface IUserService { }
 public interface IAnalyticsService { }
 public interface ILastFmService { }
-public interface IMusicSearchService { }
 public interface IEmailService { }
 
 // Placeholder implementations - these will be fully implemented later
 public class UserService : IUserService { }
 public class AnalyticsService : IAnalyticsService { }
 public class LastFmService : ILastFmService { }
-public class MusicSearchService : IMusicSearchService { }
 public class EmailService : IEmailService { }
 
 // Refit HTTP Client placeholder

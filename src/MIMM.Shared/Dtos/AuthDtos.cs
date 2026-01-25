@@ -50,3 +50,25 @@ public record UserDto
     public required string Language { get; init; }
     public required bool EmailVerified { get; init; }
 }
+
+/// <summary>
+/// Music track result used by music search endpoints
+/// </summary>
+public record MusicTrackDto
+{
+    public required string Title { get; init; }
+    public string? Artist { get; init; }
+    public string? Album { get; init; }
+    public string? CoverUrl { get; init; }
+    public string? Source { get; init; }
+    public string? ExternalId { get; init; }
+}
+
+/// <summary>
+/// Response wrapper for music search
+/// </summary>
+public record MusicSearchResponse
+{
+    public required string Query { get; init; }
+    public required List<MusicTrackDto> Items { get; init; }
+}

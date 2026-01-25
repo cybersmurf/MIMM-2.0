@@ -13,6 +13,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<JournalEntry> Entries { get; set; } = null!;
     public DbSet<LastFmToken> LastFmTokens { get; set; } = null!;
+    public DbSet<MusicBrainzArtist> MusicBrainzArtists { get; set; } = null!;
+    public DbSet<MusicBrainzRelease> MusicBrainzReleases { get; set; } = null!;
+    public DbSet<MusicBrainzRecording> MusicBrainzRecordings { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -73,6 +76,39 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.SessionKey).HasMaxLength(255).IsRequired();
             entity.Property(e => e.LastFmUsername).HasMaxLength(100).IsRequired();
             entity.HasIndex(e => e.UserId).IsUnique();
+        });
+
+        // MusicBrainz artist cache
+        modelBuilder.Entity<MusicBrainzArtist>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasMaxLength(36);
+            entity.Property(e => e.Name).HasMaxLength(255).IsRequired();
+        });
+
+        // MusicBrainz release cache
+        modelBuilder.Entity<MusicBrainzRelease>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasMaxLength(36);
+            entity.Property(e => e.Title).HasMaxLength(255).IsRequired();
+            entity.Property(e => e.ReleaseDate).HasMaxLength(100);
+            entity.Property(e => e.CoverArtUrl).HasMaxLength(500);
+        });
+
+        // MusicBrainz recording cache
+        modelBuilder.Entity<MusicBrainzRecording>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasMaxLength(36);
+            entity.Property(e => e.Title).HasMaxLength(255).IsRequired();
+            entity.Property(e => e.ArtistId).HasMaxLength(36);
+            entity.Property(e => e.ArtistName).HasMaxLength(255);
+            entity.Property(e => e.ReleaseId).HasMaxLength(36);
+            entity.Property(e => e.ReleaseTitle).HasMaxLength(255);
+            entity.Property(e => e.CoverUrl).HasMaxLength(500);
+            entity.HasIndex(e => e.ArtistId);
+            entity.HasIndex(e => e.ReleaseId);
         });
     }
 }

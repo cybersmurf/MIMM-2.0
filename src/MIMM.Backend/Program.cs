@@ -95,7 +95,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<ILastFmService, LastFmService>();
-builder.Services.AddScoped<IMusicSearchService, MusicSearchService>();
+builder.Services.AddHttpClient<IMusicSearchService, MusicSearchService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // === HTTP CLIENTS (Refit) ===

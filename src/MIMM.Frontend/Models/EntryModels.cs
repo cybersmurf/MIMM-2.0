@@ -8,6 +8,7 @@ public class CreateEntryModel
     public string SongTitle { get; set; } = string.Empty;
     public string? ArtistName { get; set; }
     public string? AlbumName { get; set; }
+    public string? CoverUrl { get; set; }
     public double Valence { get; set; } = 0.0;
     public double Arousal { get; set; } = 0.0;
     public int TensionLevel { get; set; } = 50;
@@ -23,6 +24,7 @@ public class UpdateEntryModel
     public string? SongTitle { get; set; }
     public string? ArtistName { get; set; }
     public string? AlbumName { get; set; }
+    public string? CoverUrl { get; set; }
     public double Valence { get; set; } = 0.0;
     public double Arousal { get; set; } = 0.0;
     public int TensionLevel { get; set; } = 50;

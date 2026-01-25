@@ -24,41 +24,25 @@
 
                     <MudTextField @bind-Value="Model.AlbumName" Label="Album" />
 
+                    <MudPaper Class="pa-3" Elevation="0" Style="background-color:rgba(0,0,0,0.02);">
+                        <MudStack Spacing="2">
+                            <MudText Typo="Typo.subtitle2">Find a track</MudText>
+
+                            @if (_selectedTrack is not null)
+                            {
+                                <MudChip Color="Color.Primary" Variant="Variant.Filled" Class="mb-1">
+                                    Selected: @_selectedTrack.Title — @_selectedTrack.Artist (@_selectedTrack.Album)
+                                </MudChip>
+                            }
+
+                            <MusicSearchBox OnTrackSelected="HandleTrackSelected" />
+                        </MudStack>
+                    </MudPaper>
+
                     <MudDivider Class="my-2" />
 
-                    <MudText Typo="Typo.subtitle2">Mood</MudText>
-
-                    <MudStack Spacing="2">
-                        <MudText Typo="Typo.body2">
-                            Valence: @Model.Valence.ToString("F2") 
-                            <MudChip T="string" Size="Size.Small" Color="@GetValenceColor(Model.Valence)">
-                                @GetValenceLabel(Model.Valence)
-                            </MudChip>
-                        </MudText>
-                        <MudSlider @bind-Value="Model.Valence" 
-                                   Min="-1" 
-                                   Max="1" 
-                                   Step="0.1" 
-                                   Color="Color.Primary">
-                            Sad ← → Happy
-                        </MudSlider>
-                    </MudStack>
-
-                    <MudStack Spacing="2">
-                        <MudText Typo="Typo.body2">
-                            Arousal: @Model.Arousal.ToString("F2")
-                            <MudChip T="string" Size="Size.Small" Color="@GetArousalColor(Model.Arousal)">
-                                @GetArousalLabel(Model.Arousal)
-                            </MudChip>
-                        </MudText>
-                        <MudSlider @bind-Value="Model.Arousal" 
-                                   Min="-1" 
-                                   Max="1" 
-                                   Step="0.1" 
-                                   Color="Color.Secondary">
-                            Calm ← → Energetic
-                        </MudSlider>
-                    </MudStack>
+                    <MoodSelector2D @bind-Valence="Model.Valence"
+                                     @bind-Arousal="Model.Arousal" />
 
                     <MudStack Spacing="2">
                         <MudText Typo="Typo.body2">Tension level: @Model.TensionLevel</MudText>
@@ -135,6 +119,7 @@
     private bool _isFormValid;
     private bool _isSubmitting;
     private bool _isLoading = true;
+    private MusicTrackDto? _selectedTrack;
 
     private UpdateEntryModel Model { get; set; } = new();
     private HashSet<string> SelectedTags { get; set; } = [];
@@ -167,6 +152,7 @@
                     SongTitle = entry.SongTitle,
                     ArtistName = entry.ArtistName,
                     AlbumName = entry.AlbumName,
+                    CoverUrl = entry.CoverUrl,
                     Valence = entry.Valence,
                     Arousal = entry.Arousal,
                     TensionLevel = entry.TensionLevel,
@@ -220,6 +206,16 @@
         }
     }
 
+    private void HandleTrackSelected(MusicTrackDto track)
+    {
+        _selectedTrack = track;
+        Model.SongTitle = track.Title;
+        Model.ArtistName = track.Artist;
+        Model.AlbumName = track.Album;
+        Model.CoverUrl = track.CoverUrl;
+        StateHasChanged();
+    }
+
     private async Task SubmitAsync()
     {
         await _form.Validate();
@@ -238,6 +234,7 @@
                 SongTitle = Model.SongTitle,
                 ArtistName = Model.ArtistName,
                 AlbumName = Model.AlbumName,
+                CoverUrl = _selectedTrack?.CoverUrl ?? Model.CoverUrl,
                 Valence = Model.Valence,
                 Arousal = Model.Arousal,
                 TensionLevel = Model.TensionLevel,
@@ -303,40 +300,4 @@
     }
 
     private void Cancel() => MudDialog.Cancel();
-
-    private Color GetValenceColor(double valence) => valence switch
-    {
-        > 0.3 => Color.Success,
-        < -0.3 => Color.Error,
-        _ => Color.Default
-    };
-
-    private string GetValenceLabel(double valence) => valence switch
-    {
-        > 0.5 => "Very Happy",
-        > 0.3 => "Happy",
-        > 0.1 => "Slightly Happy",
-        < -0.5 => "Very Sad",
-        < -0.3 => "Sad",
-        < -0.1 => "Slightly Sad",
-        _ => "Neutral"
-    };
-
-    private Color GetArousalColor(double arousal) => arousal switch
-    {
-        > 0.3 => Color.Warning,
-        < -0.3 => Color.Info,
-        _ => Color.Default
-    };
-
-    private string GetArousalLabel(double arousal) => arousal switch
-    {
-        > 0.5 => "Very Energetic",
-        > 0.3 => "Energetic",
-        > 0.1 => "Slightly Energetic",
-        < -0.5 => "Very Calm",
-        < -0.3 => "Calm",
-        < -0.1 => "Slightly Calm",
-        _ => "Neutral"
-    };
 }

@@ -52,7 +52,15 @@
                             <MudText Typo="Typo.body2" Color="Color.Secondary">
                                 @(entry.ArtistName ?? "Unknown artist") • @entry.CreatedAt.ToString("MMM d, HH:mm")
                             </MudText>
+                            @if (!string.IsNullOrWhiteSpace(entry.AlbumName))
+                            {
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">Album: @entry.AlbumName</MudText>
+                            }
                         </MudStack>
+
+                        <MudChip T="string" Size="Size.Small" Color="@GetSourceColor(entry.Source)" Variant="Variant.Outlined">
+                            @entry.Source
+                        </MudChip>
 
                         <MudChip T="string" Size="Size.Small" Color="@GetMoodColor(entry.Valence)">
                             @GetMoodLabel(entry.Valence, entry.Arousal)
@@ -184,6 +192,17 @@
             > 0.3 => Color.Success,
             < -0.3 => Color.Error,
             _ => Color.Warning
+        };
+    }
+
+    private Color GetSourceColor(string source)
+    {
+        return source?.ToLowerInvariant() switch
+        {
+            "itunes" => Color.Info,
+            "lastfm" => Color.Secondary,
+            "deezer" => Color.Tertiary,
+            _ => Color.Dark
         };
     }
 

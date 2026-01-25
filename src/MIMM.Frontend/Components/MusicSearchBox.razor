@@ -1,0 +1,104 @@
+@using MIMM.Shared.Dtos
+@inject IMusicSearchApiService MusicApi
+@inject ISnackbar Snackbar
+
+<MudPaper Class="pa-4" Elevation="1">
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle1">Search music</MudText>
+        <MudTextField @bind-Value="_query"
+                      Label="Song or artist"
+                      Variant="Variant.Outlined"
+                      OnKeyDown="HandleKeyDown"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      OnAdornmentClick="SearchAsync"
+                      Disabled="_loading" />
+
+        @if (_loading)
+        {
+            <MudProgressLinear Indeterminate Color="Color.Primary" />
+        }
+
+        @if (_results is { Count: > 0 })
+        {
+            <MudList>
+                @foreach (var item in _results)
+                {
+                    <MudListItem Class="music-item">
+                        <MudAvatar Src="@item.CoverUrl" Size="Size.Medium" Class="mr-2" />
+                        <MudStack Spacing="0" Style="flex:1;">
+                            <MudText Typo="Typo.body1">@item.Title</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">@item.Artist</MudText>
+                        </MudStack>
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">@item.Album</MudText>
+                        @if (OnTrackSelected.HasDelegate)
+                        {
+                            <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="() => Select(item)">
+                                Use
+                            </MudButton>
+                        }
+                    </MudListItem>
+                    <MudDivider />
+                }
+            </MudList>
+        }
+        else if (!_loading && _searchedOnce)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">No results</MudAlert>
+        }
+    </MudStack>
+</MudPaper>
+
+@code {
+    private string _query = string.Empty;
+    private bool _loading;
+    private bool _searchedOnce;
+    private List<MusicTrackDto> _results = [];
+
+    [Parameter]
+    public EventCallback<MusicTrackDto> OnTrackSelected { get; set; }
+
+    private async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_query))
+        {
+            Snackbar.Add("Enter a search term", Severity.Warning);
+            return;
+        }
+
+        _loading = true;
+        StateHasChanged();
+
+        try
+        {
+            var response = await MusicApi.SearchAsync(_query, 10);
+            _searchedOnce = true;
+            _results = response?.Items ?? [];
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Search failed: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchAsync();
+        }
+    }
+
+    private async Task Select(MusicTrackDto track)
+    {
+        if (OnTrackSelected.HasDelegate)
+        {
+            await OnTrackSelected.InvokeAsync(track);
+        }
+    }
+}
