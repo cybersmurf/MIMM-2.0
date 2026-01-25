@@ -48,7 +48,15 @@
                         }
                         
                         <MudStack Spacing="0" Style="flex: 1;">
-                            <MudText Typo="Typo.body1">@entry.SongTitle</MudText>
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                                <MudText Typo="Typo.body1">@entry.SongTitle</MudText>
+                                @if (!string.IsNullOrWhiteSpace(entry.SongId))
+                                {
+                                    <MudTooltip Text="@($"MusicBrainz ID: {entry.SongId}")" Arrow ShowOnHover Duration="500">
+                                        <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Color="Color.Secondary" />
+                                    </MudTooltip>
+                                }
+                            </MudStack>
                             <MudText Typo="Typo.body2" Color="Color.Secondary">
                                 @(entry.ArtistName ?? "Unknown artist") • @entry.CreatedAt.ToString("MMM d, HH:mm")
                             </MudText>
@@ -58,13 +66,24 @@
                             }
                         </MudStack>
 
-                        <MudChip T="string" Size="Size.Small" Color="@GetSourceColor(entry.Source)" Variant="Variant.Outlined">
-                            @entry.Source
-                        </MudChip>
+                        <MudStack Row Spacing="1">
+                            <MudChip T="string" Size="Size.Small" Color="@GetSourceColor(entry.Source)" Variant="Variant.Outlined">
+                                @GetSourceBadge(entry.Source)
+                            </MudChip>
 
-                        <MudChip T="string" Size="Size.Small" Color="@GetMoodColor(entry.Valence)">
-                            @GetMoodLabel(entry.Valence, entry.Arousal)
-                        </MudChip>
+                            <MudChip T="string" Size="Size.Small" Color="@GetMoodColor(entry.Valence)">
+                                @GetMoodLabel(entry.Valence, entry.Arousal)
+                            </MudChip>
+
+                            @if (!string.IsNullOrWhiteSpace(entry.SongId))
+                            {
+                                <MudTooltip Text="@($"MusicBrainz ID: {entry.SongId}")" Arrow ShowOnHover Duration="500">
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Tertiary" Icon="@Icons.Material.Filled.MusicNote" Variant="Variant.Filled">
+                                        MB
+                                    </MudChip>
+                                </MudTooltip>
+                            }
+                        </MudStack>
 
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" 
                                        Size="Size.Small" 
@@ -215,6 +234,19 @@
             ( < -0.3, > 0.3) => "Angry",
             ( < -0.3, < -0.3) => "Sad",
             _ => "Neutral"
+        };
+    }
+
+    private string GetSourceBadge(string source)
+    {
+        return source?.ToLowerInvariant() switch
+        {
+            "musicbrainz" => "🎵 MB",
+            "itunes" => "🎵 iTunes",
+            "lastfm" => "🎵 Last.fm",
+            "deezer" => "🎵 Deezer",
+            "manual" => "✍️ Manual",
+            _ => source ?? "Unknown"
         };
     }
 }

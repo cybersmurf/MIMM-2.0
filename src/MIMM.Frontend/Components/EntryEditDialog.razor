@@ -18,7 +18,8 @@
                     <MudTextField @bind-Value="Model.SongTitle" 
                                   Label="Song title" 
                                   Required 
-                                  RequiredError="Song title is required" />
+                                  RequiredError="Song title is required"
+                                  HelperText="@(string.IsNullOrEmpty(Model.SongId) ? "" : $"MusicBrainz ID: {Model.SongId}")" />
 
                     <MudTextField @bind-Value="Model.ArtistName" Label="Artist" />
 
@@ -30,9 +31,39 @@
 
                             @if (_selectedTrack is not null)
                             {
-                                <MudChip Color="Color.Primary" Variant="Variant.Filled" Class="mb-1">
-                                    Selected: @_selectedTrack.Title — @_selectedTrack.Artist (@_selectedTrack.Album)
-                                </MudChip>
+                                <MudPaper Class="pa-2" Elevation="0" Style="background-color:rgba(33,150,243,0.1); border-left:4px solid #2196F3;">
+                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                        @if (!string.IsNullOrEmpty(_selectedTrack.CoverUrl))
+                                        {
+                                            <MudAvatar Src="@_selectedTrack.CoverUrl" Size="Size.Large" Class="rounded" />
+                                        }
+                                        else
+                                        {
+                                            <MudAvatar Color="Color.Primary" Size="Size.Large">
+                                                <MudIcon Icon="@Icons.Material.Filled.MusicNote" />
+                                            </MudAvatar>
+                                        }
+                                        
+                                        <MudStack Spacing="0" Style="flex:1;">
+                                            <MudText Typo="Typo.body1" Style="font-weight:500;">@_selectedTrack.Title</MudText>
+                                            <MudText Typo="Typo.body2" Color="Color.Secondary">@_selectedTrack.Artist</MudText>
+                                            @if (!string.IsNullOrEmpty(_selectedTrack.Album))
+                                            {
+                                                <MudText Typo="Typo.caption" Color="Color.Secondary">@_selectedTrack.Album</MudText>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(_selectedTrack.ExternalId))
+                                            {
+                                                <MudText Typo="Typo.caption" Color="Color.Tertiary">
+                                                    <strong>@(_selectedTrack.Source == "musicbrainz" ? "🎵 MusicBrainz" : "🎵 " + _selectedTrack.Source)</strong>
+                                                </MudText>
+                                            }
+                                        </MudStack>
+                                        
+                                        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small" OnClick="ClearSelection">
+                                            Change
+                                        </MudButton>
+                                    </MudStack>
+                                </MudPaper>
                             }
 
                             <MusicSearchBox OnTrackSelected="HandleTrackSelected" />
@@ -153,6 +184,7 @@
                     ArtistName = entry.ArtistName,
                     AlbumName = entry.AlbumName,
                     CoverUrl = entry.CoverUrl,
+                    SongId = entry.SongId,
                     Valence = entry.Valence,
                     Arousal = entry.Arousal,
                     TensionLevel = entry.TensionLevel,
@@ -213,6 +245,13 @@
         Model.ArtistName = track.Artist;
         Model.AlbumName = track.Album;
         Model.CoverUrl = track.CoverUrl;
+        Model.SongId = track.ExternalId;
+        StateHasChanged();
+    }
+
+    private void ClearSelection()
+    {
+        _selectedTrack = null;
         StateHasChanged();
     }
 

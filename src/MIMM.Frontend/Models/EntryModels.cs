@@ -9,6 +9,8 @@ public class CreateEntryModel
     public string? ArtistName { get; set; }
     public string? AlbumName { get; set; }
     public string? CoverUrl { get; set; }
+    public string? SongId { get; set; } // MusicBrainz ID or external ID
+    public string? Source { get; set; } = "manual";
     public double Valence { get; set; } = 0.0;
     public double Arousal { get; set; } = 0.0;
     public int TensionLevel { get; set; } = 50;
@@ -25,6 +27,7 @@ public class UpdateEntryModel
     public string? ArtistName { get; set; }
     public string? AlbumName { get; set; }
     public string? CoverUrl { get; set; }
+    public string? SongId { get; set; }
     public double Valence { get; set; } = 0.0;
     public double Arousal { get; set; } = 0.0;
     public int TensionLevel { get; set; } = 50;

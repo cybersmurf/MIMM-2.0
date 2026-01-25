@@ -23,7 +23,7 @@
 
         <div class="cursor" style="left:@CursorLeft%; top:@CursorTop%"></div>
 
-        <MudChip Class="label-chip" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small">
+        <MudChip T="string" Class="label-chip" Color="Color.Primary" Variant="Variant.Filled">
             @MoodLabel (V @Valence.ToString("F2"), A @Arousal.ToString("F2"))
         </MudChip>
     </MudPaper>

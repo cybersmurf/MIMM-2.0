@@ -21,22 +21,48 @@
 
         @if (_results is { Count: > 0 })
         {
-            <MudList>
+            <MudList T="string">
                 @foreach (var item in _results)
                 {
-                    <MudListItem Class="music-item">
-                        <MudAvatar Src="@item.CoverUrl" Size="Size.Medium" Class="mr-2" />
-                        <MudStack Spacing="0" Style="flex:1;">
-                            <MudText Typo="Typo.body1">@item.Title</MudText>
-                            <MudText Typo="Typo.body2" Color="Color.Secondary">@item.Artist</MudText>
+                    <MudListItem T="string">
+                        <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Style="width:100%;">
+                            @if (!string.IsNullOrEmpty(item.CoverUrl))
+                            {
+                                <MudAvatar Src="@item.CoverUrl" Size="Size.Medium" Class="rounded" />
+                            }
+                            else
+                            {
+                                <MudAvatar Color="Color.Primary" Size="Size.Medium">
+                                    <MudIcon Icon="@Icons.Material.Filled.MusicNote" />
+                                </MudAvatar>
+                            }
+                            
+                            <MudStack Spacing="0" Style="flex:1;">
+                                <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                                    <MudText Typo="Typo.body1">@item.Title</MudText>
+                                    @if (!string.IsNullOrWhiteSpace(item.ExternalId))
+                                    {
+                                        <MudTooltip Text="@($"Source: {item.Source} (ID: {item.ExternalId})")" Arrow ShowOnHover>
+                                            <MudChip T="string" Size="Size.Small" Color="Color.Tertiary" Icon="@Icons.Material.Filled.MusicNote" Variant="Variant.Filled" Class="ms-1">
+                                                @(item.Source == "musicbrainz" ? "MB" : "iTunes")
+                                            </MudChip>
+                                        </MudTooltip>
+                                    }
+                                </MudStack>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary">@item.Artist</MudText>
+                                @if (!string.IsNullOrEmpty(item.Album))
+                                {
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Album: @item.Album</MudText>
+                                }
+                            </MudStack>
+                            
+                            @if (OnTrackSelected.HasDelegate)
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="() => Select(item)">
+                                    Use
+                                </MudButton>
+                            }
                         </MudStack>
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">@item.Album</MudText>
-                        @if (OnTrackSelected.HasDelegate)
-                        {
-                            <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="() => Select(item)">
-                                Use
-                            </MudButton>
-                        }
                     </MudListItem>
                     <MudDivider />
                 }
