@@ -4,14 +4,24 @@ Všechny významné změny v tomto demo projektu budou zaznamenány v tomto soub
 
 ## [v26.1.25] - 25. ledna 2026
 
+### Added
+
+- **Last.fm Integration**: Scrobbling support for music entries
+  - Backend `LastFmService.ScrobbleAsync()` method (validates session key, signs with MD5, posts to Last.fm track.scrobble API)
+  - New endpoint `POST /api/lastfm/scrobble [Authorize]` accepting song title, artist, album, timestamp
+  - Frontend `LastFmApiService.ScrobbleAsync()` HTTP client wrapper
+  - EntryList UI: scrobble button for entries not yet synced to Last.fm
+  - Unit tests for scrobbling service (valid token, missing token error handling)
+  - ✅ Both backend (port 7001) and frontend (port 5000) verified running
+
 ### Changed
 
-- **Performance**: Optimalizace EF Core queries
+- **Performance**: Optimizace EF Core queries
   - Přidáno `.AsNoTracking()` do read-only queries (GetAsync, ListAsync, SearchAsync)
   - Očekávaný nárůst výkonu: 15-20% na složitých queries
   - Odstraněny zbytečné global query filtry z JournalEntry a LastFmToken
 
-### Added
+### Added (Previous)
 
 - **Security**: JWT token tracking
   - Přidán "jti" (JWT ID) claim pro budoucí revocation mechanismus
