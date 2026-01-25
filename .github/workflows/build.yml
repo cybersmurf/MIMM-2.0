@@ -8,7 +8,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     
     services:
       postgres:
@@ -42,15 +45,18 @@ jobs:
       run: dotnet test tests/MIMM.Tests.Unit/MIMM.Tests.Unit.csproj --no-build --configuration Release --verbosity normal
     
     - name: Run integration tests
+      if: runner.os == 'Linux'
       run: dotnet test tests/MIMM.Tests.Integration/MIMM.Tests.Integration.csproj --no-build --configuration Release --verbosity normal
       env:
         ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=mimm_test;Username=postgres;Password=postgres"
     
     - name: Publish
+      if: runner.os == 'Linux'
       run: dotnet publish src/MIMM.Backend/MIMM.Backend.csproj -c Release -o ./publish
     
     - name: Upload artifacts
+      if: runner.os == 'Linux'
       uses: actions/upload-artifact@v4
       with:
-        name: mimm-backend
+        name: mimm-backend-${{ matrix.os }}
         path: ./publish
