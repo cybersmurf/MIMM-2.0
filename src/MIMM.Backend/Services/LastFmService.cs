@@ -162,4 +162,93 @@ public sealed class LastFmService(ApplicationDbContext db, IConfiguration config
         var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()));
         return Convert.ToHexString(hash).ToLowerInvariant();
     }
+
+    public async Task<(bool Success, string? Error)> ScrobbleAsync(
+        Guid userId,
+        string songTitle,
+        string? artistName,
+        string? albumName,
+        DateTime? timestamp,
+        CancellationToken cancellationToken = default)
+    {
+        // Get user's Last.fm session key
+        var token = await _db.LastFmTokens.FirstOrDefaultAsync(
+            x => x.UserId == userId && x.SessionKey != null,
+            cancellationToken);
+
+        if (token?.SessionKey == null)
+        {
+            return (false, "User has not connected Last.fm");
+        }
+
+        var apiKey = _config["LastFm:ApiKey"] ?? string.Empty;
+        var secret = _config["LastFm:SharedSecret"] ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(secret))
+        {
+            return (false, "Last.fm credentials not configured");
+        }
+
+        try
+        {
+            var client = _httpFactory.CreateClient("lastfm");
+            
+            // Build track.scrobble signed request
+            // https://www.last.fm/api/show/track.scrobble
+            var parameters = new Dictionary<string, string>
+            {
+                ["api_key"] = apiKey,
+                ["artist"] = artistName ?? "Unknown Artist",
+                ["track"] = songTitle,
+                ["method"] = "track.scrobble",
+                ["sk"] = token.SessionKey,
+                ["timestamp"] = ((timestamp ?? DateTime.UtcNow).Ticks / 10000000 - 62135596800).ToString() // Unix timestamp
+            };
+
+            if (!string.IsNullOrWhiteSpace(albumName))
+            {
+                parameters["album"] = albumName;
+            }
+
+            var apiSig = BuildApiSig(parameters, secret);
+            parameters["api_sig"] = apiSig;
+
+            // POST request with form data
+            using var content = new FormUrlEncodedContent(parameters);
+            var response = await client.PostAsync("", content, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Last.fm scrobble failed: {Status}", response.StatusCode);
+                return (false, $"Last.fm error: {response.StatusCode}");
+            }
+
+            using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
+
+            // Check for error in response
+            if (doc.RootElement.TryGetProperty("error", out var errorEl))
+            {
+                var errorCode = errorEl.GetInt32();
+                var errorMsg = doc.RootElement.TryGetProperty("message", out var msgEl) 
+                    ? msgEl.GetString() 
+                    : $"Last.fm error {errorCode}";
+                
+                _logger.LogWarning("Last.fm scrobble error {Code}: {Message}", errorCode, errorMsg);
+                return (false, errorMsg);
+            }
+
+            if (doc.RootElement.TryGetProperty("scrobbles", out var scrobblesEl))
+            {
+                _logger.LogInformation("Track scrobbled to Last.fm: {Song} by {Artist}", songTitle, artistName);
+                return (true, null);
+            }
+
+            return (false, "Invalid response from Last.fm");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Last.fm scrobble failed for track {Song}", songTitle);
+            return (false, ex.Message);
+        }
+    }
 }

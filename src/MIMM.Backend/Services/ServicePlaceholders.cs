@@ -9,6 +9,7 @@ public interface ILastFmService
 {
 	Task<string> GetAuthUrlAsync(Guid userId, string requestBaseUrl, CancellationToken cancellationToken = default);
 	Task<(bool Success, string? Username, string? Error)> HandleCallbackAsync(string state, string token, CancellationToken cancellationToken = default);
+	Task<(bool Success, string? Error)> ScrobbleAsync(Guid userId, string songTitle, string? artistName, string? albumName, DateTime? timestamp, CancellationToken cancellationToken = default);
 }
 
 public interface IEmailService { }

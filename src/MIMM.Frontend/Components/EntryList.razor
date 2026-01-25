@@ -1,6 +1,7 @@
 @using MIMM.Shared.Dtos
 @using MIMM.Frontend.Services
 @inject IEntryApiService EntryApi
+@inject ILastFmApiService LastFmApi
 @inject ISnackbar Snackbar
 
 <MudPaper Elevation="2" Class="pa-4">
@@ -88,6 +89,14 @@
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" 
                                        Size="Size.Small" 
                                        OnClick="@(() => OnEditEntry.InvokeAsync(entry))" />
+                        @if (!entry.ScrobbledToLastFm)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.MusicNote" 
+                                           Size="Size.Small" 
+                                           Color="Color.Secondary"
+                                           Title="Scrobble to Last.fm"
+                                           OnClick="@(() => HandleScrobbleAsync(entry))" />
+                        }
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                                        Size="Size.Small" 
                                        Color="Color.Error"
@@ -201,6 +210,26 @@
         else
         {
             Snackbar.Add("Failed to delete entry", Severity.Error);
+        }
+    }
+
+    private async Task HandleScrobbleAsync(EntryDto entry)
+    {
+        var success = await LastFmApi.ScrobbleAsync(
+            entry.SongTitle, 
+            entry.ArtistName, 
+            entry.AlbumName, 
+            entry.CreatedAt);
+
+        if (success)
+        {
+            Snackbar.Add($"Scrobbled '{entry.SongTitle}' to Last.fm", Severity.Success);
+            await LoadEntriesAsync();
+            await OnEntryChanged.InvokeAsync();
+        }
+        else
+        {
+            Snackbar.Add("Failed to scrobble to Last.fm", Severity.Error);
         }
     }
 

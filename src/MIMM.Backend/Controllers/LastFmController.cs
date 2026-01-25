@@ -51,4 +51,46 @@ public class LastFmController(ILastFmService lastFm, ILogger<LastFmController> l
     [AllowAnonymous]
     public Task<IActionResult> LegacyCallback([FromQuery(Name = "token")] string token, [FromQuery(Name = "s")] string state, CancellationToken cancellationToken)
         => Callback(token, state, cancellationToken);
+
+    [HttpPost("scrobble")]
+    [Authorize]
+    public async Task<IActionResult> ScrobbleTrack([FromBody] ScrobbleRequest request, CancellationToken cancellationToken)
+    {
+        if (request == null || string.IsNullOrWhiteSpace(request.SongTitle))
+        {
+            return BadRequest("Song title is required");
+        }
+
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrWhiteSpace(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var (success, error) = await _lastFm.ScrobbleAsync(
+            userId,
+            request.SongTitle,
+            request.ArtistName,
+            request.AlbumName,
+            request.Timestamp,
+            cancellationToken);
+
+        if (!success)
+        {
+            return BadRequest(new { error });
+        }
+
+        return Ok(new { message = "Track scrobbled successfully" });
+    }
+}
+
+/// <summary>
+/// Request DTO for scrobbling a track to Last.fm
+/// </summary>
+public record ScrobbleRequest
+{
+    public required string SongTitle { get; init; }
+    public string? ArtistName { get; init; }
+    public string? AlbumName { get; init; }
+    public DateTime? Timestamp { get; init; }
 }
