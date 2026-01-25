@@ -76,6 +76,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.SessionKey).HasMaxLength(255).IsRequired();
             entity.Property(e => e.LastFmUsername).HasMaxLength(100).IsRequired();
             entity.HasIndex(e => e.UserId).IsUnique();
+            
+            // No soft delete query filter - filtered through User relationship via FK constraint
         });
 
         // MusicBrainz artist cache

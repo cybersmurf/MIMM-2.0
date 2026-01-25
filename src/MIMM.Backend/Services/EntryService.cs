@@ -182,6 +182,7 @@ public class EntryService : IEntryService
     )
     {
         var entry = await _dbContext.Entries
+            .AsNoTracking()
             .FirstOrDefaultAsync(
                 e => e.Id == entryId && e.UserId == userId && e.DeletedAt == null,
                 cancellationToken
@@ -200,6 +201,7 @@ public class EntryService : IEntryService
     )
     {
         var query = _dbContext.Entries
+            .AsNoTracking()
             .Where(e => e.UserId == userId && e.DeletedAt == null);
 
         // Apply sorting
@@ -246,6 +248,7 @@ public class EntryService : IEntryService
     )
     {
         var query = _dbContext.Entries
+            .AsNoTracking()
             .Where(e => e.UserId == userId && e.DeletedAt == null);
 
         // Apply text search

@@ -390,7 +390,8 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
             new Claim(ClaimTypes.Name, user.DisplayName ?? string.Empty),
-            new Claim("language", user.Language ?? "en")
+            new Claim("language", user.Language ?? "en"),
+            new Claim("jti", Guid.NewGuid().ToString())
         };
 
         var token = new JwtSecurityToken(

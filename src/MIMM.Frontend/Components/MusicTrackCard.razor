@@ -1,0 +1,61 @@
+@using MIMM.Shared.Dtos
+
+@if (Track is not null)
+{
+    <MudListItem T="string" Class="px-0">
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Style="width:100%;">
+            @if (!string.IsNullOrEmpty(Track.CoverUrl))
+            {
+                <MudAvatar Src="@Track.CoverUrl" Size="Size.Medium" Class="rounded" />
+            }
+            else
+            {
+                <MudAvatar Color="Color.Primary" Size="Size.Medium">
+                    <MudIcon Icon="@Icons.Material.Filled.MusicNote" />
+                </MudAvatar>
+            }
+            
+            <MudStack Spacing="0" Style="flex:1;">
+                <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                    <MudText Typo="Typo.body1">@Track.Title</MudText>
+                    @if (!string.IsNullOrWhiteSpace(Track.ExternalId))
+                    {
+                        <MudTooltip Text="@($"Source: {Track.Source} (ID: {Track.ExternalId})")" Arrow ShowOnHover>
+                            <MudChip T="string" 
+                                     Size="Size.Small" 
+                                     Color="Color.Tertiary" 
+                                     Icon="@Icons.Material.Filled.MusicNote" 
+                                     Variant="Variant.Filled" 
+                                     Class="ms-1">
+                                @(Track.Source == "musicbrainz" ? "MB" : "iTunes")
+                            </MudChip>
+                        </MudTooltip>
+                    }
+                </MudStack>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">@Track.Artist</MudText>
+                @if (!string.IsNullOrEmpty(Track.Album))
+                {
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">Album: @Track.Album</MudText>
+                }
+            </MudStack>
+            
+            @if (OnSelect.HasDelegate)
+            {
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Primary" 
+                           Size="Size.Small" 
+                           OnClick="() => OnSelect.InvokeAsync(Track)">
+                    Use
+                </MudButton>
+            }
+        </MudStack>
+    </MudListItem>
+}
+
+@code {
+    [Parameter]
+    public MusicTrackDto? Track { get; set; }
+
+    [Parameter]
+    public EventCallback<MusicTrackDto> OnSelect { get; set; }
+}
