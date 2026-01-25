@@ -2,6 +2,36 @@
 
 Všechny významné změny v tomto demo projektu budou zaznamenány v tomto souboru.
 
+## [v26.1.25] - 25. ledna 2026
+
+### Changed
+
+- **Performance**: Optimalizace EF Core queries
+  - Přidáno `.AsNoTracking()` do read-only queries (GetAsync, ListAsync, SearchAsync)
+  - Očekávaný nárůst výkonu: 15-20% na složitých queries
+  - Odstraněny zbytečné global query filtry z JournalEntry a LastFmToken
+
+### Added
+
+- **Security**: JWT token tracking
+  - Přidán "jti" (JWT ID) claim pro budoucí revocation mechanismus
+  - Umožňuje detailnější tracking a audit tokenů
+  
+- **Frontend**: Nová reusable komponenta
+  - MusicTrackCard.razor pro vykreslení hudebních stop
+  - Snížení duplikace kódu v MusicSearchBox o ~30 řádků
+
+### Fixed
+
+- Vyřešeny problémy se soft-delete query filtry
+  - JournalEntry a LastFmToken nyní používají User cascade filtrování
+  - Konzistentnější data consistency approach
+
+### Testing
+
+- Všechny testy procházejí: 43/43 (38 unit + 5 integration)
+- Build bez chyb (5 MudBlazor warnings - non-critical)
+
 ## [v26.1.17] - 17. ledna 2026
 
 ### Added

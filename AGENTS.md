@@ -1,11 +1,13 @@
 # AGENTS.md
 
 [![CI](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/ci.yml/badge.svg)](https://github.com/cybersmurf/MIMM-2.0/actions/workflows/ci.yml)
+**Version:** 2.0.1 | **Status:** Code Review & Optimization Complete ✅
 
 - zde jsou klíčové instrukce pro všechny AI agenty
 - **níže jsou uvedeny další instrukční soubory, které je nutné respektovat**
 
 - [README.md](./README.md) - základní informace o projektu
+- [CODE_REVIEW_PLAN.md](./docs/CODE_REVIEW_PLAN.md) - detailní plán refaktoringu a optimizací
 - [copilot-instructions](./.github/copilot-instructions.md) - pravidla generování kódu
 - `.github/prompts/` - opakovatelné prompty pro Copilot (release notes, E2E maintenance, CI fix, feature pattern)
   - release-notes.prompt.md

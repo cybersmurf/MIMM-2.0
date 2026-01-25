@@ -423,5 +423,5 @@ MIT License – see [LICENSE](LICENSE).
 
 ---
 
-Version: 2.0.0
-Last Updated: 24. ledna 2026
+Version: 2.0.1 (Code Quality & Performance Improvements)
+Last Updated: 25. ledna 2026
