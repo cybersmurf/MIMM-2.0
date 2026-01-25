@@ -104,10 +104,11 @@ public class LastFmServiceTests : IAsyncLifetime
     [Fact]
     public async Task ScrobbleAsync_WithValidSessionKey_CallsHttpClient()
     {
-        // Arrange
+        // Arrange - Setup mock BEFORE creating service
+        // Last.fm returns response with "scrobbles" element on success
         var mockResponse = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
         {
-            Content = new StringContent("""{"lfm": {"status": "ok"}}""")
+            Content = new StringContent("""{"scrobbles":{"scrobble":{"artist":"Test Artist","albumArtist":"","album":"Test Album","timestamp":"1234567890","ignoredMessage":{"code":"0","content":""}},"@attr":{"accepted":1,"ignored":0}}}""")
         };
 
         var mockHandler = new Mock<HttpMessageHandler>();
@@ -119,11 +120,20 @@ public class LastFmServiceTests : IAsyncLifetime
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(mockResponse);
 
-        var httpClient = new HttpClient(mockHandler.Object);
+        var httpClient = new HttpClient(mockHandler.Object) 
+        { 
+            BaseAddress = new Uri("https://ws.audioscrobbler.com/2.0/") 
+        };
+        
+        // Reset and reconfigure factory for this test
+        _mockHttpClientFactory.Reset();
         _mockHttpClientFactory.Setup(x => x.CreateClient("lastfm")).Returns(httpClient);
 
+        // Recreate service with configured mock
+        var testService = new LastFmService(_dbContext, _configuration, _mockHttpClientFactory.Object, _mockLogger.Object);
+
         // Act
-        var (success, error) = await _lastFmService!.ScrobbleAsync(
+        var (success, error) = await testService.ScrobbleAsync(
             _testUser.Id,
             "Test Song",
             "Test Artist",
