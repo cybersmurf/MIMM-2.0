@@ -98,6 +98,10 @@ builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<ILastFmService, LastFmService>();
 builder.Services.AddHttpClient<IMusicSearchService, MusicSearchService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddHttpClient("lastfm", c => c.BaseAddress = new Uri("https://ws.audioscrobbler.com/2.0/"));
+
+// Caching
+builder.Services.AddMemoryCache();
 
 // === HTTP CLIENTS (Refit) ===
 builder.Services.AddRefitClient<ILastFmHttpClient>()

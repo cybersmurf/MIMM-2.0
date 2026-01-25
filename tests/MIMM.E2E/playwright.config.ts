@@ -8,5 +8,9 @@ export default defineConfig({
     headless: true,
     trace: 'on-first-retry',
   },
-  reporter: [['list'], ['html', { outputFolder: 'playwright-report' }]],
+  reporter: [
+    ['list'],
+    ['html', { outputFolder: 'playwright-report' }],
+    ['json', { outputFile: 'playwright-report/report.json' }],
+  ],
 });

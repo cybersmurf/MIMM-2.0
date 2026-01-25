@@ -45,7 +45,8 @@ public class MusicSearchServiceTests
         var httpClient = new HttpClient(handler.Object);
         var logger = Mock.Of<ILogger<MusicSearchService>>();
         await using var dbContext = CreateDbContext();
-        var service = new MusicSearchService(httpClient, dbContext, logger);
+        var cache = new Microsoft.Extensions.Caching.Memory.MemoryCache(new Microsoft.Extensions.Caching.Memory.MemoryCacheOptions());
+        var service = new MusicSearchService(httpClient, dbContext, logger, cache);
 
         // Act
         var result = await service.SearchAsync("Song");
@@ -69,7 +70,8 @@ public class MusicSearchServiceTests
     {
         var logger = Mock.Of<ILogger<MusicSearchService>>();
         await using var dbContext = CreateDbContext();
-        var service = new MusicSearchService(new HttpClient(new Mock<HttpMessageHandler>().Object), dbContext, logger);
+        var cache = new Microsoft.Extensions.Caching.Memory.MemoryCache(new Microsoft.Extensions.Caching.Memory.MemoryCacheOptions());
+        var service = new MusicSearchService(new HttpClient(new Mock<HttpMessageHandler>().Object), dbContext, logger, cache);
 
         var result = await service.SearchAsync(" ");
 
@@ -88,7 +90,8 @@ public class MusicSearchServiceTests
         var httpClient = new HttpClient(handler.Object);
         var logger = Mock.Of<ILogger<MusicSearchService>>();
         await using var dbContext = CreateDbContext();
-        var service = new MusicSearchService(httpClient, dbContext, logger);
+        var cache = new Microsoft.Extensions.Caching.Memory.MemoryCache(new Microsoft.Extensions.Caching.Memory.MemoryCacheOptions());
+        var service = new MusicSearchService(httpClient, dbContext, logger, cache);
 
         var result = await service.SearchAsync("Song");
 

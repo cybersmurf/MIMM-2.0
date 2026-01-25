@@ -36,6 +36,7 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddScoped<IAuthApiService, AuthApiService>();
 builder.Services.AddScoped<IEntryApiService, EntryApiService>();
 builder.Services.AddScoped<IMusicSearchApiService, MusicSearchApiService>();
+builder.Services.AddScoped<ILastFmApiService, LastFmApiService>();
 
 // Logging
 builder.Logging.SetMinimumLevel(LogLevel.Information);

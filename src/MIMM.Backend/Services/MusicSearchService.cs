@@ -5,6 +5,8 @@ using MIMM.Backend.Data;
 using MIMM.Shared.Dtos;
 using MIMM.Shared.Entities;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Caching.Memory;
+using System.Text.RegularExpressions;
 
 namespace MIMM.Backend.Services;
 
@@ -21,12 +23,15 @@ public class MusicSearchService : IMusicSearchService
     private readonly HttpClient _httpClient;
     private readonly ApplicationDbContext _dbContext;
     private readonly ILogger<MusicSearchService> _logger;
+    private readonly IMemoryCache _cache;
+    private static DateTime _lastMbCallUtc = DateTime.UnixEpoch;
 
-    public MusicSearchService(HttpClient httpClient, ApplicationDbContext dbContext, ILogger<MusicSearchService> logger)
+    public MusicSearchService(HttpClient httpClient, ApplicationDbContext dbContext, ILogger<MusicSearchService> logger, IMemoryCache cache)
     {
         _httpClient = httpClient;
         _dbContext = dbContext;
         _logger = logger;
+        _cache = cache;
     }
 
     public async Task<IReadOnlyList<MusicTrackDto>> SearchAsync(string query, int limit = 10, CancellationToken cancellationToken = default)
@@ -38,15 +43,49 @@ public class MusicSearchService : IMusicSearchService
 
         var safeLimit = Math.Clamp(limit, 1, 25);
 
+        // Cache key per query+limit
+        var cacheKey = $"music_search::{query.Trim().ToLowerInvariant()}::{safeLimit}";
+        if (_cache.TryGetValue(cacheKey, out IReadOnlyList<MusicTrackDto>? cached) && cached is { Count: > 0 })
+        {
+            return cached;
+        }
+
         var musicBrainzResults = await SearchMusicBrainzAsync(query, safeLimit, cancellationToken);
 
         if (musicBrainzResults.Count > 0)
         {
             await CacheMusicBrainzAsync(musicBrainzResults.Select(r => r.CachePayload), cancellationToken);
-            return musicBrainzResults.Select(r => r.Track).ToList();
+            var tracks = Deduplicate(musicBrainzResults.Select(r => r.Track).ToList());
+            _cache.Set(cacheKey, tracks, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(12),
+                Size = 1
+            });
+            return tracks;
         }
 
-        return await SearchItunesFallbackAsync(query, safeLimit, cancellationToken);
+        var deezerResults = await SearchDeezerFallbackAsync(query, safeLimit, cancellationToken);
+        if (deezerResults.Count > 0)
+        {
+            var tracks = Deduplicate(deezerResults);
+            _cache.Set(cacheKey, tracks, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(8),
+                Size = 1
+            });
+            return tracks;
+        }
+
+        var fallback = Deduplicate(await SearchItunesFallbackAsync(query, safeLimit, cancellationToken));
+        if (fallback.Count > 0)
+        {
+            _cache.Set(cacheKey, fallback, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(6),
+                Size = 1
+            });
+        }
+        return fallback;
     }
 
     private async Task<List<MusicBrainzRecordingResult>> SearchMusicBrainzAsync(string query, int limit, CancellationToken cancellationToken)
@@ -57,6 +96,8 @@ public class MusicSearchService : IMusicSearchService
             using var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.UserAgent.ParseAdd("MIMM/2.0 (+https://github.com/cybersmurf/MIMM-2.0)");
 
+            // Simple rate limiting for MusicBrainz (1 req/sec recommended)
+            await EnforceMusicBrainzRateLimitAsync(cancellationToken);
             var response = await _httpClient.SendAsync(request, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
@@ -88,6 +129,20 @@ public class MusicSearchService : IMusicSearchService
             _logger.LogWarning(ex, "MusicBrainz search request failed for query {Query}", query);
             return [];
         }
+    }
+
+    private static Task EnforceMusicBrainzRateLimitAsync(CancellationToken cancellationToken)
+    {
+        const int minDelayMs = 1100;
+        var now = DateTime.UtcNow;
+        var since = (int)(now - _lastMbCallUtc).TotalMilliseconds;
+        if (since < minDelayMs)
+        {
+            var delay = minDelayMs - since;
+            return Task.Delay(delay, cancellationToken).ContinueWith(_ => { _lastMbCallUtc = DateTime.UtcNow; }, cancellationToken);
+        }
+        _lastMbCallUtc = now;
+        return Task.CompletedTask;
     }
 
     private async Task CacheMusicBrainzAsync(IEnumerable<MusicBrainzCachePayload> payloads, CancellationToken cancellationToken)
@@ -229,7 +284,56 @@ public class MusicSearchService : IMusicSearchService
         return new MusicBrainzRecordingResult(track, cachePayload);
     }
 
-    private async Task<IReadOnlyList<MusicTrackDto>> SearchItunesFallbackAsync(string query, int limit, CancellationToken cancellationToken)
+    private async Task<List<MusicTrackDto>> SearchDeezerFallbackAsync(string query, int limit, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var url = $"https://api.deezer.com/search?q={Uri.EscapeDataString(query)}&limit={limit}";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Deezer search failed: {StatusCode}", response.StatusCode);
+                return [];
+            }
+
+            var payload = await response.Content.ReadFromJsonAsync<DeezerResponse>(cancellationToken: cancellationToken);
+            if (payload?.Data == null || payload.Data.Count == 0)
+            {
+                return [];
+            }
+
+            return payload.Data
+                .Select(MapDeezerTrack)
+                .Where(t => t is not null)
+                .Cast<MusicTrackDto>()
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Deezer fallback search failed for query {Query}", query);
+            return [];
+        }
+    }
+
+    private static MusicTrackDto? MapDeezerTrack(DeezerTrack track)
+    {
+        if (string.IsNullOrWhiteSpace(track.Title))
+        {
+            return null;
+        }
+
+        return new MusicTrackDto
+        {
+            Title = track.Title,
+            Artist = track.Artist?.Name ?? string.Empty,
+            Album = track.Album?.Title ?? string.Empty,
+            CoverUrl = track.Album?.CoverMedium,
+            Source = "deezer",
+            ExternalId = track.Id?.ToString() ?? track.Title
+        };
+    }
+
+    private async Task<List<MusicTrackDto>> SearchItunesFallbackAsync(string query, int limit, CancellationToken cancellationToken)
     {
         try
         {
@@ -238,13 +342,13 @@ public class MusicSearchService : IMusicSearchService
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogWarning("iTunes music search failed: {StatusCode}", response.StatusCode);
-                return Array.Empty<MusicTrackDto>();
+                return new List<MusicTrackDto>();
             }
 
             var payload = await response.Content.ReadFromJsonAsync<ItunesResponse>(cancellationToken: cancellationToken);
             if (payload?.Results == null || payload.Results.Count == 0)
             {
-                return Array.Empty<MusicTrackDto>();
+                return new List<MusicTrackDto>();
             }
 
             return payload.Results
@@ -256,11 +360,41 @@ public class MusicSearchService : IMusicSearchService
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "iTunes fallback search failed for query {Query}", query);
-            return Array.Empty<MusicTrackDto>();
+            return new List<MusicTrackDto>();
         }
     }
 
-    private static MusicTrackDto? MapItunesTrack(ItunesTrack track)
+    private static List<MusicTrackDto> Deduplicate(List<MusicTrackDto> items)
+        {
+            if (items.Count <= 1) return items;
+
+            string Key(MusicTrackDto t)
+            {
+                var title = NormalizeText(t.Title);
+                var artist = NormalizeText(t.Artist);
+                return $"{title}__{artist}";
+            }
+
+            return items
+                .GroupBy(Key)
+                .Select(g => g.First())
+                .ToList();
+        }
+
+        private static string NormalizeText(string? s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return string.Empty;
+            var t = s.Trim().ToLowerInvariant();
+            // Remove bracketed suffices like (Remastered 2011), [Mono]
+            t = Regex.Replace(t, "[\\(\\[\\{].*?[\\)\\]\\}]", " ");
+            // Remove common " - 2011 Remaster" / " - Remastered 2011" patterns
+            t = Regex.Replace(t, @"\s*[-–]\s*(\d{4}\s*)?remaster(ed)?(\s*\d{4})?$", " ");
+            // Collapse whitespace
+            t = Regex.Replace(t, @"\s+", " ").Trim();
+            return t;
+        }
+
+        private static MusicTrackDto? MapItunesTrack(ItunesTrack track)
     {
         if (string.IsNullOrWhiteSpace(track.TrackName))
         {
@@ -282,6 +416,30 @@ public class MusicSearchService : IMusicSearchService
     {
         public int ResultCount { get; set; }
         public List<ItunesTrack> Results { get; set; } = [];
+    }
+
+    private sealed class DeezerResponse
+    {
+        public List<DeezerTrack> Data { get; set; } = [];
+    }
+
+    private sealed class DeezerTrack
+    {
+        public long? Id { get; set; }
+        public string? Title { get; set; }
+        public DeezerArtist? Artist { get; set; }
+        public DeezerAlbum? Album { get; set; }
+    }
+
+    private sealed class DeezerArtist
+    {
+        public string? Name { get; set; }
+    }
+
+    private sealed class DeezerAlbum
+    {
+        public string? Title { get; set; }
+        public string? CoverMedium { get; set; }
     }
 
     private sealed class ItunesTrack
