@@ -1,0 +1,13 @@
+{
+  "name": "mimm-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "codegen": "playwright codegen http://localhost:5000",
+    "install:browsers": "playwright install --with-deps"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.42.0"
+  }
+}
