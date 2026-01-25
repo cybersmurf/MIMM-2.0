@@ -375,10 +375,79 @@ public class MusicSearchService : IMusicSearchService
                 return $"{title}__{artist}";
             }
 
-            return items
+            // Basic deduplication
+            var deduped = items
                 .GroupBy(Key)
                 .Select(g => g.First())
                 .ToList();
+
+            // Advanced deduplication: detect and remove variants
+            deduped = RemoveVariants(deduped);
+
+            return deduped;
+        }
+
+        /// <summary>
+        /// Remove variant versions of the same track (live, mono, deluxe, remix, etc.)
+        /// Keeps the "canonical" version (usually the original or most complete version)
+        /// </summary>
+        private static List<MusicTrackDto> RemoveVariants(List<MusicTrackDto> items)
+        {
+            if (items.Count <= 1) return items;
+
+            var variantPatterns = new[]
+            {
+                // Version patterns (in order of preference - higher = better to keep)
+                (@"\b(live|concert)\b", 2),           // Live versions lower priority
+                (@"\b(remix|rmx|dub|rework)\b", 2),  // Remixes lower priority
+                (@"\b(mono|stereo)\b", 3),            // Mono versions lower than stereo
+                (@"\b(acoustic|unplugged)\b", 3),    // Acoustic lower than studio
+                (@"\b(deluxe|expanded|extended)\b", 5), // Deluxe higher priority
+                (@"\b(remaster|remastered|master)\b", 4), // Remastered good priority
+                (@"\b(demo|preview)\b", 1),          // Demos lowest priority
+                (@"\b(cover|version)\b", 2),         // Covers lower priority
+            };
+
+            string GetCanonicalKey(MusicTrackDto t)
+            {
+                var normalized = NormalizeText(t.Title);
+                var artist = NormalizeText(t.Artist);
+                
+                // Remove all variant keywords to create canonical key
+                foreach (var (pattern, _) in variantPatterns)
+                {
+                    normalized = Regex.Replace(normalized, pattern, " ", RegexOptions.IgnoreCase);
+                }
+                
+                normalized = Regex.Replace(normalized, @"\s+", " ").Trim();
+                return $"{normalized}__{artist}";
+            }
+
+            int GetVariantScore(MusicTrackDto t)
+            {
+                var title = t.Title.ToLowerInvariant();
+                int score = 10; // Base score for original/studio version
+
+                foreach (var (pattern, penaltyOrBonus) in variantPatterns)
+                {
+                    if (Regex.IsMatch(title, pattern, RegexOptions.IgnoreCase))
+                    {
+                        score += (penaltyOrBonus - 5); // 5 is neutral, > 5 is better, < 5 is worse
+                    }
+                }
+
+                return score;
+            }
+
+            // Group by canonical key and keep best version
+            var result = items
+                .GroupBy(GetCanonicalKey)
+                .Select(g => g.Count() == 1 
+                    ? g.First() 
+                    : g.OrderByDescending(GetVariantScore).First())
+                .ToList();
+
+            return result;
         }
 
         private static string NormalizeText(string? s)
