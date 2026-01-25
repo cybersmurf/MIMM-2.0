@@ -2,8 +2,8 @@ namespace MIMM.Backend.Services;
 
 // NOTE: IAuthService is now fully implemented in AuthService.cs
 // NOTE: IEntryService is now fully implemented in EntryService.cs
+// NOTE: IAnalyticsService is now fully implemented in AnalyticsService.cs
 public interface IUserService { }
-public interface IAnalyticsService { }
 
 public interface ILastFmService
 {
@@ -16,7 +16,6 @@ public interface IEmailService { }
 
 // Placeholder implementations - these will be fully implemented later (except LastFmService defined in separate file)
 public class UserService : IUserService { }
-public class AnalyticsService : IAnalyticsService { }
 public class EmailService : IEmailService { }
 
 // Refit HTTP Client placeholder (not used in scaffold)

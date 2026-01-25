@@ -1,0 +1,230 @@
+@page "/analytics"
+@using MIMM.Shared.Dtos
+@using System.Globalization
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<PageTitle>Analytics Dashboard - MIMM</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="py-8">
+    <MudText Typo="Typo.h4" GutterBottom>📊 Analytics Dashboard</MudText>
+
+    @if (_isLoading)
+    {
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" Class="mb-4" />
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" Class="mb-4" />
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
+    }
+    else if (_error != null)
+    {
+        <MudAlert Severity="Severity.Error">
+            <MudText>@_error</MudText>
+        </MudAlert>
+    }
+    else
+    {
+        <!-- Mood Trends Section -->
+        <MudText Typo="Typo.h5" Class="mt-6 mb-3">Mood Trends (Last @_daysLookback Days)</MudText>
+        
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.caption">Total Entries</MudText>
+                        <MudText Typo="Typo.h4">@_moodTrend?.TotalEntries</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.caption">Avg. Valence</MudText>
+                        <MudText Typo="Typo.h4">@_moodTrend?.AverageValence.ToString("F2")</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.caption">Avg. Arousal</MudText>
+                        <MudText Typo="Typo.h4">@_moodTrend?.AverageArousal.ToString("F2")</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.caption">Scrobble Rate</MudText>
+                        <MudText Typo="Typo.h4">@(_musicStats?.ScrobbleRate.ToString("P0") ?? "N/A")</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+        <!-- Mood Distribution -->
+        <MudText Typo="Typo.h5" Class="mt-6 mb-3">Mood Distribution</MudText>
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Class="mud-success">
+                    <MudCardContent>
+                        <MudText Typo="Typo.caption" Color="Color.Success">Happy</MudText>
+                        <MudText Typo="Typo.h5">@_moodTrend?.MoodDistribution.HappyPercent.ToString("F1")%</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Class="mud-info">
+                    <MudCardContent>
+                        <MudText Typo="Typo.caption" Color="Color.Info">Calm</MudText>
+                        <MudText Typo="Typo.h5">@_moodTrend?.MoodDistribution.CalmPercent.ToString("F1")%</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Class="mud-warning">
+                    <MudCardContent>
+                        <MudText Typo="Typo.caption" Color="Color.Warning">Angry</MudText>
+                        <MudText Typo="Typo.h5">@_moodTrend?.MoodDistribution.AngryPercent.ToString("F1")%</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudCard Class="mud-error">
+                    <MudCardContent>
+                        <MudText Typo="Typo.caption" Color="Color.Error">Sad</MudText>
+                        <MudText Typo="Typo.h5">@_moodTrend?.MoodDistribution.SadPercent.ToString("F1")%</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+        <!-- Music Statistics -->
+        <MudText Typo="Typo.h5" Class="mt-6 mb-3">Music Statistics</MudText>
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudCard>
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Top Artists</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @if (_musicStats?.TopArtists?.Count > 0)
+                        {
+                            <MudList T="ArtistStatDto">
+                                @foreach (var artist in _musicStats.TopArtists)
+                                {
+                                    <MudListItem T="ArtistStatDto">
+                                        <MudText>@artist.Name</MudText>
+                                        <MudText Typo="Typo.caption">@artist.Count entries</MudText>
+                                    </MudListItem>
+                                }
+                            </MudList>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.caption">No data available</MudText>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudCard>
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Top Songs</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @if (_musicStats?.TopSongs?.Count > 0)
+                        {
+                            <MudList T="SongStatDto">
+                                @foreach (var song in _musicStats.TopSongs)
+                                {
+                                    <MudListItem T="SongStatDto">
+                                        <MudText>@song.Title</MudText>
+                                        <MudText Typo="Typo.caption">@song.Artist (@song.Count plays)</MudText>
+                                    </MudListItem>
+                                }
+                            </MudList>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.caption">No data available</MudText>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+        <!-- Period Selection -->
+        <MudPaper Class="pa-4 mt-6">
+            <MudText Typo="Typo.h6" Class="mb-3">Analysis Period</MudText>
+            <MudSelect T="int" Value="_daysLookback" ValueChanged="OnPeriodChanged" Label="Days">
+                <MudSelectItem Value="7">Last 7 days</MudSelectItem>
+                <MudSelectItem Value="30">Last 30 days</MudSelectItem>
+                <MudSelectItem Value="90">Last 90 days</MudSelectItem>
+                <MudSelectItem Value="365">Last year</MudSelectItem>
+            </MudSelect>
+        </MudPaper>
+    }
+</MudContainer>
+
+@code {
+    private MoodTrendDto? _moodTrend;
+    private MusicStatisticsDto? _musicStats;
+    private int _daysLookback = 30;
+    private bool _isLoading = true;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAnalyticsAsync();
+    }
+
+    private async Task LoadAnalyticsAsync()
+    {
+        _isLoading = true;
+        _error = null;
+
+        try
+        {
+            // Load mood trends
+            var trendData = await Http.GetFromJsonAsync<MoodTrendDto>($"api/analytics/mood-trends?daysLookback={_daysLookback}");
+            _moodTrend = trendData;
+
+            // Load music statistics
+            var statsData = await Http.GetFromJsonAsync<MusicStatisticsDto>("api/analytics/music-stats");
+            _musicStats = statsData;
+        }
+        catch (Exception ex)
+        {
+            _error = $"Error loading analytics: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task OnPeriodChanged(int days)
+    {
+        _daysLookback = days;
+        await LoadAnalyticsAsync();
+    }
+}
+
+<style>
+    .mud-success {
+        background-color: rgba(76, 175, 80, 0.1) !important;
+    }
+
+    .mud-info {
+        background-color: rgba(33, 150, 243, 0.1) !important;
+    }
+
+    .mud-warning {
+        background-color: rgba(255, 152, 0, 0.1) !important;
+    }
+
+    .mud-error {
+        background-color: rgba(244, 67, 54, 0.1) !important;
+    }
+</style>
