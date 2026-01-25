@@ -1,0 +1,125 @@
+# Production Docker Compose for MIMM 2.0
+# Optimized for rootless Docker on VPS
+# Usage: docker compose -f docker-compose.prod.yml up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mimm-postgres
+    restart: unless-stopped
+    user: "999:999"  # Postgres non-root user
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "127.0.0.1:5432:5432"  # Bind only to localhost for security
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid
+      - /run/postgresql:noexec,nosuid
+    shm_size: 256mb
+
+  redis:
+    image: redis:7-alpine
+    container_name: mimm-redis
+    restart: unless-stopped
+    user: "999:1000"  # Redis non-root user
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "127.0.0.1:6379:6379"  # Bind only to localhost
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--pass", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mimm-backend:${VERSION:-latest}
+    container_name: mimm-backend
+    restart: unless-stopped
+    user: "1000:1000"  # Run as non-root user (matches appuser in Dockerfile)
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_HTTPS_PORTS: ""
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};SSL Mode=Prefer;Trust Server Certificate=true"
+      ConnectionStrings__Redis: "redis:6379,password=${REDIS_PASSWORD}"
+      Jwt__Key: ${JWT_SECRET_KEY}
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Cors__AllowedOrigins__0: ${FRONTEND_URL}
+      Lastfm__ApiKey: ${LASTFM_API_KEY}
+      Lastfm__ApiSecret: ${LASTFM_API_SECRET}
+      Spotify__ClientId: ${SPOTIFY_CLIENT_ID}
+      Spotify__ClientSecret: ${SPOTIFY_CLIENT_SECRET}
+      Discogs__ConsumerKey: ${DISCOGS_CONSUMER_KEY}
+      Discogs__ConsumerSecret: ${DISCOGS_CONSUMER_SECRET}
+    ports:
+      - "127.0.0.1:8080:8080"  # Bind only to localhost (Nginx will proxy)
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs:rw
+      - ./appsettings.Production.json:/app/appsettings.Production.json:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    security_opt:
+      - no-new-privileges:true
+    read_only: false  # Allow writing logs
+    tmpfs:
+      - /tmp:noexec,nosuid
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1024M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

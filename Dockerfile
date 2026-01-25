@@ -20,12 +20,21 @@ RUN dotnet publish "MIMM.Backend.csproj" -c Release -o /app/publish /p:UseAppHos
 # Final runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
-EXPOSE 7000 7001
+
+# Create non-root user for rootless Docker
+RUN groupadd -r appuser && useradd -r -g appuser appuser \
+    && chown -R appuser:appuser /app
+
+# Use non-privileged ports (8080/8081) for rootless Docker compatibility
+EXPOSE 8080 8081
 
 # Copy published files
 COPY --from=publish /app/publish .
 
-# Set environment
-ENV ASPNETCORE_URLS=https://+:7001;http://+:7000
+# Set environment (use non-privileged ports)
+ENV ASPNETCORE_URLS=https://+:8081;http://+:8080
+
+# Switch to non-root user
+USER appuser
 
 ENTRYPOINT ["dotnet", "MIMM.Backend.dll"]

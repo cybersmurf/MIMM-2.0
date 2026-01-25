@@ -34,20 +34,21 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: mimm-backend
+    user: "1000:1000"  # Run as non-root user (adjust UID/GID for your system)
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:5001
-      ASPNETCORE_HTTP_PORTS: 5001
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_HTTP_PORTS: 8080
       ASPNETCORE_HTTPS_PORTS: ""
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=mimm;Username=mimmuser;Password=mimmpass"
       ConnectionStrings__Redis: "redis:6379"
       Jwt__Key: "development-secret-key-at-least-32-characters-long-for-jwt-signing"
-      Jwt__Issuer: "http://localhost:5001"
+      Jwt__Issuer: "http://localhost:8080"
       Jwt__Audience: "mimm-frontend"
       Cors__AllowedOrigins__0: "http://localhost:5000"
-      Cors__AllowedOrigins__1: "https://localhost:5001"
+      Cors__AllowedOrigins__1: "http://localhost:8080"
     ports:
-      - "5001:5001"
+      - "8080:8080"  # Non-privileged port for rootless Docker
     depends_on:
       postgres:
         condition: service_healthy
@@ -55,6 +56,11 @@ services:
         condition: service_healthy
     volumes:
       - ./logs:/app/logs
+    security_opt:
+      - no-new-privileges:true  # Prevent privilege escalation
+    read_only: false  # Allow writing to /app for logs
+    tmpfs:
+      - /tmp:noexec,nosuid  # Secure tmp directory
 
 volumes:
   postgres_data:
