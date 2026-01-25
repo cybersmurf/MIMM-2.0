@@ -16,6 +16,7 @@
 ### Phase 1: Code Review & Optimization ✅ **100%**
 
 **Completed (v2.0.1):**
+
 - ✅ Add `.AsNoTracking()` to read-only queries
 - ✅ Fix soft-delete query filter warning
 - ✅ Add "jti" claim to JWT tokens
@@ -23,6 +24,7 @@
 - ✅ Build validation and tests passing
 
 **Metrics:**
+
 - 4 improvements implemented
 - 43/43 tests passing (0 failures)
 - 2 commits documented
@@ -31,6 +33,7 @@
 ### Phase 2: Database Setup & API Health ✅ **100%**
 
 **Completed (Action 1-2):**
+
 - ✅ PostgreSQL 16-alpine running in Docker
 - ✅ Redis 7-alpine running in Docker
 - ✅ InitialCreate migration applied (3 tables: Users, Entries, LastFmTokens)
@@ -40,6 +43,7 @@
 - ✅ JWT tokens verified (with new "jti" claim for revocation)
 
 **Database Status:**
+
 - Seed user: `e2e-auto@example.com` (password: `Test123!`)
 - 0 entries (ready for frontend testing)
 - Schema: 3 domain tables + migration history table
@@ -47,6 +51,7 @@
 ### Phase 3: Frontend Integration Testing ⏳ **5%**
 
 **Preparation (In Progress):**
+
 - ✅ All 7 UI components created and verified
 - ✅ Frontend service layer ready (AuthStateService, EntryApiService, MusicSearchApiService)
 - ✅ Manual test plan documented (10 scenarios)
@@ -54,6 +59,7 @@
 - ⏳ Browser-based testing needed (manual verification of UI/UX)
 
 **Component Status:**
+
 1. **EntryList.razor** (253 lines)
    - ✅ Pagination controls
    - ✅ Mood mood colors
@@ -116,6 +122,7 @@
 ## Current System Running
 
 **Services:**
+
 ```
 ✅ Backend API:    http://localhost:5001
 ✅ Swagger UI:     http://localhost:5001/swagger
@@ -125,6 +132,7 @@
 ```
 
 **Database:**
+
 ```
 Tables: Users (1 row) | Entries (0 rows) | LastFmTokens (0 rows)
 Migrations: InitialCreate applied
@@ -134,7 +142,8 @@ Schema Version: v1
 ## Next Steps (Week 2)
 
 ### High Priority (Frontend Integration)
-1. **Start Blazor dev server** 
+
+1. **Start Blazor dev server**
    - `cd src/MIMM.Frontend && npm install && npm run dev`
    - Verify no build errors
    - Check browser console
@@ -158,6 +167,7 @@ Schema Version: v1
    - Implement CI/CD integration
 
 ### Medium Priority (Features)
+
 5. **Pagination Edge Cases**
    - First/last page buttons
    - Page size changes
@@ -171,6 +181,7 @@ Schema Version: v1
    - Duplicate entry detection
 
 ### Lower Priority (Phase 2)
+
 7. **Last.fm OAuth**
    - Scaffold OAuth flow
    - Token exchange implementation
@@ -186,17 +197,20 @@ Schema Version: v1
 ## Known Issues
 
 ### Compiler Warnings (Non-blocking)
+
 - 4× CS8619 nullable reference type mismatches in AuthService
 - 1× CS8601 null assignment possibility in EntryService
 - **Impact:** None (runtime safe, warnings only)
 - **Resolution:** Add null-coalescing operators or `#pragma disable`
 
 ### Database Schema
+
 - User entity has soft-delete filter (DeletedAt), but no dependent entities configured
 - **Impact:** ⚠️ Potential orphaned entries if user deleted
 - **Resolution:** Configure cascade delete or matching filter on Entries/LastFmTokens
 
 ### Frontend
+
 - No automated E2E testing yet (manual scenarios only)
 - **Impact:** Risk of regression without test coverage
 - **Resolution:** Set up Cypress/Playwright this week
@@ -234,18 +248,21 @@ Schema Version: v1
 ## Recommendations
 
 ### This Week (Immediate)
+
 1. **Start frontend dev server** and verify build
 2. **Execute manual test scenarios** (all 10)
 3. **Fix 4 nullable compiler warnings** in AuthService
 4. **Document any UI/UX issues** found during testing
 
 ### Next Week (Future Planning)
+
 1. **Set up Cypress for E2E testing**
 2. **Implement form validation edge cases**
 3. **Begin Last.fm OAuth scaffolding**
 4. **Create database migration for soft-delete cascade**
 
 ### Long-term (Phase 2+)
+
 1. **Music search aggregation** (iTunes, Deezer, MusicBrainz)
 2. **Analytics dashboard** (mood trends, top tracks)
 3. **Real-time sync** with SignalR

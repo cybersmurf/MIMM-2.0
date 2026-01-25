@@ -5,6 +5,7 @@
 ### Executive Summary
 
 ✅ **Last.fm Scrobbling integration fully tested and verified**
+
 - Unit tests: **2/2 PASSING**
 - E2E workflow test: **PASSING**
 - Database verification: **SUCCESSFUL**
@@ -16,14 +17,14 @@
 
 ### Test File: `tests/MIMM.Tests.Unit/Services/LastFmServiceTests.cs`
 
-#### Tests Executed:
+#### Tests Executed
 
 | Test Name | Status | Notes |
 |-----------|--------|-------|
 | `ScrobbleAsync_WithoutSessionKey_ReturnsFalse` | ✅ PASS | Verifies error when user has no Last.fm token |
 | `ScrobbleAsync_WithValidSessionKey_CallsHttpClient` | ✅ PASS | Verifies HTTP request sent and response parsed correctly |
 
-#### Details:
+#### Details
 
 ```
 Testovací běh: MIMM.Tests.Unit
@@ -34,7 +35,7 @@ Celkem:      2
 Doba trvání: 110 ms
 ```
 
-### Key Fixes Applied:
+### Key Fixes Applied
 
 1. **Mock HttpClientFactory Setup**
    - Issue: Mock was configured AFTER service creation
@@ -68,7 +69,8 @@ Doba trvání: 110 ms
 
 ### Test Script: `scripts/test-scrobbling-e2e.sh`
 
-#### Workflow Tested:
+#### Workflow Tested
+
 1. **User Registration** ✅
    - Created test account: `test+1769350429972@example.com`
    - User ID: `f86bdd36-9598-4d7c-81a4-93794dd3ae4a`
@@ -90,7 +92,8 @@ Doba trvání: 110 ms
    - Response: `{"error":"User has not connected Last.fm"}`
    - Status: Correctly rejected ✓
 
-#### Test Flow Diagram:
+#### Test Flow Diagram
+
 ```
 Register → Login → Create Entry → Attempt Scrobble
    ✅      ✅         ✅              ✅
@@ -101,7 +104,7 @@ Register → Login → Create Entry → Attempt Scrobble
 
 ## 3. Database Verification
 
-### PostgreSQL Query Results:
+### PostgreSQL Query Results
 
 ```sql
 SELECT "Id", "SongTitle", "ArtistName", "ScrobbledToLastFm", "CreatedAt" 
@@ -127,19 +130,23 @@ LIMIT 5;
 ## 4. Service Health Check
 
 ### Backend API
+
 ```bash
 $ curl -s http://localhost:7001/health
 {"status":"healthy","timestamp":"2026-01-25T14:13:19.813184Z"}
 ```
+
 ✅ Status: **HEALTHY**
 
 ### Frontend WASM
+
 ```bash
 $ curl -s http://localhost:5000/index.html | head -3
 <!DOCTYPE html>
 <html lang="en">
 <head>
 ```
+
 ✅ Status: **RUNNING**
 
 ---
@@ -164,23 +171,29 @@ Build Time: 0.88s
 **Test Cases Verified:**
 
 1. **Valid Request with Auth Token**
+
    ```
    Status: 200 OK (when Last.fm connected)
    Status: 400 Bad Request (when no Last.fm token)
    ```
+
    ✅ VERIFIED
 
 2. **Missing Authorization Header**
+
    ```
    Status: 401 Unauthorized
    ```
+
    ✅ VERIFIED
 
 3. **Missing Required Fields**
+
    ```
    Status: 400 Bad Request
    Message: "Song title required"
    ```
+
    ✅ VERIFIED
 
 ---
@@ -201,7 +214,7 @@ Build Time: 0.88s
 
 ## 8. Error Handling Validation
 
-### Scenarios Tested:
+### Scenarios Tested
 
 | Scenario | Expected Behavior | Result |
 |----------|------------------|--------|
@@ -214,12 +227,14 @@ Build Time: 0.88s
 
 ## 9. Code Quality Metrics
 
-### Test Coverage:
+### Test Coverage
+
 - **Backend Service**: 2 unit tests + E2E workflow
 - **Frontend Service**: HTTP client wrapper tested via E2E
 - **Controller Endpoint**: Tested via E2E API calls
 
-### Code Style:
+### Code Style
+
 - ✅ Follows .NET 9 C# 13 conventions
 - ✅ Proper nullable reference types handling
 - ✅ Async/await patterns correctly implemented
@@ -238,16 +253,16 @@ Build Time: 0.88s
 
 ## 11. Known Limitations & Next Steps
 
-### Current Limitations:
+### Current Limitations
 
 1. **Full Scrobbling Test**: Requires user with valid Last.fm OAuth token
    - Workaround: Can be tested manually by connecting Last.fm OAuth first
-   
+
 2. **Unit Test Mock**: Could be enhanced with more edge cases
    - Rate limiting scenarios
    - Last.fm API downtime handling
 
-### Recommended Next Steps:
+### Recommended Next Steps
 
 1. **Integration Testing**: Full Last.fm OAuth + Scrobbling flow
    - Requires test Last.fm API credentials

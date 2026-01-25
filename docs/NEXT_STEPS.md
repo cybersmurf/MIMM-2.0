@@ -3,6 +3,7 @@
 ## 📅 Current Status (2026-01-25)
 
 ✅ **Phase 1 & 2 Complete**
+
 - Backend API running and tested
 - Database setup and verified
 - E2E authentication flow working
@@ -29,6 +30,7 @@ Open browser: `http://localhost:5173`
 Follow the checklist in `docs/testing/FRONTEND_QUICK_START.md`:
 
 **Quick Test Flow:**
+
 1. Login with: `e2e-auto@example.com` / `Test123!`
 2. Create entry with: Title="Test Song", Artist="Artist Name"
 3. Verify entry appears in list
@@ -37,6 +39,7 @@ Follow the checklist in `docs/testing/FRONTEND_QUICK_START.md`:
 6. Verify deletion
 
 **Success Criteria:**
+
 - [ ] Login redirects to /dashboard
 - [ ] Create entry saves to database
 - [ ] Entry list displays correctly
@@ -58,6 +61,7 @@ docker exec -it mimm-postgres psql -U mimmuser -d mimm -c \
 ## 🔄 Decision Points
 
 ### Option A: Manual Testing First (Recommended for quick validation)
+
 1. Perform manual tests (see step 2 above)
 2. Document any issues
 3. Fix issues
@@ -66,6 +70,7 @@ docker exec -it mimm-postgres psql -U mimmuser -d mimm -c \
 **Time: 30 minutes** | **Risk: Low** | **Validation: Medium**
 
 ### Option B: Jump to Automated Testing
+
 1. Install Cypress or Playwright
 2. Write E2E tests
 3. Run tests to validate
@@ -73,6 +78,7 @@ docker exec -it mimm-postgres psql -U mimmuser -d mimm -c \
 **Time: 2-3 hours** | **Risk: High** | **Validation: High**
 
 ### Option C: Fix Compiler Warnings First
+
 1. Fix 5 nullable reference type warnings in AuthService
 2. Clean up CS8619 issues
 3. Then test
@@ -173,11 +179,13 @@ cd src/MIMM.Frontend && rm -rf node_modules dist && npm install
 ## 📚 Documentation to Review
 
 **Essential:**
+
 - `docs/PHASE_1_2_COMPLETION_SUMMARY.md` - Overview of what was done
 - `docs/testing/FRONTEND_QUICK_START.md` - Step-by-step manual testing
 - `docs/testing/e2e-auth-flow.sh` - Backend E2E test script
 
 **Reference:**
+
 - `docs/SPRINT_1_PROGRESS_REPORT.md` - Detailed metrics and status
 - `docs/actions/ACTION_1_2_COMPLETION.md` - Completion details
 - `docs/planning/STRATEGIC_ACTION_PLAN_2026.md` - Overall roadmap
@@ -207,10 +215,10 @@ cd src/MIMM.Frontend && rm -rf node_modules dist && npm install
 
 For reference when implementing next features:
 
-- **MudBlazor Components:** https://mudblazor.com/
-- **Blazor WASM Architecture:** https://learn.microsoft.com/blazor
-- **EF Core 9 Docs:** https://learn.microsoft.com/ef/core
-- **JWT Best Practices:** https://tools.ietf.org/html/rfc7519
+- **MudBlazor Components:** <https://mudblazor.com/>
+- **Blazor WASM Architecture:** <https://learn.microsoft.com/blazor>
+- **EF Core 9 Docs:** <https://learn.microsoft.com/ef/core>
+- **JWT Best Practices:** <https://tools.ietf.org/html/rfc7519>
 
 ---
 
@@ -218,8 +226,8 @@ For reference when implementing next features:
 
 | Resource | URL |
 |----------|-----|
-| Frontend Dev Server | http://localhost:5173 |
-| Backend Swagger UI | http://localhost:5001/swagger |
+| Frontend Dev Server | <http://localhost:5173> |
+| Backend Swagger UI | <http://localhost:5001/swagger> |
 | GitHub Issues | [Create if problems found] |
 | Test Results | `dotnet test --logger:"console;verbosity=detailed"` |
 
@@ -235,6 +243,7 @@ For reference when implementing next features:
 4. **Authentication works** - JWT + refresh tokens verified
 
 **First 15 minutes:**
+
 1. Read `PHASE_1_2_COMPLETION_SUMMARY.md`
 2. Start backend: `cd src/MIMM.Backend && dotnet run`
 3. Start frontend: `cd src/MIMM.Frontend && npm run dev`

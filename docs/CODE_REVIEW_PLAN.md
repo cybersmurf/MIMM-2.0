@@ -11,6 +11,7 @@
 ### Fáze 1: EF Core Query Optimization (High Impact)
 
 #### 1.1 Add `.AsNoTracking()` to Read-Only Queries
+
 - **Soubory:** `src/MIMM.Backend/Services/EntryService.cs`
 - **Benefit:** +15-20% performance improvement na read-heavy operacích
 - **Změny:**
@@ -21,6 +22,7 @@
 - **Risk:** LOW (only affects read operations, no write risk)
 
 #### 1.2 Fix Soft-Delete Query Filter Warning
+
 - **Soubor:** `src/MIMM.Backend/Data/ApplicationDbContext.cs`
 - **Issue:** "Entity 'User' has global query filter but is required nav..."
 - **Řešení:** Apply matching filter to JournalEntry and LastFmToken entities
@@ -30,6 +32,7 @@
 ### Fáze 2: JWT Security Hardening (Critical)
 
 #### 2.1 Add "jti" Claim to JWT Tokens
+
 - **Soubor:** `src/MIMM.Backend/Services/AuthService.cs`
 - **Benefit:** Individual token tracking for revocation support
 - **Změny:**
@@ -41,6 +44,7 @@
 ### Fáze 3: Frontend Component Refactoring (Quality)
 
 #### 3.1 Extract MusicTrackCard Component
+
 - **Soubory:**
   - NEW: `src/MIMM.Frontend/Components/MusicTrackCard.razor`
   - MODIFY: `src/MIMM.Frontend/Components/MusicSearchBox.razor`
@@ -55,6 +59,7 @@
 ### Fáze 4: Verification & Testing
 
 #### 4.1 Build & Test Validation
+
 - Run `dotnet build` → Verify 0 errors
 - Run `dotnet test` → Verify all 43 tests pass
 - Manual testing: Music search, pagination, auth flow
@@ -77,19 +82,23 @@
 ## 📊 OČEKÁVANÝ DOPAD
 
 ### Performance
+
 - Query optimization: **+15-20% faster pagination**
 - No negative impacts expected
 
 ### Security
+
 - Token tracking enabled for future revocation
 - Compliant with JWT best practices (RFC 7519)
 
 ### Code Quality
+
 - Reduced duplication (MusicTrackCard extraction)
 - Better separation of concerns
 - Cleaner EF Core configuration
 
 ### Test Coverage
+
 - All 43 tests should continue passing
 - No new test additions required (refactoring only)
 

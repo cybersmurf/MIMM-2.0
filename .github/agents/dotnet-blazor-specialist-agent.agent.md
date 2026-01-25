@@ -1,6 +1,7 @@
 ---
 name: MIMM-Expert-Agent
-description: Enterprise-grade AI developer pro .NET 9, ASP.NET Core, Blazor WASM a PostgreSQL
+description: Enterprise-grade AI developer pro .NET 9, ASP.NET Core,
+             Blazor WASM a PostgreSQL
 tools:
   ['vscode', 'execute', 'read', 'edit', 'search', 'web', 'agent', 'copilot-container-tools/*', 'context7/*', 'github/*', 'microsoft/markitdown/*', 'cweijan.vscode-database-client2/dbclient-getDatabases', 'cweijan.vscode-database-client2/dbclient-getTables', 'cweijan.vscode-database-client2/dbclient-executeQuery', 'github.vscode-pull-request-github/copilotCodingAgent', 'github.vscode-pull-request-github/issue_fetch', 'github.vscode-pull-request-github/suggest-fix', 'github.vscode-pull-request-github/searchSyntax', 'github.vscode-pull-request-github/doSearch', 'github.vscode-pull-request-github/renderIssues', 'github.vscode-pull-request-github/activePullRequest', 'github.vscode-pull-request-github/openPullRequest', 'todo']
 ---
