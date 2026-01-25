@@ -11,8 +11,10 @@ Všechny významné změny v tomto demo projektu budou zaznamenány v tomto soub
   - New endpoint `POST /api/lastfm/scrobble [Authorize]` accepting song title, artist, album, timestamp
   - Frontend `LastFmApiService.ScrobbleAsync()` HTTP client wrapper
   - EntryList UI: scrobble button for entries not yet synced to Last.fm
-  - Unit tests for scrobbling service (valid token, missing token error handling)
+  - ✅ Unit tests for scrobbling service (2/2 passing: valid token, missing token)
+  - ✅ E2E workflow test script (register → create entry → scrobble with error handling)
   - ✅ Both backend (port 7001) and frontend (port 5000) verified running
+  - ✅ Database verified with E2E test entry (Bohemian Rhapsody by Queen)
 
 ### Changed
 
