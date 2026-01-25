@@ -37,6 +37,25 @@ public class User
     public string? RefreshToken { get; set; }
     
     public DateTime? RefreshTokenExpiresAt { get; set; }
+
+    // Spotify OAuth integration
+    [MaxLength(500)]
+    public string? SpotifyAccessToken { get; set; }
+
+    [MaxLength(500)]
+    public string? SpotifyRefreshToken { get; set; }
+
+    public DateTime? SpotifyTokenExpiresAt { get; set; }
+
+    public DateTime? SpotifyConnectedAt { get; set; }
+
+    [MaxLength(50)]
+    public string? SpotifyUserId { get; set; }
+
+    [MaxLength(255)]
+    public string? SpotifyState { get; set; }
+
+    public DateTime? SpotifyStateExpiresAt { get; set; }
     
     // Navigation properties
     public ICollection<JournalEntry> Entries { get; set; } = new List<JournalEntry>();

@@ -21,6 +21,12 @@ public class JournalEntry
     
     [MaxLength(100)]
     public string? SongId { get; set; } // iTunes/Deezer/MusicBrainz ID
+
+    [MaxLength(100)]
+    public string? SpotifyId { get; set; } // Spotify track ID
+    
+    [MaxLength(500)]
+    public string? SpotifyUri { get; set; } // Spotify URI (spotify:track:...)
     
     [MaxLength(500)]
     public string? CoverUrl { get; set; }

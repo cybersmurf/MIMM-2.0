@@ -96,6 +96,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<ILastFmService, LastFmService>();
+builder.Services.AddScoped<ISpotifyService, SpotifyService>();
 builder.Services.AddHttpClient<IMusicSearchService, MusicSearchService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHttpClient("lastfm", c => c.BaseAddress = new Uri("https://ws.audioscrobbler.com/2.0/"));
@@ -106,6 +107,9 @@ builder.Services.AddMemoryCache();
 // === HTTP CLIENTS (Refit) ===
 builder.Services.AddRefitClient<ILastFmHttpClient>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://ws.audioscrobbler.com"));
+
+builder.Services.AddRefitClient<ISpotifyHttpClient>()
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://api.spotify.com"));
 
 // === VALIDATION (FluentValidation) ===
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
