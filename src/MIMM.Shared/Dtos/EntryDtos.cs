@@ -81,8 +81,14 @@ public record UpdateEntryRequest
     public string? AlbumName { get; init; }
 
     [MaxLength(500)]
+    public string? SongId { get; init; }
+
+    [MaxLength(500)]
     [Url(ErrorMessage = "Cover URL must be a valid URL")]
     public string? CoverUrl { get; init; }
+
+    [MaxLength(50)]
+    public string? Source { get; init; }
 
     [Range(-1.0, 1.0, ErrorMessage = "Valence must be between -1.0 and 1.0")]
     public double? Valence { get; init; }

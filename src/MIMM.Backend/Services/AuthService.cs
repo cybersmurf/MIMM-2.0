@@ -212,9 +212,9 @@ public class AuthService : IAuthService
                 User = new UserDto
                 {
                     Id = user.Id,
-                    Email = user.Email,
-                    DisplayName = user.DisplayName,
-                    Language = user.Language,
+                    Email = user.Email ?? string.Empty,
+                    DisplayName = user.DisplayName ?? string.Empty,
+                    Language = user.Language ?? "en",
                     EmailVerified = user.EmailVerified
                 }
             };
@@ -277,9 +277,9 @@ public class AuthService : IAuthService
                 User = new UserDto
                 {
                     Id = user.Id,
-                    Email = user.Email,
-                    DisplayName = user.DisplayName,
-                    Language = user.Language,
+                    Email = user.Email ?? string.Empty,
+                    DisplayName = user.DisplayName ?? string.Empty,
+                    Language = user.Language ?? "en",
                     EmailVerified = user.EmailVerified
                 }
             };
@@ -296,14 +296,14 @@ public class AuthService : IAuthService
     /// <summary>
     /// Verify JWT token and return claims principal
     /// </summary>
-    public async Task<(bool Success, ClaimsPrincipal? Principal, string? ErrorMessage)> VerifyTokenAsync(
+    public Task<(bool Success, ClaimsPrincipal? Principal, string? ErrorMessage)> VerifyTokenAsync(
         string token,
         CancellationToken cancellationToken = default
     )
     {
         if (string.IsNullOrWhiteSpace(token))
         {
-            return (false, null, "Token is required");
+            return Task.FromResult((false, null as ClaimsPrincipal, "Token is required"));
         }
 
         try
@@ -332,15 +332,15 @@ public class AuthService : IAuthService
 
             if (securityToken is not JwtSecurityToken jwtToken)
             {
-                return (false, null, "Invalid token format");
+                return Task.FromResult((false, null as ClaimsPrincipal, "Invalid token format"));
             }
 
-            return (true, principal, null);
+            return Task.FromResult((true, principal, (string?)null));
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Token verification failed");
-            return (false, null, "Token verification failed");
+            return Task.FromResult((false, null as ClaimsPrincipal, "Token verification failed"));
         }
     }
 
@@ -388,9 +388,9 @@ public class AuthService : IAuthService
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.DisplayName),
-            new Claim("language", user.Language)
+            new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+            new Claim(ClaimTypes.Name, user.DisplayName ?? string.Empty),
+            new Claim("language", user.Language ?? "en")
         };
 
         var token = new JwtSecurityToken(

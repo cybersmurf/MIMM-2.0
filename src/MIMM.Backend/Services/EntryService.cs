@@ -367,6 +367,12 @@ public class EntryService : IEntryService
             if (request.CoverUrl != null)
                 entry.CoverUrl = request.CoverUrl;
 
+            if (request.SongId != null)
+                entry.SongId = request.SongId;
+
+            if (request.Source != null)
+                entry.Source = request.Source;
+
             if (request.Valence.HasValue)
                 entry.Valence = (float)request.Valence.Value;
 

@@ -190,9 +190,9 @@ public class AuthController : ControllerBase
             var userDto = new UserDto
             {
                 Id = user.Id,
-                Email = user.Email,
-                DisplayName = user.DisplayName,
-                Language = user.Language,
+                Email = user.Email ?? string.Empty,
+                DisplayName = user.DisplayName ?? string.Empty,
+                Language = user.Language ?? "en",
                 EmailVerified = user.EmailVerified
             };
 
