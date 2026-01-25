@@ -303,7 +303,7 @@ public class AuthService : IAuthService
     {
         if (string.IsNullOrWhiteSpace(token))
         {
-            return Task.FromResult((false, null as ClaimsPrincipal, "Token is required"));
+            return Task.FromResult((false, default(ClaimsPrincipal?), (string?)"Token is required"));
         }
 
         try
@@ -332,7 +332,7 @@ public class AuthService : IAuthService
 
             if (securityToken is not JwtSecurityToken jwtToken)
             {
-                return Task.FromResult((false, null as ClaimsPrincipal, "Invalid token format"));
+                return Task.FromResult((false, default(ClaimsPrincipal?), (string?)"Invalid token format"));
             }
 
             return Task.FromResult((true, principal, (string?)null));
@@ -340,7 +340,7 @@ public class AuthService : IAuthService
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Token verification failed");
-            return Task.FromResult((false, null as ClaimsPrincipal, "Token verification failed"));
+            return Task.FromResult((false, default(ClaimsPrincipal?), (string?)"Token verification failed"));
         }
     }
 

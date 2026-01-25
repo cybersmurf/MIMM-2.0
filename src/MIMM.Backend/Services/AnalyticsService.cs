@@ -94,7 +94,7 @@ public sealed class AnalyticsService(ApplicationDbContext db, ILogger<AnalyticsS
 
         var topArtists = entries
             .Where(e => !string.IsNullOrWhiteSpace(e.ArtistName))
-            .GroupBy(e => e.ArtistName)
+            .GroupBy(e => e.ArtistName ?? string.Empty)
             .OrderByDescending(g => g.Count())
             .Take(10)
             .Select(g => new ArtistStatDto { Name = g.Key, Count = g.Count() })

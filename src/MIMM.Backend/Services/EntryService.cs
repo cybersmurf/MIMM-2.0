@@ -368,10 +368,10 @@ public class EntryService : IEntryService
                 entry.AlbumName = string.IsNullOrWhiteSpace(request.AlbumName) ? null : request.AlbumName.Trim();
 
             if (request.CoverUrl != null)
-                entry.CoverUrl = request.CoverUrl;
+                entry.CoverUrl = request.CoverUrl ?? string.Empty;
 
             if (request.SongId != null)
-                entry.SongId = request.SongId;
+                entry.SongId = request.SongId ?? string.Empty;
 
             if (request.Source != null)
                 entry.Source = request.Source;
