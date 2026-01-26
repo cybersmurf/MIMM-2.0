@@ -97,6 +97,12 @@ MIMM stands for **"Music In My Mind"** – It's the music that plays internally 
   - UX/UI Action Plan Analysis ✅
   - E2E Test Execution Readiness ✅
   - Final Status Report ✅
+    - **[Production Issues & Fixes Guide](docs/deployment/PRODUCTION_ISSUES_AND_FIXES.md)** ✅ (Docker cache, JWT response structure)
+    - **[Update Strategy & Deployment Plan](docs/deployment/UPDATE_STRATEGY.md)** ✅ (Version management, deployment procedure, rollback)
+
+    - **[Production Issues & Fixes Guide](docs/deployment/PRODUCTION_ISSUES_AND_FIXES.md)** ✅ (Docker cache, JWT response structure)
+    - **[Update Strategy & Deployment Plan](docs/deployment/UPDATE_STRATEGY.md)** ✅ (Version management, deployment procedure, rollback)
+
 
 - **UX/UI Polish** (100% complete)
   - Phase 1: Navigation drawer + dashboard data + login feedback + empty states ✅

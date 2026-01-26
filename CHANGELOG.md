@@ -2,11 +2,32 @@
 
 Všechny významné změny v tomto demo projektu budou zaznamenány v tomto souboru.
 
+## [v26.1.29] - 27. ledna 2026 (Production Fix - Registration & Docker Cache)
+
+### Critical Fixes
+
+- **Docker Build Cache Invalidation** ✅ RESOLVED
+  - Problem: Multi-stage build cached `COPY src/ .` layer despite code changes
+  - Solution: Added `ARG CACHEBUST=1` to Dockerfile, build with `--build-arg CACHEBUST=$(date +%s)`
+  - Impact: Future deployments guarantee fresh code compilation
+
+- **JWT Authentication Response Structure** ✅ FIXED
+  - Problem: RegisterAsync returned UserDto instead of AuthenticationResponse
+  - Files: AuthService.cs, AuthController.cs, AuthApiService.cs
+  - Result: Backend returns tokens, Frontend deserializes successfully
+
+- **Frontend Error Handling** ✅ IMPROVED
+  - Added Content-Type validation and try-catch for JSON deserialization
+
+### Documentation
+
+- Added [PRODUCTION_ISSUES_AND_FIXES.md](docs/deployment/PRODUCTION_ISSUES_AND_FIXES.md)
+  - Complete guide on Docker cache issues, JWT response structure, and deployment strategy
+
 ## [v26.1.28] - 26. ledna 2026 (Late Evening Update)
 
 ### Fixed
 
-- **Deployment Documentation**
   - Removed Azure guide (we use Docker VPS only)
   - Clarified deployment strategy: Docker Compose on VPS with Nginx reverse proxy
   - Added [DOCKER_OPERATIONS.md](docs/deployment/DOCKER_OPERATIONS.md) covering:
@@ -18,8 +39,6 @@ Všechny významné změny v tomto demo projektu budou zaznamenány v tomto soub
 
 ### Documentation
 
-- Updated README with correct Docker deployment links
-- Status: Docker VPS ready (all guides in place)
 
 ## [v26.1.27] - 26. ledna 2026 (Evening Update)
 
