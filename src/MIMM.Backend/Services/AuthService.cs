@@ -20,7 +20,7 @@ public interface IAuthService
     /// <summary>
     /// Register new user with email and password
     /// </summary>
-    Task<(bool Success, string? ErrorMessage, UserDto? User)> RegisterAsync(
+    Task<(bool Success, string? ErrorMessage, AuthenticationResponse? Response)> RegisterAsync(
         RegisterRequest request,
         CancellationToken cancellationToken = default
     );
@@ -83,7 +83,7 @@ public class AuthService : IAuthService
     /// <summary>
     /// Register new user: validate input, hash password, create user in DB
     /// </summary>
-    public async Task<(bool Success, string? ErrorMessage, UserDto? User)> RegisterAsync(
+    public async Task<(bool Success, string? ErrorMessage, AuthenticationResponse? Response)> RegisterAsync(
         RegisterRequest request,
         CancellationToken cancellationToken = default
     )
@@ -123,7 +123,7 @@ public class AuthService : IAuthService
                 DisplayName = request.DisplayName ?? request.Email.Split('@')[0],
                 Language = request.Language ?? "en",
                 CreatedAt = DateTime.UtcNow,
-                EmailVerified = false // Require email verification in production
+                EmailVerified = false
             };
 
             // Save to database
@@ -132,17 +132,26 @@ public class AuthService : IAuthService
 
             _logger.LogInformation("User registered successfully: {UserId}", user.Id);
 
-            // Return user DTO
-            var userDto = new UserDto
+            // Generate JWT tokens
+            var accessToken = GenerateAccessToken(user);
+            var refreshToken = GenerateRefreshToken();
+
+            // Return authentication response with tokens
+            var authResponse = new AuthenticationResponse
             {
-                Id = user.Id,
-                Email = user.Email,
-                DisplayName = user.DisplayName,
-                Language = user.Language,
-                EmailVerified = user.EmailVerified
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                User = new UserDto
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    DisplayName = user.DisplayName,
+                    Language = user.Language,
+                    EmailVerified = user.EmailVerified
+                }
             };
 
-            return (true, null, userDto);
+            return (true, null, authResponse);
         }
         catch (Exception ex)
         {
