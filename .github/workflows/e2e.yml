@@ -118,6 +118,18 @@ jobs:
             if curl -fsS http://localhost:5000 >/dev/null; then echo "Frontend up"; break; fi; sleep 2; done
           curl -fsS http://localhost:5000 || (echo "Frontend failed to start" && exit 1)
 
+      - name: Check service health before tests
+        run: |
+          echo "Checking Backend health..."
+          curl -v http://localhost:5001/health || true
+          echo ""
+          echo "Checking Frontend..."
+          curl -v http://localhost:5000 || true
+          echo ""
+          echo "Checking logs..."
+          [ -f backend.log ] && echo "=== BACKEND LOG ===" && tail -50 backend.log || echo "No backend.log"
+          [ -f frontend.log ] && echo "=== FRONTEND LOG ===" && tail -50 frontend.log || echo "No frontend.log"
+
       - name: Run Playwright E2E
         working-directory: tests/MIMM.E2E
         env:
