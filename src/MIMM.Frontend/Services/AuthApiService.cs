@@ -35,15 +35,29 @@ public class AuthApiService : IAuthApiService
             
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
+                try
+                {
+                    return await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error deserializing registration response");
+                    return null;
+                }
             }
 
-            _logger.LogWarning("Registration failed: {StatusCode}", response.StatusCode);
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("Registration failed: {StatusCode}, {ErrorContent}", response.StatusCode, errorContent);
+            return null;
+        }
+        catch (HttpRequestException hex)
+        {
+            _logger.LogError(hex, "HTTP error during registration");
             return null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during registration");
+            _logger.LogError(ex, "Unexpected error during registration");
             return null;
         }
     }
@@ -56,15 +70,29 @@ public class AuthApiService : IAuthApiService
             
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
+                try
+                {
+                    return await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error deserializing login response");
+                    return null;
+                }
             }
 
-            _logger.LogWarning("Login failed: {StatusCode}", response.StatusCode);
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("Login failed: {StatusCode}, {ErrorContent}", response.StatusCode, errorContent);
+            return null;
+        }
+        catch (HttpRequestException hex)
+        {
+            _logger.LogError(hex, "HTTP error during login");
             return null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during login");
+            _logger.LogError(ex, "Unexpected error during login");
             return null;
         }
     }
@@ -78,15 +106,29 @@ public class AuthApiService : IAuthApiService
             
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
+                try
+                {
+                    return await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error deserializing refresh response");
+                    return null;
+                }
             }
 
-            _logger.LogWarning("Token refresh failed: {StatusCode}", response.StatusCode);
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogWarning("Token refresh failed: {StatusCode}, {ErrorContent}", response.StatusCode, errorContent);
+            return null;
+        }
+        catch (HttpRequestException hex)
+        {
+            _logger.LogError(hex, "HTTP error during token refresh");
             return null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during token refresh");
+            _logger.LogError(ex, "Unexpected error during token refresh");
             return null;
         }
     }
