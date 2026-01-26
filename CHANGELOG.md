@@ -2,6 +2,63 @@
 
 Všechny významné změny v tomto demo projektu budou zaznamenány v tomto souboru.
 
+## [v26.1.27] - 26. ledna 2026 (Evening Update)
+
+### Added
+
+- **Security Middleware**
+  - `SecurityHeadersMiddleware.cs`: Adds 6 critical HTTP security headers
+    - X-Frame-Options: DENY (prevents clickjacking)
+    - X-Content-Type-Options: nosniff (prevents MIME sniffing)
+    - X-XSS-Protection: 1; mode=block (XSS protection)
+    - Referrer-Policy: strict-origin-when-cross-origin
+    - Permissions-Policy: Disables geolocation, microphone, camera
+    - HSTS: max-age=31536000 (production only, requires HTTPS)
+  - `RateLimitingMiddleware.cs`: In-memory rate limiting for auth endpoints
+    - Register: 5 requests per hour per IP
+    - Login: 10 requests per 5 minutes per IP
+    - Refresh token: 30 requests per hour per IP
+    - Returns 429 TooManyRequests with Retry-After header
+
+- **Documentation**
+  - `docs/deployment/AZURE_DEPLOYMENT_GUIDE.md`: Complete Azure App Service deployment guide
+    - Step-by-step infrastructure setup (Resource Group, PostgreSQL, Key Vault, App Service)
+    - EF Core migration and deployment procedures
+    - SSL/TLS certificate configuration
+    - WAF setup and database firewall rules
+    - Application Insights integration and monitoring
+    - Backup & disaster recovery procedures
+  - `docs/testing/E2E_TEST_GUIDE.md`: Comprehensive E2E test execution guide
+    - Playwright test framework setup and configuration
+    - Detailed descriptions of 5 test scenarios
+    - Debugging techniques (traces, screenshots, inspector)
+    - Common failure troubleshooting (timeout, connection, 401 errors)
+    - CI/CD integration with GitHub Actions
+    - Test maintenance best practices
+  - `docs/ADMIN_ONBOARDING_GUIDE.md`: Administrator setup and operations guide
+    - Local development setup (5 steps)
+    - Production deployment options (Azure, Docker Compose, Kubernetes)
+    - Operational tasks (daily, weekly, monthly)
+    - Database maintenance (backup, restore, migrations)
+    - Monitoring and alerting setup with Application Insights
+    - Security hardening checklist
+    - Incident response procedures
+    - Useful commands reference (Build, Testing, Database, Docker, Azure)
+
+### Status
+
+- ✅ Build: 0 errors, 0 warnings
+- ✅ Tests: 45/45 passing (40 unit + 5 integration)
+- ✅ Middleware: SecurityHeaders + RateLimit integrated and tested
+- ✅ Documentation: 3 new guides for deployment, testing, admin operations
+
+### Notes
+
+- Last.fm integration temporarily deprioritized (marked as "Phase 2")
+- Focus shifted to security hardening, comprehensive documentation, and deployment preparation
+- All changes backward compatible; no breaking changes
+- Project status: 97% complete (3% remaining: E2E execution, final polish, Azure deployment)
+
 ## [v26.1.26] - 26. ledna 2026
 
 ### Fixed (CI/CD)
