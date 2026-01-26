@@ -98,6 +98,7 @@ builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IExportService, ExportService>();
 builder.Services.AddScoped<IImportService, ImportService>();
+builder.Services.AddScoped<IFriendService, FriendService>();
 builder.Services.AddScoped<ILastFmService, LastFmService>();
 builder.Services.AddScoped<ISpotifyService, SpotifyService>();
 builder.Services.AddHttpClient<IMusicSearchService, MusicSearchService>();

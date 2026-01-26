@@ -60,4 +60,6 @@ public class User
     // Navigation properties
     public ICollection<JournalEntry> Entries { get; set; } = new List<JournalEntry>();
     public LastFmToken? LastFmToken { get; set; }
+    public ICollection<Friendship> FriendsInitiated { get; set; } = [];
+    public ICollection<Friendship> FriendsReceived { get; set; } = [];
 }

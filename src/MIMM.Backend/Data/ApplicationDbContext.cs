@@ -13,6 +13,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<JournalEntry> Entries { get; set; } = null!;
     public DbSet<LastFmToken> LastFmTokens { get; set; } = null!;
+    public DbSet<Friendship> Friendships { get; set; } = null!;
     public DbSet<MusicBrainzArtist> MusicBrainzArtists { get; set; } = null!;
     public DbSet<MusicBrainzRelease> MusicBrainzReleases { get; set; } = null!;
     public DbSet<MusicBrainzRecording> MusicBrainzRecordings { get; set; } = null!;
@@ -45,6 +46,17 @@ public class ApplicationDbContext : DbContext
             entity.HasOne(e => e.LastFmToken)
                 .WithOne(t => t.User)
                 .HasForeignKey<LastFmToken>(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            // Friendships
+            entity.HasMany(e => e.FriendsInitiated)
+                .WithOne(f => f.User)
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasMany(e => e.FriendsReceived)
+                .WithOne(f => f.FriendUser)
+                .HasForeignKey(f => f.FriendUserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -126,6 +138,22 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Friendship>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Status).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.Reason).HasMaxLength(255);
+            entity.HasIndex(e => new { e.UserId, e.FriendUserId }).IsUnique();
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.FriendUserId);
+            
+            // Soft delete query filter
+            entity.HasQueryFilter(e => e.DeletedAt == null);
+            
+            // Relationships configured in User entity
         });
     }
 }
