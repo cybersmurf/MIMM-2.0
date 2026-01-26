@@ -35,13 +35,22 @@ public class AuthApiService : IAuthApiService
             
             if (response.IsSuccessStatusCode)
             {
+                var contentType = response.Content.Headers.ContentType?.MediaType;
+                if (contentType is null || !contentType.Contains("json", StringComparison.OrdinalIgnoreCase))
+                {
+                    var body = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("Registration success status but non-JSON body. Content-Type: {ContentType}, Body snippet: {Snippet}", contentType, body[..Math.Min(200, body.Length)]);
+                    return null;
+                }
+
                 try
                 {
                     return await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error deserializing registration response");
+                    var body = await response.Content.ReadAsStringAsync();
+                    _logger.LogError(ex, "Error deserializing registration response. Body snippet: {Snippet}", body[..Math.Min(200, body.Length)]);
                     return null;
                 }
             }
