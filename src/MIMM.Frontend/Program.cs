@@ -42,6 +42,7 @@ builder.Services.AddScoped<IMusicSearchApiService, MusicSearchApiService>();
 builder.Services.AddScoped<ILastFmApiService, LastFmApiService>();
 builder.Services.AddScoped<IAnalyticsApiService, AnalyticsApiService>();
 builder.Services.AddScoped<IExportImportApiService, ExportImportApiService>();
+builder.Services.AddScoped<IFriendsApiService, FriendsApiService>();
 builder.Services.AddScoped<INotificationApiService, NotificationApiService>();
 builder.Services.AddScoped<INotificationHubService, NotificationHubService>();
 

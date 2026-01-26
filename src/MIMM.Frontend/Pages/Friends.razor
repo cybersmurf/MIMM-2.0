@@ -1,0 +1,290 @@
+@page "/friends"
+@using MIMM.Frontend.Services
+@using MIMM.Shared.Dtos
+@inject IFriendsApiService FriendsApi
+@inject ISnackbar Snackbar
+
+<PageTitle>Friends - MIMM</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h4" Class="mb-2">Friends</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-6">
+                Connect with other MIMM users and explore shared musical interests.
+            </MudText>
+        </MudItem>
+    </MudGrid>
+
+    <MudGrid Spacing="2" Class="mb-6">
+        <!-- ADD FRIEND SECTION -->
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-6" Elevation="1">
+                <MudText Typo="Typo.h6" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.PersonAdd" Class="me-2" />
+                    Add a Friend
+                </MudText>
+
+                <MudStack Spacing="2">
+                    <MudTextField 
+                        @bind-Value="@_newFriendEmail"
+                        Label="Friend's Email"
+                        Variant="Variant.Outlined"
+                        InputType="InputType.Email"
+                        Disabled="@_isAddingFriend"
+                        Placeholder="friend@example.com" />
+
+                    <MudButton 
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        FullWidth="true"
+                        OnClick="AddFriendAsync"
+                        Disabled="@(_isAddingFriend || string.IsNullOrWhiteSpace(_newFriendEmail))">
+                        @if (_isAddingFriend)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
+                            <span>Adding...</span>
+                        }
+                        else
+                        {
+                            <span>Add Friend</span>
+                        }
+                    </MudButton>
+
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">
+                        <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" />
+                        Enter the email address of another MIMM user to add them as a friend.
+                    </MudText>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <!-- PENDING REQUESTS SECTION -->
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-6" Elevation="1">
+                <MudText Typo="Typo.h6" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.Inbox" Class="me-2" />
+                    Pending Requests
+                </MudText>
+
+                @if (_pendingRequests.Count == 0)
+                {
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        No pending friend requests.
+                    </MudText>
+                }
+                else
+                {
+                    <MudStack Spacing="2">
+                        @foreach (var request in _pendingRequests)
+                        {
+                            <MudPaper Class="pa-3" Elevation="0" Style="background-color: var(--color-bg-secondary);">
+                                <MudStack Spacing="1">
+                                    <MudText Typo="Typo.body2" Style="font-weight: 600;">@request.FriendDisplayName</MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@request.FriendEmail</MudText>
+                                    <MudStack Row="true" Spacing="1" Class="mt-2">
+                                        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Success" 
+                                                   OnClick="@(async () => await RespondRequestAsync(request.Id, "accept"))">
+                                            Accept
+                                        </MudButton>
+                                        <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Error" 
+                                                   OnClick="@(async () => await RespondRequestAsync(request.Id, "reject"))">
+                                            Reject
+                                        </MudButton>
+                                    </MudStack>
+                                </MudStack>
+                            </MudPaper>
+                        }
+                    </MudStack>
+                }
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <!-- FRIENDS LIST SECTION -->
+    <MudPaper Class="pa-6 mb-6" Elevation="1">
+        <MudText Typo="Typo.h6" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.Group" Class="me-2" />
+            My Friends (@_friends.Count)
+        </MudText>
+
+        @if (_isLoadingFriends)
+        {
+            <MudStack Class="pa-4" AlignItems="AlignItems.Center">
+                <MudProgressCircular Indeterminate="true" />
+                <MudText Typo="Typo.caption">Loading friends...</MudText>
+            </MudStack>
+        }
+        else if (_friends.Count == 0)
+        {
+            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                You haven't added any friends yet. Add your first friend to get started!
+            </MudText>
+        }
+        else
+        {
+            <MudGrid Spacing="2">
+                @foreach (var friend in _friends)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudPaper Class="pa-4" Elevation="0" Style="background-color: var(--color-bg-secondary); display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.body1" Style="font-weight: 600;">@friend.FriendDisplayName</MudText>
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">@friend.FriendEmail</MudText>
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                    <MudIcon Icon="@Icons.Material.Filled.AccessTime" Size="Size.Small" Class="me-1" />
+                                    Friends since @friend.ConnectedSince.ToString("MMMM dd, yyyy")
+                                </MudText>
+                            </MudStack>
+
+                            <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Error" 
+                                       FullWidth="true" Class="mt-4"
+                                       OnClick="@(async () => await RemoveFriendAsync(friend.Id))">
+                                <MudIcon Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Class="me-1" />
+                                Remove
+                            </MudButton>
+                        </MudPaper>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+    </MudPaper>
+
+    <!-- INFO SECTION -->
+    <MudPaper Class="pa-6" Elevation="0" Style="background-color: var(--color-bg-secondary);">
+        <MudText Typo="Typo.h6" Class="mb-2">About Friends</MudText>
+        <MudStack Spacing="2">
+            <MudStack Row="true" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
+                <MudText Typo="Typo.body2">Connect with other MIMM users by their email address.</MudText>
+            </MudStack>
+            <MudStack Row="true" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
+                <MudText Typo="Typo.body2">Share your musical interests and mood patterns with friends.</MudText>
+            </MudStack>
+            <MudStack Row="true" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
+                <MudText Typo="Typo.body2">Discover new music through your friends' entries and preferences.</MudText>
+            </MudStack>
+            <MudStack Row="true" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
+                <MudText Typo="Typo.body2">Remove friends at any time to manage your connections.</MudText>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private List<FriendDto> _friends = [];
+    private List<FriendDto> _pendingRequests = [];
+    private string? _newFriendEmail;
+    private bool _isLoadingFriends = true;
+    private bool _isAddingFriend = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFriendsAsync();
+        await LoadPendingRequestsAsync();
+    }
+
+    private async Task LoadFriendsAsync()
+    {
+        _isLoadingFriends = true;
+        try
+        {
+            var result = await FriendsApi.GetFriendsAsync();
+            _friends = result.Friends ?? [];
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading friends: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isLoadingFriends = false;
+        }
+    }
+
+    private async Task LoadPendingRequestsAsync()
+    {
+        try
+        {
+            _pendingRequests = await FriendsApi.GetPendingRequestsAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading pending requests: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task AddFriendAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_newFriendEmail))
+            return;
+
+        _isAddingFriend = true;
+        try
+        {
+            var result = await FriendsApi.AddFriendAsync(_newFriendEmail);
+            if (result.Success)
+            {
+                Snackbar.Add("Friend added successfully!", Severity.Success);
+                _newFriendEmail = null;
+                await LoadFriendsAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message ?? "Failed to add friend", Severity.Error);
+            }
+        }
+        finally
+        {
+            _isAddingFriend = false;
+        }
+    }
+
+    private async Task RemoveFriendAsync(Guid friendshipId)
+    {
+        try
+        {
+            var result = await FriendsApi.RemoveFriendAsync(friendshipId);
+            if (result.Success)
+            {
+                Snackbar.Add("Friend removed", Severity.Success);
+                await LoadFriendsAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message ?? "Failed to remove friend", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error removing friend: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task RespondRequestAsync(Guid friendshipId, string action)
+    {
+        try
+        {
+            var result = await FriendsApi.RespondFriendRequestAsync(friendshipId, action);
+            if (result.Success)
+            {
+                Snackbar.Add($"Friend request {action}ed", Severity.Success);
+                if (action == "accept")
+                    await LoadFriendsAsync();
+                
+                await LoadPendingRequestsAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.Message ?? "Failed to respond to request", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error responding to request: {ex.Message}", Severity.Error);
+        }
+    }
+}
