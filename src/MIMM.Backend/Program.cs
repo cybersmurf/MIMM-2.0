@@ -188,6 +188,10 @@ else
 // No HTTPS redirect – backend listens on HTTP only in dev
 app.UseCors("AllowFrontend");
 
+// Security middleware
+app.UseMiddleware<SecurityHeadersMiddleware>();
+app.UseMiddleware<RateLimitingMiddleware>();
+
 // Custom middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
