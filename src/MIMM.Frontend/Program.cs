@@ -8,8 +8,10 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Configure API base URL (HTTP in dev to avoid self-signed cert prompts)
-var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://localhost:5001";
+// Configure API base URL (from appsettings.json or environment variable)
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"] 
+    ?? builder.Configuration["BACKEND_URL"]
+    ?? "https://api.musicinmymind.app";
 
 // Register services
 builder.Services.AddMudServices();
