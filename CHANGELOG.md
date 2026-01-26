@@ -2,6 +2,25 @@
 
 Všechny významné změny v tomto demo projektu budou zaznamenány v tomto souboru.
 
+## [v26.1.28] - 26. ledna 2026 (Late Evening Update)
+
+### Fixed
+
+- **Deployment Documentation**
+  - Removed Azure guide (we use Docker VPS only)
+  - Clarified deployment strategy: Docker Compose on VPS with Nginx reverse proxy
+  - Added [DOCKER_OPERATIONS.md](docs/deployment/DOCKER_OPERATIONS.md) covering:
+    - Post-deployment verification checklist (6 health checks)
+    - Monitoring & logging setup (real-time logs, CPU/memory/disk monitoring)
+    - Comprehensive troubleshooting guide (backend crashes, postgres connection, SSL issues)
+    - Application updates procedure (rolling deployments, database migrations without downtime)
+    - Automated backup & recovery procedures (daily pg_dump, restore from backup)
+
+### Documentation
+
+- Updated README with correct Docker deployment links
+- Status: Docker VPS ready (all guides in place)
+
 ## [v26.1.27] - 26. ledna 2026 (Evening Update)
 
 ### Added

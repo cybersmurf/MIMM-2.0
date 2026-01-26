@@ -482,8 +482,10 @@ Cors__AllowedOrigins__1=https://www.mimm.app
 - **[Setup Guide](docs/SETUP_GUIDE.md)** – Local development environment
 - **[Developer Guide](docs/DEVELOPER_GUIDE.md)** – Architecture & code patterns
 - **[Admin Onboarding Guide](docs/ADMIN_ONBOARDING_GUIDE.md)** – New admin setup steps
+- **[Docker Deployment Plan](docs/deployment/DEPLOYMENT_PLAN_LITE.md)** – 10-step VPS deployment
+- **[Docker Operations Guide](docs/deployment/DOCKER_OPERATIONS.md)** – Post-deployment, monitoring, troubleshooting, updates
+- **[Rootless Docker Setup](docs/deployment/ROOTLESS_DOCKER_SETUP.md)** – Secure rootless Docker on VPS
 - **[E2E Test Guide](docs/testing/E2E_TEST_GUIDE.md)** – Running Playwright tests
-- **[Azure Deployment Guide](docs/deployment/AZURE_DEPLOYMENT_GUIDE.md)** – Production deployment
 - **[User Guide](docs/USER_GUIDE.md)** – End-user features and workflows
 - **[Code Review Plan](docs/CODE_REVIEW_PLAN.md)** – Refactoring roadmap
 - **[Migration Guide](docs/MIGRATION_GUIDE.md)** – Database schema changes
