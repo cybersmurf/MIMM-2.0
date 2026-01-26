@@ -8,8 +8,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-9.0-purple)](https://dotnet.microsoft.com/)
 
-**Project Status:** ✅ **97% COMPLETE** – All UX/UI done, E2E ready, Last.fm pending
-| Build: 0 errors, 0 warnings | Tests: 45/45 ✅ | UX/UI: 12/12 ✅ | Launch Target: 6 Feb 2026
+**Project Status:** ✅ **97% COMPLETE** – All UX/UI done, CI fixed, E2E ready
+| Build: ✅ 0 errors | Tests: ✅ 45/45 | Markdown: ✅ 0 errors | Target: 6 Feb 2026
 
 ---
 
@@ -108,19 +108,21 @@ MIMM stands for **"Music In My Mind"** – It's the music that plays internally 
 
 ### 🚧 What's Remaining (3%)
 
-- **Last.fm Scrobbling** (3-4 hours)
-  - Implement `ScrobbleAsync()` method
-  - OAuth token refresh
-  - Error handling + rate limiting
-  
 - **E2E Test Execution** (1-2 hours)
-  - Run Playwright test suite
-  - Verify all 10 test scenarios pass
+  - Playwright test suite (manual trigger - ready for execution)
+  - Debug CI environment (if needed)
   - Generate HTML report
-
-- **E2E Testing** (Not started)
-  - Playwright/Cypress framework needed
-  - User flow testing (register → entry → analytics)
+  
+- **Final Documentation** (2-3 hours)
+  - User guide Last.fm section
+  - Admin onboarding guide
+  - Deployment checklist
+  
+- **Security & Performance** (3-4 hours)
+  - CORS hardening for production
+  - Rate limiting on public endpoints
+  - EF Core query optimization (global filter warnings)
+  - Frontend bundle optimization
 
 ### ❌ What's NOT Started Yet (Phase 2+)
 
@@ -410,7 +412,66 @@ docker-compose up -d
 
 ### Azure App Service
 
-See [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) for detailed steps.
+See [DEPLOYMENT_CHECKLIST.md](docs/deployment/DEPLOYMENT_CHECKLIST.md) for detailed steps.
+
+### Deployment Checklist
+
+- [ ] Database: PostgreSQL managed instance (Azure Database for PostgreSQL)
+- [ ] SSL/TLS: Let's Encrypt or Azure-managed certificates
+- [ ] Environment: Production appsettings with Key Vault integration
+- [ ] CI/CD: GitHub Actions deployment on release tag
+- [ ] Monitoring: Application Insights, custom events logging
+- [ ] Backup: Automated database backups (daily)
+- [ ] Scaling: App Service Plan configured for load
+- [ ] DNS: CNAME records pointing to app service
+
+---
+
+## 🔒 Security
+
+### JWT Authentication
+
+- **Algorithm:** HS256 (HMAC-SHA256)
+- **Access Token:** 15-minute expiry
+- **Refresh Token:** 7-day expiry
+- **Token ID:** "jti" claim for future revocation tracking
+- **Password Hashing:** BCrypt (workFactor: 12)
+
+### CORS Policy
+
+- **Development:** `http://localhost:3000`, `http://localhost:5000`
+- **Production:** Add environment-specific allowed origins
+- **Credentials:** enabled for authentication
+
+### Environment Variables (Production)
+
+```bash
+# Never commit secrets - use Azure Key Vault
+ASPNETCORE_ENVIRONMENT=Production
+ConnectionStrings__DefaultConnection=Server=prod-db.postgres.database.azure.com;...
+Jwt__Key=<generate-256-bit-key>
+Jwt__Issuer=https://mimm.app
+Jwt__Audience=https://mimm.app
+Cors__AllowedOrigins__0=https://mimm.app
+Cors__AllowedOrigins__1=https://www.mimm.app
+```
+
+### Production Hardening Checklist
+
+- [ ] Enable HTTPS only (remove HTTP)
+- [ ] Set secure cookies (SameSite=Strict, HttpOnly)
+- [ ] Add rate limiting on auth endpoints
+- [ ] Implement CSRF protection
+- [ ] Add request logging for audit trail
+- [ ] Configure WAF (Azure Application Gateway)
+- [ ] Database: Enable SSL/TLS for connections
+- [ ] Database: Enable row-level security for user data
+- [ ] API: Version management (accept only /api/v1)
+- [ ] API: Request size limits
+- [ ] API: Response compression (gzip)
+- [ ] Frontend: Content Security Policy headers
+- [ ] Frontend: X-Frame-Options, X-Content-Type-Options headers
+- [ ] Monitoring: Application Insights integration
 
 ---
 
@@ -436,8 +497,8 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting PRs.
 | **Source Files** | 43 |
 | **Test Files** | 3 |
 | **Test Coverage** | ~10% |
-| **Project Completion** | 60% |
-| **Est. Remaining Hours** | 170-440 (Senior-Junior) |
+| **Project Completion** | 97% |
+| **Est. Remaining Hours** | 20-30 (E2E + Docs + Deploy) |
 
 ---
 
