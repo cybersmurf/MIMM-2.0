@@ -47,7 +47,8 @@ public class AuthController : ControllerBase
             }
 
             _logger.LogInformation("User registered: {Email}", request.Email);
-            return CreatedAtAction(nameof(Register), response);
+            // Return created with response payload; avoid CreatedAtAction overload that skips body
+            return Created(string.Empty, response);
         }
         catch (Exception ex)
         {
