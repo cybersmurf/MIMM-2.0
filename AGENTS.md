@@ -8,7 +8,7 @@
 
 - [README.md](./README.md) - základní informace o projektu
 - [CODE_REVIEW_PLAN.md](./docs/CODE_REVIEW_PLAN.md) - detailní plán refaktoringu a optimizací
-- [copilot-instructions](./.github/copilot-instructions.md) - pravidla generování kódu
+- [DOCKER_DEPLOYMENT_RULES.md](./.github/DOCKER_DEPLOYMENT_RULES.md) - pravidla pro Docker a deployment
 - `.github/prompts/` - opakovatelné prompty pro Copilot (release notes, E2E maintenance, CI fix, feature pattern)
   - release-notes.prompt.md
   - e2e-tests-maintenance.prompt.md

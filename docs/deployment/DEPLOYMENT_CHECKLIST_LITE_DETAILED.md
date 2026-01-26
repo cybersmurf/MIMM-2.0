@@ -464,7 +464,7 @@ server {
   ssl_protocols TLSv1.2 TLSv1.3;
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
   
-  root /home/mimm/mimm-app/src/MIMM.Frontend/bin/Release/net9.0/browser-wasm;
+  root /home/mimm/mimm-app/src/MIMM.Frontend/wwwroot;
   
   location / {
     try_files $uri $uri/ /index.html;
@@ -604,6 +604,30 @@ find /home/mimm/mimm-app -name "index.html" -type f
 # Uprav `root` v /etc/nginx/sites-available/mimm-frontend
 # na správnou cestu
 ```
+
+### Frontend vrací 500 - Permission Denied
+```
+stat() "/home/mimm/mimm-app/src/MIMM.Frontend/wwwroot/index.html" failed (13: Permission denied)
+```
+**Příčina:** Nginx (běží jako `www-data`) nemá právo traversovat `/home/mimm` adresář.
+
+**Řešení:** Přidej execute bit pro "others" na home directory:
+```bash
+# Zkontroluj aktuální práva
+ls -ld /home/mimm
+# Mělo by být: drwxr-x--- (750) - CHYBÍ execute pro others
+
+# Přidej execute bit (750 → 751)
+sudo chmod o+x /home/mimm
+
+# Reload nginx
+sudo systemctl reload nginx
+
+# Test
+curl -I https://your-domain.com  # Mělo by vrátit 200 OK
+```
+
+**Co to dělá:** `o+x` jen povolí nginx procházet adresářem (traverse), ne čtení obsahu. Je to bezpečné - `ls /home/mimm` stále nebude fungovat pro www-data.
 
 ---
 
