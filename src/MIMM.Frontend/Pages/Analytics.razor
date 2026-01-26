@@ -1,6 +1,7 @@
 @page "/analytics"
 @using MIMM.Shared.Dtos
 @using MIMM.Frontend.Services
+@using MudBlazor.Charts
 
 @inject IAnalyticsApiService AnalyticsApi
 @inject ISnackbar Snackbar
@@ -98,79 +99,87 @@
         @if (!_isLoading && _trends != null)
         {
             <MudGrid Spacing="3">
-                <!-- Mood Distribution -->
+                <!-- Mood Distribution Pie Chart -->
                 <MudItem xs="12" sm="12" md="6" lg="6">
                     <MudCard Elevation="0" Class="glass-card">
                         <MudCardContent>
                             <MudStack Spacing="2">
                                 <MudText Typo="Typo.subtitle1">Mood Distribution (Quadrants)</MudText>
-                                <MudGrid Spacing="1">
-                                    <MudItem xs="6" sm="6">
-                                        <MudPaper Class="pa-2" Elevation="0" Style="background-color:rgba(255,87,34,0.1);">
-                                            <MudText Typo="Typo.caption" Color="Color.Secondary">Energetic & Positive</MudText>
-                                            <MudText Typo="Typo.h6">@_quadrants["energetic"]</MudText>
-                                        </MudPaper>
-                                    </MudItem>
-                                    <MudItem xs="6">
-                                        <MudPaper Class="pa-2" Elevation="0" Style="background-color:rgba(76,175,80,0.1);">
-                                            <MudText Typo="Typo.caption" Color="Color.Secondary">Calm & Positive</MudText>
-                                            <MudText Typo="Typo.h6">@_quadrants["calm"]</MudText>
-                                        </MudPaper>
-                                    </MudItem>
-                                    <MudItem xs="6">
-                                        <MudPaper Class="pa-2" Elevation="0" Style="background-color:rgba(244,67,54,0.1);">
-                                            <MudText Typo="Typo.caption" Color="Color.Secondary">Agitated & Negative</MudText>
-                                            <MudText Typo="Typo.h6">@_quadrants["angry"]</MudText>
-                                        </MudPaper>
-                                    </MudItem>
-                                    <MudItem xs="6">
-                                        <MudPaper Class="pa-2" Elevation="0" Style="background-color:rgba(33,150,243,0.1);">
-                                            <MudText Typo="Typo.caption" Color="Color.Secondary">Sad & Negative</MudText>
-                                            <MudText Typo="Typo.h6">@_quadrants["sad"]</MudText>
-                                        </MudPaper>
-                                    </MudItem>
-                                </MudGrid>
+                                @if (_isLoading)
+                                {
+                                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="300px" Class="skeleton-shimmer" />
+                                }
+                                else if (_moodDistributionData.Count > 0)
+                                {
+                                    <MudChart ChartType="ChartType.Pie" 
+                                              ChartSeries="@_moodDistributionSeries" 
+                                              ChartOptions="@_moodDistributionOptions"
+                                              Width="100%"
+                                              Height="300px"
+                                              Class="pa-3" />
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary">No mood distribution data available</MudText>
+                                }
                             </MudStack>
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
 
-                <!-- Top Artists -->
+                <!-- Top Artists Bar Chart -->
                 <MudItem xs="12" sm="12" md="6" lg="6">
                     <MudCard Elevation="0" Class="glass-card">
                         <MudCardContent>
                             <MudStack Spacing="2">
                                 <MudText Typo="Typo.subtitle1">Top Artists (Last 30 days)</MudText>
-                                <MudList T="string" Dense>
-                                    @foreach (var artist in _topArtists.Take(5))
-                                    {
-                                        <MudListItem T="string">
-                                            <MudText Typo="Typo.body2">@artist</MudText>
-                                        </MudListItem>
-                                    }
-                                </MudList>
+                                @if (_isLoading)
+                                {
+                                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="300px" Class="skeleton-shimmer" />
+                                }
+                                else if (_topArtistsData.Count > 0)
+                                {
+                                    <MudChart ChartType="ChartType.Bar" 
+                                              ChartSeries="@_topArtistsSeries" 
+                                              ChartOptions="@_topArtistsOptions"
+                                              XAxisLabels="@_topArtistsLabels.ToArray()"
+                                              Width="100%"
+                                              Height="300px"
+                                              Class="pa-3" />
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary">No artist data available</MudText>
+                                }
                             </MudStack>
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
 
-                <!-- Mood Timeline -->
+                <!-- Mood Trends Line Chart -->
                 <MudItem xs="12">
                     <MudCard Elevation="0" Class="glass-card">
                         <MudCardContent>
                             <MudStack Spacing="2">
-                                <MudText Typo="Typo.subtitle1">Mood Timeline (Last 30 days)</MudText>
-                                <MudTimeline TimelineAlign="TimelineAlign.Default">
-                                    @foreach (var daily in _trends.DailyAverages.OrderByDescending(d => d.Date).Take(10))
-                                    {
-                                        <MudTimelineItem Elevation="0">
-                                            <MudText Typo="Typo.body2">@daily.Date.ToString("MMM dd")</MudText>
-                                            <MudText Typo="Typo.caption" Color="Color.Secondary">
-                                                Valence: @daily.AverageValence.ToString("F1") | Arousal: @daily.AverageArousal.ToString("F1")
-                                            </MudText>
-                                        </MudTimelineItem>
-                                    }
-                                </MudTimeline>
+                                <MudText Typo="Typo.subtitle1">Mood Trends (Last 30 days)</MudText>
+                                @if (_isLoading)
+                                {
+                                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="400px" Class="skeleton-shimmer" />
+                                }
+                                else if (_moodTrendsData.Count > 0)
+                                {
+                                    <MudChart ChartType="ChartType.Line" 
+                                              ChartSeries="@_moodTrendsSeries" 
+                                              ChartOptions="@_moodTrendsOptions"
+                                              XAxisLabels="@_trendLabels.ToArray()"
+                                              Width="100%"
+                                              Height="400px"
+                                              Class="pa-3" />
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary">No mood trend data available</MudText>
+                                }
                             </MudStack>
                         </MudCardContent>
                     </MudCard>
@@ -329,6 +338,21 @@
         { "angry", 0 }
     };
 
+    // Chart Data
+    private List<double> _moodDistributionData = [];
+    private List<ChartSeries> _moodDistributionSeries = [];
+    private ChartOptions _moodDistributionOptions = new();
+
+    private List<double> _moodTrendsData = [];
+    private List<ChartSeries> _moodTrendsSeries = [];
+    private List<string> _trendLabels = [];
+    private ChartOptions _moodTrendsOptions = new();
+
+    private List<double> _topArtistsData = [];
+    private List<ChartSeries> _topArtistsSeries = [];
+    private List<string> _topArtistsLabels = [];
+    private ChartOptions _topArtistsOptions = new();
+
     protected override async Task OnInitializedAsync()
     {
         var isAuthenticated = await AuthState.IsAuthenticatedAsync();
@@ -374,6 +398,11 @@
                 _topArtists = stats.TopArtists;
             }
 
+            // Initialize charts
+            InitializeMoodDistributionChart();
+            InitializeMoodTrendsChart();
+            InitializeTopArtistsChart();
+
             _liveMessage = "Analytics loaded successfully.";
         }
         catch (Exception ex)
@@ -385,6 +414,83 @@
         {
             _isLoading = false;
         }
+    }
+
+    private void InitializeMoodDistributionChart()
+    {
+        if (_trends?.MoodDistribution == null)
+            return;
+
+        _moodDistributionData =
+        [
+            _trends.MoodDistribution.HappyPercent,
+            _trends.MoodDistribution.CalmPercent,
+            _trends.MoodDistribution.SadPercent,
+            _trends.MoodDistribution.AngryPercent
+        ];
+
+        _moodDistributionSeries =
+        [
+            new ChartSeries { Name = "Mood Distribution", Data = _moodDistributionData.ToArray() }
+        ];
+
+        _moodDistributionOptions = new ChartOptions
+        {
+            ChartPalette =
+            [
+                "#ff5722", // Energetic (orange)
+                "#4caf50", // Calm (green)
+                "#2196f3", // Sad (blue)
+                "#f44336"  // Angry (red)
+            ],
+            YAxisTicks = 10
+        };
+    }
+
+    private void InitializeMoodTrendsChart()
+    {
+        if (_trends?.DailyAverages == null || !_trends.DailyAverages.Any())
+            return;
+
+        var sortedDaily = _trends.DailyAverages.OrderBy(d => d.Date).ToList();
+        
+        var valenceData = sortedDaily.Select(d => (double)d.AverageValence).ToList();
+        var arousalData = sortedDaily.Select(d => (double)d.AverageArousal).ToList();
+
+        _trendLabels = sortedDaily.Select(d => d.Date.ToString("MMM dd")).ToList();
+
+        _moodTrendsSeries =
+        [
+            new ChartSeries { Name = "Valence (Positivity)", Data = valenceData.ToArray() },
+            new ChartSeries { Name = "Arousal (Energy)", Data = arousalData.ToArray() }
+        ];
+
+        _moodTrendsOptions = new ChartOptions
+        {
+            ChartPalette = ["#3b82f6", "#a855f7"],
+            YAxisTicks = 5
+        };
+    }
+
+    private void InitializeTopArtistsChart()
+    {
+        if (_topArtists == null || !_topArtists.Any())
+            return;
+
+        var topFive = _topArtists.Take(5).ToList();
+        _topArtistsLabels = topFive.Select(a => a.Name).ToList();
+        _topArtistsData = topFive.Select(a => (double)a.Count).ToList();
+
+        _topArtistsSeries =
+        [
+            new ChartSeries { Name = "Play Count", Data = _topArtistsData.ToArray() }
+        ];
+
+        _topArtistsOptions = new ChartOptions
+        {
+            ChartPalette = ["#9333ea"],
+            YAxisTicks = 5
+        };
     }
 
     private async Task LoadMoodCorrelationAsync()
