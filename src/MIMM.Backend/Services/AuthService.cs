@@ -133,7 +133,7 @@ public class AuthService : IAuthService
             _logger.LogInformation("User registered successfully: {UserId}", user.Id);
 
             // Generate JWT tokens
-            var accessToken = GenerateAccessToken(user);
+            var (accessToken, _) = GenerateAccessToken(user);
             var refreshToken = GenerateRefreshToken();
 
             // Return authentication response with tokens
