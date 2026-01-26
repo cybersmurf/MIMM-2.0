@@ -99,9 +99,11 @@ public class AuthService : IAuthService
             return (false, "Password must be at least 6 characters long", null);
         }
 
-        // Check if user already exists
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+
+        // Check if user already exists (case-insensitive)
         var existingUser = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Email == normalizedEmail, cancellationToken);
 
         if (existingUser != null)
         {
@@ -118,7 +120,7 @@ public class AuthService : IAuthService
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Email = request.Email.Trim().ToLowerInvariant(),
+                Email = normalizedEmail,
                 PasswordHash = passwordHash,
                 DisplayName = request.DisplayName ?? request.Email.Split('@')[0],
                 Language = request.Language ?? "en",
@@ -133,14 +135,22 @@ public class AuthService : IAuthService
             _logger.LogInformation("User registered successfully: {UserId}", user.Id);
 
             // Generate JWT tokens
-            var (accessToken, _) = GenerateAccessToken(user);
+            var (accessToken, accessTokenExpiration) = GenerateAccessToken(user);
             var refreshToken = GenerateRefreshToken();
+
+            // Persist refresh token for newly registered user
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(
+                _configuration.GetValue<int>("Jwt:RefreshTokenExpirationDays", 7)
+            );
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             // Return authentication response with tokens
             var authResponse = new AuthenticationResponse
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
+                AccessTokenExpiresAt = accessTokenExpiration,
                 User = new UserDto
                 {
                     Id = user.Id,

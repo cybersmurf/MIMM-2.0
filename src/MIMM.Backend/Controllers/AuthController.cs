@@ -28,10 +28,10 @@ public class AuthController : ControllerBase
     /// Register new user
     /// </summary>
     /// <param name="request">Registration details</param>
-    /// <response code="201">User registered successfully</response>
+    /// <response code="200">User registered successfully</response>
     /// <response code="400">Invalid request or user already exists</response>
     [HttpPost("register")]
-    [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<AuthenticationResponse>> Register(
         [FromBody] RegisterRequest request,
