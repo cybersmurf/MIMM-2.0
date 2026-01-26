@@ -13,6 +13,9 @@ using MIMM.Backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// === CONFIGURATION: Load environment variables (for Docker) ===
+builder.Configuration.AddEnvironmentVariables();
+
 // === LOGGING (Serilog) ===
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
@@ -25,18 +28,19 @@ builder.Host.UseSerilog();
 // === DATABASE ===
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    // Build connection string from environment variables (for Docker production) or appsettings
+    var connectionString = BuildConnectionString(builder.Configuration);
     options.UseNpgsql(connectionString)
         .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
 });
 
 // === AUTHENTICATION (JWT) ===
-var jwtKey = builder.Configuration["Jwt:Key"] 
-    ?? throw new InvalidOperationException("JWT Key not configured");
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] 
-    ?? throw new InvalidOperationException("JWT Issuer not configured");
-var jwtAudience = builder.Configuration["Jwt:Audience"] 
-    ?? throw new InvalidOperationException("JWT Audience not configured");
+var jwtKey = builder.Configuration["JWT_SECRET_KEY"] ?? builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("JWT Key not configured (set JWT_SECRET_KEY or Jwt:Key)");
+var jwtIssuer = builder.Configuration["JWT_ISSUER"] ?? builder.Configuration["Jwt:Issuer"]
+    ?? throw new InvalidOperationException("JWT Issuer not configured (set JWT_ISSUER or Jwt:Issuer)");
+var jwtAudience = builder.Configuration["JWT_AUDIENCE"] ?? builder.Configuration["Jwt:Audience"]
+    ?? throw new InvalidOperationException("JWT Audience not configured (set JWT_AUDIENCE or Jwt:Audience)");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -220,6 +224,24 @@ if (app.Environment.IsDevelopment())
 
 Log.Information("MIMM Backend starting...");
 app.Run();
+
+// === HELPER: Build connection string from environment or appsettings ===
+static string BuildConnectionString(IConfiguration config)
+{
+    // Try environment variables first (Docker production)
+    var host = config["POSTGRES_HOST"] ?? config["ConnectionStrings:DefaultConnection"]?.Split(';').FirstOrDefault(s => s.StartsWith("Host="))?.Replace("Host=", "");
+    if (string.IsNullOrEmpty(host))
+        host = config.GetConnectionString("DefaultConnection")?.Split(';').FirstOrDefault(s => s.StartsWith("Host="))?.Replace("Host=", "") ?? "localhost";
+    
+    var port = config["POSTGRES_PORT"] ?? "5432";
+    var database = config["POSTGRES_DB"] ?? config.GetConnectionString("DefaultConnection")?.Split(';').FirstOrDefault(s => s.StartsWith("Database="))?.Replace("Database=", "") ?? "mimm_dev";
+    var username = config["POSTGRES_USER"] ?? config.GetConnectionString("DefaultConnection")?.Split(';').FirstOrDefault(s => s.StartsWith("Username="))?.Replace("Username=", "") ?? "postgres";
+    var password = config["POSTGRES_PASSWORD"] ?? config.GetConnectionString("DefaultConnection")?.Split(';').FirstOrDefault(s => s.StartsWith("Password="))?.Replace("Password=", "") ?? "postgres";
+    
+    var connStr = $"Host={host};Port={port};Database={database};Username={username};Password={password};";
+    Log.Information("Database connection: Host={Host}, Database={Database}, User={User}", host, database, username);
+    return connStr;
+}
 
 // Make Program class accessible for testing
 public partial class Program { }

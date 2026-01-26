@@ -214,7 +214,7 @@ sudo certbot renew --dry-run
 
 ---
 
-## Fáze D: Aplikace (20–30 min)
+## Fáze D: Aplikace (25–35 min)
 
 1) **Repo stáhnout / nahrát**
 
@@ -236,12 +236,16 @@ Ukázka obsahu `.env` (nahraď vlastními hodnotami):
 
 ```bash
 # Database
+POSTGRES_HOST=postgres          # Docker hostname (NE localhost!)
+POSTGRES_PORT=5432             # Docker port
 POSTGRES_USER=mimmuser
-POSTGRES_PASSWORD=STRONG_DB_PASS
+POSTGRES_PASSWORD=STRONG_DB_PASS  # min. 16 chars, random
 POSTGRES_DB=mimm
 
 # Redis
-REDIS_PASSWORD=STRONG_REDIS_PASS
+REDIS_HOST=redis               # Docker hostname
+REDIS_PORT=6379
+REDIS_PASSWORD=STRONG_REDIS_PASS  # min. 16 chars, random
 
 # JWT Authentication (generuj: openssl rand -base64 64)
 JWT_SECRET_KEY=AT_LEAST_64_CHARS_SECRET_KEY_FOR_PRODUCTION
@@ -264,106 +268,166 @@ DISCOGS_CONSUMER_SECRET=your_discogs_secret
 VERSION=1.0.0
 ```
 
-1) **Docker Compose file**
-
-**Pro ROOTLESS Docker:** Použij `docker-compose.prod.yml` z repozitáře (už obsahuje security hardening).
-
-**Pro klasický Docker:** Můžeš použít základní `docker-compose.yml` nebo upravit prod verzi.
-
-1) **Kontrola UID/GID (POUZE pro rootless)**
+2) **Build Docker images**
 
 ```bash
-id   # Zkontroluj své UID/GID (obvykle 1000:1000)
-```
-
-Pokud máš jiné UID než 1000, uprav v `docker-compose.prod.yml`:
-
-```yaml
-backend:
-  user: "TVOJE_UID:TVOJE_GID"  # např. "1001:1001"
-```
-
-1) **Build a spuštění**
-
-```bash
-# Pro ROOTLESS (doporučeno):
 docker compose -f docker-compose.prod.yml build
-docker compose -f docker-compose.prod.yml up -d
-
-# Pro klasický Docker:
-docker compose up -d
 ```
 
-1) **Kontrola běžících kontejnerů**
+3) **Spusť Postgres a Redis (bez backendu, aby se aplikovaly migrace)**
 
 ```bash
-docker ps
-# Měly by běžet: mimm-postgres, mimm-redis (pokud používáš), mimm-backend
+docker compose -f docker-compose.prod.yml up -d postgres redis
+sleep 15  # čekej, až jsou healthy
+
+# Ověř, že běží
+docker compose -f docker-compose.prod.yml ps
+# Měly by být "Up" a "healthy" oba
 ```
 
-1) **Kontrola logů**
+4) **Aplikuj databázové migrace** (KRITICKÉ - tento krok se často pokazí)
+
+⚠️ **Pozor:** Runtime obraz (backend) nemá .NET SDK, proto musíš použít SDK container:
+
+Nejdřív si zkontroluj, jaký je Docker network name (obvykle je to jméno složky + `_default`):
 
 ```bash
-docker compose -f docker-compose.prod.yml logs -f backend
-# Hledej: "Application started" nebo "Now listening on: http://[::]:8080"
+docker network ls | grep mimm
+# Mělo by být něco jako: mimm-app_default
 ```
 
-- Jinak použij šablonu z `DEPLOYMENT_PLAN_LITE.md`.
-
-1) **Nginx configy**
-
-**DŮLEŽITÉ:** Pro rootless Docker backend běží na portu `8080` (ne 5001)!
+Pak spusť migrations (nahraď `<network-name>` správným network jménem):
 
 ```bash
-# Backend config ulož do /etc/nginx/sites-available/mimm-backend
-# Frontend config ulož do /etc/nginx/sites-available/mimm-frontend
-sudo ln -s /etc/nginx/sites-available/mimm-backend /etc/nginx/sites-enabled/
-sudo ln -s /etc/nginx/sites-available/mimm-frontend /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo nginx -s reload
+docker run --rm \
+  --env-file .env \
+  --network <network-name> \
+  -v "$PWD":/src \
+  -w /src \
+  -e ASPNETCORE_ENVIRONMENT=Production \
+  -e POSTGRES_HOST=postgres \
+  -e POSTGRES_PORT=5432 \
+  -e PATH="/root/.dotnet/tools:$PATH" \
+  mcr.microsoft.com/dotnet/sdk:9.0 \
+  bash -c "dotnet restore MIMM.sln && dotnet tool install --global dotnet-ef && \
+    dotnet ef database update \
+    --project src/MIMM.Backend/MIMM.Backend.csproj \
+    --startup-project src/MIMM.Backend/MIMM.Backend.csproj \
+    --configuration Release"
 ```
 
-Minimal backend config (`/etc/nginx/sites-available/mimm-backend`):
+**Pokud máš složku `/home/mimm/mimm-app`, network se jmenuje `mimm-app_default`:**
+
+```bash
+docker run --rm \
+  --env-file .env \
+  --network mimm-app_default \
+  -v "$PWD":/src \
+  -w /src \
+  -e ASPNETCORE_ENVIRONMENT=Production \
+  -e POSTGRES_HOST=postgres \
+  -e POSTGRES_PORT=5432 \
+  -e PATH="/root/.dotnet/tools:$PATH" \
+  mcr.microsoft.com/dotnet/sdk:9.0 \
+  bash -c "dotnet restore MIMM.sln && dotnet tool install --global dotnet-ef && \
+    dotnet ef database update \
+    --project src/MIMM.Backend/MIMM.Backend.csproj \
+    --startup-project src/MIMM.Backend/MIMM.Backend.csproj \
+    --configuration Release"
+```
+
+**Co tento příkaz dělá:**
+- `--env-file .env` - vloží environment proměnné z `.env` souboru
+- `--network mimm-app_default` - připojí se do Docker network, kde běží postgres (KRITICKÉ!)
+- `--env POSTGRES_HOST=postgres` - postgres hostname v Docker networku (NE localhost!)
+- `dotnet ef database update` - aplikuje všechny pending migrations
+
+**Pokud selže:**
+```bash
+# 1. Ověř, že postgres je healthy
+docker compose -f docker-compose.prod.yml logs postgres
+
+# 2. Ověř, že máš správný network name
+docker network ls
+
+# 3. Zkus se připojit z kontejneru
+docker run --rm --network mimm-app_default \
+  mcr.microsoft.com/dotnet/sdk:9.0 \
+  ping -c 2 postgres  # ping by měl fungovat
+```
+
+5) **Spusť backend**
+
+```bash
+docker compose -f docker-compose.prod.yml up -d backend
+
+# Čekej~30 sekund, aby se aplikace nastartovala
+sleep 30
+
+# Ověř logs
+docker compose -f docker-compose.prod.yml logs backend | tail -30
+# Hledej: "Application started" nebo "Now listening"
+```
+
+6) **Ověř, že backend běží**
+
+```bash
+curl http://localhost:8080/health
+# Mělo by vrátit JSON: {"status":"healthy","timestamp":"..."}
+```
+
+**Pokud backend není healthy:**
+```bash
+docker compose -f docker-compose.prod.yml logs backend -f  # Follow logs
+docker ps  # Check container status
+```
+
+---
+
+## Fáze E: Nginx Reverse Proxy & SSL (15–20 min)
+
+**DŮLEŽITĚ:** Backend běží na `127.0.0.1:8080` (rootless Docker), Nginx proxyuje na něj a servuje frontend.
+
+### 1) Nginx config pro Backend API
+
+Vytvoř `/etc/nginx/sites-available/mimm-backend`:
+
+```bash
+sudo nano /etc/nginx/sites-available/mimm-backend
+```
+
+Vlož (nahraď `api.your-domain.com` svojí doménou):
 
 ```nginx
+upstream mimm_api { server 127.0.0.1:8080; }
+
 server {
   listen 80;
   server_name api.your-domain.com;
   location /.well-known/acme-challenge/ { root /var/www/certbot; }
-  return 301 https://$host$request_uri;
+  location / { return 301 https://$host$request_uri; }
 }
 
 server {
   listen 443 ssl http2;
   server_name api.your-domain.com;
-
   ssl_certificate /etc/letsencrypt/live/api.your-domain.com/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/api.your-domain.com/privkey.pem;
-
-  add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
   add_header X-Frame-Options "SAMEORIGIN" always;
   add_header X-Content-Type-Options "nosniff" always;
-  server_tokens off;
-
-  client_max_body_size 10M;
   
-  # Pro ROOTLESS Docker: port 8080
-  # Pro klasický Docker: port 5001
-  upstream mimm_backend { 
-    server 127.0.0.1:8080; # <- změň na 5001 pokud NEJSI rootless
-    keepalive 16; 
-  }
-
   location / {
-    proxy_pass http://mimm_backend;
+    proxy_pass http://mimm_api;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
   }
-
+  
   location /hubs/ {
-    proxy_pass http://mimm_backend;
+    proxy_pass http://mimm_api;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
@@ -371,80 +435,112 @@ server {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
   }
+}
+```
 
-  location /health {
-    proxy_pass http://mimm_backend;
-    access_log off;
+### 2) Nginx config pro Frontend
+
+Vytvoř `/etc/nginx/sites-available/mimm-frontend`:
+
+```bash
+sudo nano /etc/nginx/sites-available/mimm-frontend
+```
+
+Vlož (nahraď `your-domain.com` svojí doménou):
+
+```nginx
+server {
+  listen 80;
+  server_name your-domain.com www.your-domain.com;
+  location /.well-known/acme-challenge/ { root /var/www/certbot; }
+  location / { return 301 https://$host$request_uri; }
+}
+
+server {
+  listen 443 ssl http2;
+  server_name your-domain.com www.your-domain.com;
+  ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+  
+  root /home/mimm/mimm-app/src/MIMM.Frontend/bin/Release/net9.0/browser-wasm;
+  
+  location / {
+    try_files $uri $uri/ /index.html;
+    expires 1d;
+  }
+  
+  location ~* \.(js|css|wasm)$ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
   }
 }
 ```
 
-1) **Build & run (již provedeno výše v kroku 5)**
-
-> Tento krok byl sloučen s krokem 5. Pokud jsi ještě nespustil kontejnery, udělej to teď:
+### 3) Povolit Nginx sites
 
 ```bash
-docker compose -f docker-compose.prod.yml up -d
+sudo ln -s /etc/nginx/sites-available/mimm-backend /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/mimm-frontend /etc/nginx/sites-enabled/
+sudo rm /etc/nginx/sites-enabled/default  # Smaž default site
+sudo nginx -t  # Test konfigurace
 ```
 
-1) **Migrace databáze**
+### 4) Let's Encrypt SSL Certy
 
 ```bash
-# Pro ROOTLESS Docker:
-docker compose -f docker-compose.prod.yml exec backend \
-  dotnet ef database update --no-build
+sudo apt install -y certbot python3-certbot-nginx
 
-# Pro klasický Docker:
-docker compose exec backend dotnet ef database update --no-build
+# Hlavní doména + www
+sudo certbot certonly --nginx -d your-domain.com -d www.your-domain.com -e your@email.com
+
+# API doména
+sudo certbot certonly --nginx -d api.your-domain.com -e your@email.com
+
+# Auto-renew
+sudo systemctl enable certbot.timer
+sudo systemctl start certbot.timer
 ```
 
-**Troubleshooting pro rootless:**
-
-Pokud máš problém s připojením k Docker daemonu:
+### 5) Restart Nginx
 
 ```bash
-# Zkontroluj DOCKER_HOST
-echo $DOCKER_HOST
-# Mělo by být: unix:///run/user/1000/docker.sock
-
-# Pokud není nastaveno:
-export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock
+sudo systemctl reload nginx
+sudo systemctl status nginx
 ```
 
----
-
-## Fáze E: Smoke test (10 min)
-
-1) **Backend health check**
+### 6) Ověř, že funguje
 
 ```bash
-# Test lokálně na serveru
-curl http://localhost:8080/health   # pro rootless Docker
-# nebo
-curl http://localhost:5001/health   # pro klasický Docker
+# API
+curl https://api.your-domain.com/health
 
-# Test přes Nginx (HTTPS)
-curl -I https://api.your-domain.com/health   # očekávej HTTP/1.1 200 OK
-```
-
-1) **Frontend**
-
-- Otevři <https://your-domain.com> v prohlížeči, zkontroluj že se načte bez chyb.
-
-1) **Login/registrace**
-
-- Založ testovací účet, přihlášení musí projít.
-
-1) **Kontrola Docker kontejnerů (pro rootless)**
-
-```bash
-docker ps
-# Měly by být všechny kontejnery "Up" a healthy
+# Frontend (mělo by vrátit HTML Blazor app)
+curl -I https://your-domain.com
 ```
 
 ---
 
-## Fáze F: Backup (5 min)
+## Fáze F: Smoke test (5 min)
+
+```bash
+# 1. Backend API
+curl https://api.your-domain.com/health
+
+# 2. Frontend web
+curl -I https://your-domain.com  # Mělo by vrátit 200 OK
+
+# 3. Docker containers all healthy
+docker compose -f docker-compose.prod.yml ps
+
+# 4. Database tables created
+docker exec mimm-postgres psql -U mimmuser -d mimm -c "\dt"
+```
+
+---
+
+## Fáze G: Backup (5 min)
 
 1) Složka pro backupy
 
@@ -452,14 +548,14 @@ docker ps
 mkdir -p ~/backups
 ```
 
-1) Jednorázový dump (spusť kdykoli)
+2) Jednorázový dump (spusť kdykoli)
 
 ```bash
 docker exec mimm-postgres pg_dump -U mimmuser mimm | \
   gzip > ~/backups/mimm_db_$(date +%Y%m%d).sql.gz
 ```
 
-1) Denní cron v 2:00
+3) Denní cron v 2:00
 
 ```bash
 crontab -e
@@ -469,43 +565,59 @@ crontab -e
 
 ---
 
-## Fáze G: Minimum monitoringu (5 min)
+## Troubleshooting (když se něco pokazí)
 
-1) UptimeRobot
+### Postgres nemůže změnit práva na adresáři
+```
+chmod: /var/lib/postgresql/data: Operation not permitted
+```
+**Řešení:** Už jsme opravili v docker-compose.prod.yml (odebrali `user: "999:999"`). Udělej `git pull origin main`.
 
-- Přidej HTTP(S) check na `https://api.your-domain.com/health`.
+### Backend migrations selžou (dotnet ef not found)
+```
+The application 'ef' does not exist.
+```
+**Řešení:** Použij SDK container command (viz Fáze D, krok 4). Runtime image nemá SDK.
 
-1) Rychlé logy
-
+### Nginx "connect() failed ... refused"
+**Příčina:** Backend není spuštěný.
 ```bash
-docker compose -f docker-compose.prod.yml logs --tail=200
+docker compose -f docker-compose.prod.yml logs backend | head -20
+docker compose -f docker-compose.prod.yml restart backend
+```
+
+### SSL certificate not found
+```
+SSL_ERROR_RX_RECORD_TOO_LONG
+```
+**Řešení:** Spusť certbot znovu:
+```bash
+sudo certbot certonly --nginx -d your-domain.com
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+### Frontend vrací 404
+```bash
+# Ověř cestu k frontend buildu
+find /home/mimm/mimm-app -name "index.html" -type f
+
+# Uprav `root` v /etc/nginx/sites-available/mimm-frontend
+# na správnou cestu
 ```
 
 ---
 
-## Volitelné (až bude čas)
-
-- Redis přidej, jen pokud appka potřebuje cache/SignalR scale-out (v `docker-compose.prod.yml` už je).
-- Docker Bench / Lynis (security audit) až později.
-- Off-site backup sync (rsync/S3) až později.
-- Rychlý výkonový test: `ab -n 100 -c 5 https://api.your-domain.com/health`.
-
-### 🔒 Rootless Docker Security Benefits
-
-Pokud jsi použil rootless Docker, máš tyto výhody:
-
-✅ **Docker daemon běží bez root** - útočník nemůže získat root přístup přes Docker  
-✅ **Kontejnery běží jako non-root uživatel** - appuser (UID 1000)  
-✅ **Non-privileged porty** - 8080+ místo <1024 (není potřeba root)  
-✅ **Localhost-only binding** - PostgreSQL/Redis jsou přístupné jen z localhost  
-✅ **Security hardening** - `no-new-privileges`, `read-only` filesystémy  
-✅ **Resource limits** - CPU a paměťové limity zabraňují DoS  
-
-**Kompletní rootless Docker guide:** `docs/deployment/ROOTLESS_DOCKER_SETUP.md`
+## Fáze H: Monitoring (volitelné)
 
 ---
 
-## Go/No-Go
+## Go/No-Go – Ready to Deploy?
 
-- [ ] Vše zelené → GO
-- [ ] Něco chybí → NO-GO, doplnit
+- [ ] Rootless Docker běží (`docker info | grep rootless`)
+- [ ] Nginx nainstalovaný a testuje se (`sudo nginx -t`)
+- [ ] SSL certy v `/etc/letsencrypt/live/`
+- [ ] Postgres + Redis + Backend běží (všechny healthy)
+- [ ] Migrations úspěšně aplikované
+- [ ] `curl https://api.your-domain.com/health` → 200 OK
+- [ ] `curl https://your-domain.com` → HTML Blazor app
+- [ ] Logs jsou čisté (žádné errory)
