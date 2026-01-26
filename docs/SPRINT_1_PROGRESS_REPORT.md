@@ -168,13 +168,13 @@ Schema Version: v1
 
 ### Medium Priority (Features)
 
-5. **Pagination Edge Cases**
+1. **Pagination Edge Cases**
    - First/last page buttons
    - Page size changes
    - Total count display
    - Empty results handling
 
-6. **Form Improvements**
+2. **Form Improvements**
    - Better error messaging
    - Inline validation feedback
    - Save-in-progress (localStorage)
@@ -182,13 +182,13 @@ Schema Version: v1
 
 ### Lower Priority (Phase 2)
 
-7. **Last.fm OAuth**
+1. **Last.fm OAuth**
    - Scaffold OAuth flow
    - Token exchange implementation
    - Scrobble sync service
    - Settings page integration
 
-8. **Music Search Enhancement**
+2. **Music Search Enhancement**
    - Multi-source aggregation
    - Search result caching
    - Album art optimization

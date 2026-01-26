@@ -109,7 +109,7 @@ ssh mimm@IP -p 2222
 sudo apt install -y uidmap dbus-user-session
 ```
 
-2) **Instalace Rootless Docker (jako uživatel mimm, NE root!)**
+1) **Instalace Rootless Docker (jako uživatel mimm, NE root!)**
 
 ```bash
 # Přepni se na uživatele mimm (pokud jsi root)
@@ -130,7 +130,7 @@ docker version
 docker info | grep -i rootless   # mělo by zobrazit "rootless"
 ```
 
-3) **Povolit Docker start při bootu**
+1) **Povolit Docker start při bootu**
 
 ```bash
 systemctl --user enable docker
@@ -140,7 +140,7 @@ systemctl --user start docker
 sudo loginctl enable-linger mimm
 ```
 
-4) **Test Dockeru**
+1) **Test Dockeru**
 
 ```bash
 docker run hello-world
@@ -159,7 +159,7 @@ sudo sh get-docker.sh
 sudo apt install -y docker-compose-plugin
 ```
 
-2) **Přidání uživatele do docker group (aby mohl spouštět docker bez sudo)**
+1) **Přidání uživatele do docker group (aby mohl spouštět docker bez sudo)**
 
 ```bash
 sudo usermod -aG docker mimm
@@ -167,7 +167,7 @@ sudo usermod -aG docker mimm
 newgrp docker   # nebo logout + login
 ```
 
-3) **Test Dockeru**
+1) **Test Dockeru**
 
 ```bash
 docker run hello-world
@@ -224,7 +224,7 @@ git clone <repo-url> mimm-app   # nebo nahrát SFTP do /home/mimm/mimm-app
 cd mimm-app
 ```
 
-2) **`.env` vytvořit a zamknout (jen na serveru)**
+1) **`.env` vytvořit a zamknout (jen na serveru)**
 
 ```bash
 nano .env
@@ -264,13 +264,13 @@ DISCOGS_CONSUMER_SECRET=your_discogs_secret
 VERSION=1.0.0
 ```
 
-3) **Docker Compose file**
+1) **Docker Compose file**
 
 **Pro ROOTLESS Docker:** Použij `docker-compose.prod.yml` z repozitáře (už obsahuje security hardening).
 
 **Pro klasický Docker:** Můžeš použít základní `docker-compose.yml` nebo upravit prod verzi.
 
-4) **Kontrola UID/GID (POUZE pro rootless)**
+1) **Kontrola UID/GID (POUZE pro rootless)**
 
 ```bash
 id   # Zkontroluj své UID/GID (obvykle 1000:1000)
@@ -283,7 +283,7 @@ backend:
   user: "TVOJE_UID:TVOJE_GID"  # např. "1001:1001"
 ```
 
-5) **Build a spuštění**
+1) **Build a spuštění**
 
 ```bash
 # Pro ROOTLESS (doporučeno):
@@ -294,22 +294,23 @@ docker compose -f docker-compose.prod.yml up -d
 docker compose up -d
 ```
 
-6) **Kontrola běžících kontejnerů**
+1) **Kontrola běžících kontejnerů**
 
 ```bash
 docker ps
 # Měly by běžet: mimm-postgres, mimm-redis (pokud používáš), mimm-backend
 ```
 
-7) **Kontrola logů**
+1) **Kontrola logů**
 
 ```bash
 docker compose -f docker-compose.prod.yml logs -f backend
 # Hledej: "Application started" nebo "Now listening on: http://[::]:8080"
 ```
+
 - Jinak použij šablonu z `DEPLOYMENT_PLAN_LITE.md`.
 
-8) **Nginx configy**
+1) **Nginx configy**
 
 **DŮLEŽITÉ:** Pro rootless Docker backend běží na portu `8080` (ne 5001)!
 
@@ -378,7 +379,7 @@ server {
 }
 ```
 
-9) **Build & run (již provedeno výše v kroku 5)**
+1) **Build & run (již provedeno výše v kroku 5)**
 
 > Tento krok byl sloučen s krokem 5. Pokud jsi ještě nespustil kontejnery, udělej to teď:
 
@@ -386,7 +387,7 @@ server {
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-10) **Migrace databáze**
+1) **Migrace databáze**
 
 ```bash
 # Pro ROOTLESS Docker:
@@ -426,15 +427,15 @@ curl http://localhost:5001/health   # pro klasický Docker
 curl -I https://api.your-domain.com/health   # očekávej HTTP/1.1 200 OK
 ```
 
-2) **Frontend**
+1) **Frontend**
 
 - Otevři <https://your-domain.com> v prohlížeči, zkontroluj že se načte bez chyb.
 
-3) **Login/registrace**
+1) **Login/registrace**
 
 - Založ testovací účet, přihlášení musí projít.
 
-4) **Kontrola Docker kontejnerů (pro rootless)**
+1) **Kontrola Docker kontejnerů (pro rootless)**
 
 ```bash
 docker ps

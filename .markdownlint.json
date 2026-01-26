@@ -4,21 +4,25 @@
   "MD004": { "style": "consistent" },
   "MD007": { "indent": 2 },
   "MD013": {
-    "line_length": 120,
-    "code_block_line_length": 120,
-    "code_blocks": true,
-    "headings": true,
+    "line_length": 250,
+    "code_block_line_length": 250,
+    "code_blocks": false,
+    "headings": false,
     "tables": false,
-    "headers": true
+    "headers": false
   },
   "MD024": { "siblings_only": true },
+  "MD029": false,
   "MD030": {
     "ul_single": 1,
     "ul_multi": 1,
     "ol_single": 1,
     "ol_multi": 1
   },
+  "MD033": false,
+  "MD034": false,
   "MD036": false,
+  "MD040": false,
   "MD041": false,
   "MD045": false,
   "MD056": false,

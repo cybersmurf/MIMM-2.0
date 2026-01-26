@@ -29,6 +29,7 @@ poslouchá.
 ### Aktuální Stav (25. ledna 2026)
 
 ✅ **HOTOVO (MVP Complete):**
+
 - Základní infrastruktura (Backend API, Frontend, DB)
 - Bezpečnostní systém (JWT auth, Login/Register)
 - **Last.fm integrace s Scrobbling** ✅ (25.1.2026)

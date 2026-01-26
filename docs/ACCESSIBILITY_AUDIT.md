@@ -55,6 +55,7 @@
 | **Login.razor** | `role="status"` | `assertive` | "Welcome back!" / "Invalid email or password" |
 
 **Pattern:** All async operations announce via LiveRegion component:
+
 - Start: "Loading..."
 - Success: "X items loaded / action completed"
 - Error: "Failed to [action]. Please try again."
@@ -77,11 +78,13 @@
 ### Focus Trap Implementation
 
 **Dialogs with Focus Boundary:**
+
 - EntryCreateDialog.razor
 - EntryEditDialog.razor
 - ConfirmDialog.razor
 
 **Pattern:** Invisible focus sentinels (`tabindex="0"`) at start/end of DialogContent/DialogActions:
+
 ```razor
 <MudDialog aria-modal="true" role="dialog">
     <DialogContent>
@@ -131,6 +134,7 @@
 | Buttons (disabled) | #9CA3AF | #F3F4F6 | 3.5:1 | AA ✅ |
 
 **Theme Support:**
+
 - Light/Dark mode toggle via ThemeToggle.razor
 - High contrast variants available via CSS variables
 - Design tokens support accessibility-first approach

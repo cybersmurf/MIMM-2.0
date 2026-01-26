@@ -18,6 +18,7 @@ npm run dev
 ```
 
 **Expected output:**
+
 ```
   VITE v5.x.x  ready in xxxx ms
 
@@ -34,6 +35,7 @@ dotnet run
 ```
 
 **Expected output:**
+
 ```
 info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
       Now listening on: http://localhost:5001
@@ -128,6 +130,7 @@ Follow the **10-step test scenario** in `docs/testing/frontend-integration-test-
 ## 🐛 Troubleshooting
 
 ### Frontend won't start
+
 ```bash
 # Clear node_modules and reinstall
 cd src/MIMM.Frontend
@@ -137,16 +140,19 @@ npm run dev
 ```
 
 ### API calls failing (CORS)
+
 - Verify backend is running on `http://localhost:5001`
 - Check browser Network tab in DevTools
 - Verify `Authorization: Bearer {token}` header present
 
 ### Can't log in
+
 - Verify backend is healthy: `curl http://localhost:5001/health`
 - Check if seed user exists (docker exec mimm-postgres psql...)
 - Verify credentials: `e2e-auto@example.com` / `Test123!`
 
 ### Components not rendering
+
 - Check browser Console tab for JavaScript errors
 - Verify `.razor` files compile without errors
 - Check that Services are registered in `Program.cs`
@@ -154,15 +160,18 @@ npm run dev
 ## 📊 Browser DevTools Inspection
 
 ### Network Tab
+
 - Monitor API requests to `http://localhost:5001/api/*`
 - Verify `Authorization: Bearer {token}` header on protected endpoints
 - Check response payloads
 
 ### Application Tab
+
 - Look for `access_token` and `refresh_token` in localStorage
 - Verify tokens are valid JWT format
 
 ### Console Tab
+
 - Should be clean (no errors)
 - Verify Blazor interop messages if using JSInterop
 
@@ -173,6 +182,7 @@ npm run dev
 3. **Test edit flow** on each entry
 4. **Test delete flow** (finally delete all test entries)
 5. **Verify database state** with SQL query:
+
    ```sql
    SELECT id, song_title, valence, arousal, created_at 
    FROM entries 
@@ -183,6 +193,7 @@ npm run dev
 ## 📝 Logging Issues
 
 If something fails, capture:
+
 1. **Browser Console** errors (screenshot or copy text)
 2. **Network tab** failed request (show Response tab)
 3. **Backend logs** (terminal output)
@@ -191,11 +202,13 @@ If something fails, capture:
 ## ✨ Next Steps After Testing
 
 ### If All Tests Pass ✅
+
 1. Create Cypress/Playwright automated test suite
 2. Integrate into CI/CD pipeline
 3. Begin Phase 3.2 (Form validation improvements)
 
 ### If Tests Fail ❌
+
 1. Check error logs (browser console + backend logs)
 2. Compare with expected behavior in test plan
 3. File issues with reproduction steps
@@ -204,6 +217,7 @@ If something fails, capture:
 ## 🎯 Success Criteria
 
 All tests pass when:
+
 - [ ] Login redirects to dashboard
 - [ ] Create entry saves to database
 - [ ] Entry list displays correctly

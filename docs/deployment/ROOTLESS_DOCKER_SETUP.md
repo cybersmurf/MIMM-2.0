@@ -61,6 +61,7 @@ docker info | grep -i rootless
 ```
 
 **Očekávaný výstup:**
+
 ```
 ...
  Security Options:
@@ -148,6 +149,7 @@ chmod 600 .env
 ```
 
 **Generování JWT klíče:**
+
 ```bash
 # 64-znak náhodný klíč pro JWT
 openssl rand -base64 64 | tr -d '\n' && echo
@@ -206,6 +208,7 @@ sudo nano /etc/nginx/sites-available/mimm
 ```
 
 **Obsah souboru:**
+
 ```nginx
 # MIMM 2.0 Nginx Configuration for Rootless Docker
 
@@ -464,6 +467,7 @@ crontab -e
 ```
 
 **Přidat řádek:**
+
 ```cron
 0 2 * * * cd ~/MIMM-2.0 && docker exec mimm-postgres pg_dump -U mimmuser mimm > ~/backups/mimm_backup_$(date +\%Y\%m\%d).sql
 ```
@@ -483,6 +487,7 @@ docker exec mimm-redis redis-cli --pass <REDIS_PASSWORD> SAVE
 ### Problém: "permission denied while trying to connect to the Docker daemon socket"
 
 **Řešení:**
+
 ```bash
 # Ověř, že je nastaven správný DOCKER_HOST
 echo $DOCKER_HOST
@@ -494,6 +499,7 @@ export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock
 ### Problém: "bind: address already in use"
 
 **Řešení:**
+
 ```bash
 # Najít proces používající port
 sudo lsof -i :8080
@@ -504,6 +510,7 @@ sudo lsof -i :8080
 ### Problém: Kontejner spadne hned po startu
 
 **Řešení:**
+
 ```bash
 # Kontrola logů
 docker compose -f docker-compose.prod.yml logs backend

@@ -10,12 +10,14 @@
 ## Overview
 
 This guide provides step-by-step instructions for testing MIMM 2.0 end-to-end:
+
 - **Authentication flow** (Login/Register)
 - **Core features** (mood tracking, music search, scrobbling)
 - **Accessibility** (keyboard navigation, screen readers, ARIA)
 - **Mobile/responsive behavior**
 
 **Testing Environment:**
+
 - Windows: NVDA or JAWS + Chrome/Edge
 - macOS: VoiceOver + Safari
 - iOS: VoiceOver + Safari
@@ -41,6 +43,7 @@ dotnet run
 ```
 
 **Endpoints:**
+
 - Frontend: `http://localhost:5173` (dev) or `https://localhost:7000` (prod)
 - Backend API: `https://localhost:7001`
 - PostgreSQL: `localhost:5432`
@@ -102,6 +105,7 @@ dotnet ef database update -p src/MIMM.Backend
 **Keyboard Test:** Tab through form → Email field → Password field → Login button → all reachable.
 
 **Accessibility Check:**
+
 - [ ] Live region announces login success
 - [ ] Focus moves to dashboard after login
 - [ ] "Welcome back!" message is audible in screen reader
@@ -139,6 +143,7 @@ dotnet ef database update -p src/MIMM.Backend
 | 5 | Check theme | Light/dark mode applied per settings |
 
 **Accessibility Check:**
+
 - [ ] Announcement appears before visual content (no duplicate announcements)
 - [ ] Focus doesn't jump (live region is polite, not assertive)
 - [ ] Stats cards have proper contrast (13.5:1 or better)
@@ -160,6 +165,7 @@ dotnet ef database update -p src/MIMM.Backend
 | 7 | Check live region in EntryList | Announces: "Entry created. [Song name] saved." |
 
 **Focus Trap Test:**
+
 - [ ] Tab at bottom of dialog → focus returns to first button (focus trap active)
 - [ ] Escape key → dialog closes, focus returns to "New Entry" button
 
@@ -181,6 +187,7 @@ dotnet ef database update -p src/MIMM.Backend
 | 6 | Verify EntryList | New entry appears at top |
 
 **Accessibility Check:**
+
 - [ ] Spinner visible for >500ms search (user knows it's loading)
 - [ ] Results announced by screen reader (role="list" with items)
 - [ ] Keyboard: Arrow keys navigate results, Enter selects
@@ -203,6 +210,7 @@ dotnet ef database update -p src/MIMM.Backend
 | 5 | Check Last.fm | Track appears in recent scrobbles |
 
 **Error Handling:**
+
 - If Last.fm token expired → displays "Reconnect Last.fm" button
 - If network error → Snackbar shows error message
 
@@ -220,6 +228,7 @@ dotnet ef database update -p src/MIMM.Backend
 | 4 | Inspect charts | Can read data in text form (alt text or summary) |
 
 **Mobile Test:**
+
 - [ ] Charts responsive on mobile (320px width)
 - [ ] Legend doesn't overlap with chart
 - [ ] Touch targets for chart interactions ≥44px
@@ -240,6 +249,7 @@ dotnet ef database update -p src/MIMM.Backend
 | **Analytics** | Chart controls → Legend items |
 
 **Verification Steps:**
+
 ```
 1. Press Tab repeatedly from page top
 2. Verify focus visible (outline, highlight, or color change)
@@ -262,6 +272,7 @@ dotnet ef database update -p src/MIMM.Backend
 | 4 | Verify jump | Focus outline visible on main content area |
 
 **Visual Check:**
+
 - [ ] Skip link has high contrast (visible when focused)
 - [ ] Hidden by default (not taking up space)
 - [ ] Appears above all other content when focused (z-index: high)
@@ -275,6 +286,7 @@ dotnet ef database update -p src/MIMM.Backend
 ### Step-by-Step (NVDA Windows)
 
 **Setup:**
+
 1. Download NVDA: [www.nvaccess.org](https://www.nvaccess.org)
 2. Install and run: `nvda.exe`
 3. Open MIMM app in Chrome/Edge
@@ -339,6 +351,7 @@ NVDA announces: "Dialog closed"
 **Tool:** Built-in VoiceOver (free, included with macOS)
 
 **Setup:**
+
 1. System Preferences → Accessibility → VoiceOver → Enable
 2. Open Safari (best VoiceOver support)
 3. Navigate to MIMM app
@@ -372,6 +385,7 @@ VO announces: "Email text field, required, double tap to edit"
 **Tool:** Built-in VoiceOver (included with iOS)
 
 **Setup:**
+
 1. Settings → Accessibility → VoiceOver → On
 2. Open Safari
 3. Navigate to MIMM app URL
@@ -410,6 +424,7 @@ Expected: Entry saved, live region announces success
 3. Reload MIMM app
 
 **Verification:**
+
 - [ ] All text readable (no light text on light bg)
 - [ ] Focus indicators visible (yellow outline, high contrast)
 - [ ] Buttons distinguishable (not just color-coded)
@@ -421,6 +436,7 @@ Expected: Entry saved, live region announces success
 2. Reload app
 
 **Verification:**
+
 - [ ] Text contrast ≥ 7:1 (AAA standard)
 - [ ] No "color only" communication (e.g., "Green = success" without text)
 
@@ -439,6 +455,7 @@ Expected: Entry saved, live region announces success
 | 1920×1080 | Desktop | Full screen, no UI issues, comfortable spacing |
 
 **Test Procedure:**
+
 ```
 1. Open DevTools (F12)
 2. Click Device Emulation toggle (Ctrl+Shift+M)
@@ -464,6 +481,7 @@ Expected: Entry saved, live region announces success
 | Rotate back to Portrait | Layout returns to original state, no UI glitches |
 
 **Touch Device Emulation (Chrome):**
+
 ```
 DevTools → More tools → Sensors → Orientation
 Change from Portrait (0°) to Landscape (90°)
@@ -498,6 +516,7 @@ Monitor CSS media queries responding
 | EntryList | <1.5s | ? | Includes list load |
 
 **Measure using Chrome DevTools:**
+
 ```
 1. Open DevTools → Performance tab
 2. Click record button (red circle)
@@ -510,6 +529,7 @@ Monitor CSS media queries responding
 ```
 
 **Target Metrics (Web Vitals):**
+
 - FCP: < 1.8s (good)
 - LCP: < 2.5s (good)
 - CLS: < 0.1 (good)
@@ -532,6 +552,7 @@ Monitor CSS media queries responding
 ```
 
 **Memory Usage (DevTools → Memory tab):**
+
 ```
 1. Take heap snapshot before interaction
 2. Perform 10 mood entry operations
@@ -603,11 +624,13 @@ Monitor CSS media queries responding
 ### Test 8.1: Unit Tests
 
 Run backend unit tests:
+
 ```bash
 dotnet test tests/MIMM.Tests.Unit/ -v minimal
 ```
 
 Expected output:
+
 ```
 Passed: [X] tests
 Failed: 0 tests
@@ -619,11 +642,13 @@ Skipped: 0 tests
 ### Test 8.2: Integration Tests
 
 Run integration tests (with test database):
+
 ```bash
 dotnet test tests/MIMM.Tests.Integration/ -v minimal
 ```
 
 Expected output:
+
 ```
 Passed: [X] tests
 Failed: 0 tests
@@ -647,6 +672,7 @@ Run Lighthouse accessibility audit in Chrome DevTools:
 ```
 
 **Known Automation Limitations:**
+
 - Live region announcements require manual testing (screen reader)
 - Focus trap requires manual keyboard testing
 - Color contrast checked automatically (good tool: Axe DevTools)
@@ -658,11 +684,13 @@ Run Lighthouse accessibility audit in Chrome DevTools:
 ### Test Execution Checklist
 
 **Authentication Tests:**
+
 - [ ] Test 2.1: User Registration – PASS / FAIL
 - [ ] Test 2.2: User Login – PASS / FAIL
 - [ ] Test 2.3: Form Validation – PASS / FAIL
 
 **Core Features:**
+
 - [ ] Test 3.1: Dashboard Load – PASS / FAIL
 - [ ] Test 3.2: Create Entry – PASS / FAIL
 - [ ] Test 3.3: Music Search – PASS / FAIL
@@ -670,6 +698,7 @@ Run Lighthouse accessibility audit in Chrome DevTools:
 - [ ] Test 3.5: Analytics Page – PASS / FAIL
 
 **Accessibility:**
+
 - [ ] Test 4.1: Keyboard Navigation – PASS / FAIL
 - [ ] Test 4.2: Skip Navigation – PASS / FAIL
 - [ ] Test 4.3: Screen Reader (NVDA) – PASS / FAIL
@@ -678,21 +707,25 @@ Run Lighthouse accessibility audit in Chrome DevTools:
 - [ ] Test 4.6: High Contrast Mode – PASS / FAIL
 
 **Responsive & Mobile:**
+
 - [ ] Test 5.1: Viewport Sizes – PASS / FAIL
 - [ ] Test 5.2: Orientation Change – PASS / FAIL
 - [ ] Test 5.3: Touch Interaction – PASS / FAIL
 
 **Performance:**
+
 - [ ] Test 6.1: Page Load Time – PASS / FAIL
 - [ ] Test 6.2: Memory & Network – PASS / FAIL
 
 **Error Handling:**
+
 - [ ] Test 7.1: Network Errors – PASS / FAIL
 - [ ] Test 7.2: Expired Token – PASS / FAIL
 - [ ] Test 7.3: Database Connection Loss – PASS / FAIL
 - [ ] Test 7.4: Missing Last.fm Integration – PASS / FAIL
 
 **Automated Tests:**
+
 - [ ] Test 8.1: Unit Tests – PASS / FAIL
 - [ ] Test 8.2: Integration Tests – PASS / FAIL
 - [ ] Test 8.3: Lighthouse Audit – PASS / FAIL
@@ -767,11 +800,13 @@ Release ready after fixing 2 medium/low priority issues.
 ## Conclusion & Sign-Off
 
 Once all tests pass, MIMM 2.0 is ready for:
+
 - ✅ Phase 3 delivery (UX/UI + Accessibility)
 - ✅ User beta testing
 - ✅ Phase 4 development (new features)
 
 **Next Steps:**
+
 1. Execute tests using this guide
 2. Document failures in GitHub Issues
 3. Fix critical/high priority issues

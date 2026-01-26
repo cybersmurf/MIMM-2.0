@@ -10,6 +10,7 @@
 ## 📋 Summary
 
 MIMM 2.0 má **4 dobře nakonfigurovaných GitHub Actions workflows** zajišťujících:
+
 - ✅ Cross-platform build (Windows, macOS, Linux)
 - ✅ Automated testing (Unit, Integration, E2E)
 - ✅ Code coverage reporting (Codecov)
@@ -24,12 +25,14 @@ MIMM 2.0 má **4 dobře nakonfigurovaných GitHub Actions workflows** zajišťuj
 **Status:** ✅ Configured correctly
 
 ### Triggers
+
 ```
 - Push na main branch
 - Pull requests na main branch
 ```
 
 ### Jobs
+
 ```
 build-and-test:
   ├─ Strategy: Matrix (Ubuntu + Windows + macOS)
@@ -38,6 +41,7 @@ build-and-test:
 ```
 
 ### Steps
+
 1. ✅ **Checkout** - actions/checkout@v4
 2. ✅ **Setup .NET 9** - actions/setup-dotnet@v4
 3. ✅ **Cache NuGet** - Cross-platform cache (Linux, Windows, macOS)
@@ -48,6 +52,7 @@ build-and-test:
 8. ✅ **Codecov Upload** - integration s Codecov (token: secrets.CODECOV_TOKEN)
 
 ### Configuration Details
+
 - **Dotnet Version:** 9.0.x ✅
 - **Coverage Format:** XPlat (cross-platform compatible) ✅
 - **Codecov Integration:** ✅ Configured
@@ -63,12 +68,14 @@ build-and-test:
 **Status:** ✅ Configured correctly
 
 ### Triggers
+
 ```
 - Push na main, develop branches
 - Pull requests na main, develop branches
 ```
 
 ### Environment
+
 ```
 Service: PostgreSQL 16-alpine
   ├─ Database: mimm_test
@@ -77,6 +84,7 @@ Service: PostgreSQL 16-alpine
 ```
 
 ### Steps
+
 1. ✅ **Checkout** - actions/checkout@v4
 2. ✅ **Setup .NET** - 9.0.x
 3. ✅ **Restore Dependencies** - `dotnet restore MIMM.sln`
@@ -88,6 +96,7 @@ Service: PostgreSQL 16-alpine
 8. ✅ **Upload Artifacts** - Backend binaries
 
 ### Database Configuration
+
 ```
 Service: postgres:16-alpine
 Environment:
@@ -106,12 +115,14 @@ Health check: pg_isready (10s interval, 5s timeout, 5 retries)
 **Status:** ✅ Comprehensive configuration
 
 ### Triggers
+
 ```
 - Push na main
 - Pull requests na main
 ```
 
 ### Services
+
 ```
 1. PostgreSQL 16-alpine
    └─ User: mimmuser, Password: mimmpass, Database: mimm
@@ -121,6 +132,7 @@ Health check: pg_isready (10s interval, 5s timeout, 5 retries)
 ```
 
 ### Environment Variables
+
 ```
 ASPNETCORE_ENVIRONMENT: Development
 ASPNETCORE_URLS: http://+:5001
@@ -135,6 +147,7 @@ CORS__AllowedOrigins__0: http://localhost:5000
 ### Workflow Steps
 
 #### Part 1: Setup
+
 1. ✅ **Checkout** - Source code
 2. ✅ **Setup .NET 9** - Backend runtime
 3. ✅ **Setup Node.js 20** - For Playwright
@@ -142,36 +155,40 @@ CORS__AllowedOrigins__0: http://localhost:5000
 5. ✅ **Install Playwright** - npm ci + install drivers
 
 #### Part 2: Application Start
+
 6. ✅ **Start Backend**
    - Port: 5001
    - Health check: 30 attempts, 2s intervals
    - Logs: backend.log
    - PID tracking: backend.pid
-   
-7. ✅ **Start Frontend**
+
+2. ✅ **Start Frontend**
    - Port: 5000
    - Health check: 30 attempts, 2s intervals
    - Logs: frontend.log
    - PID tracking: frontend.pid
 
 #### Part 3: Testing
+
 8. ✅ **Run Playwright E2E** Tests
    - Working directory: tests/MIMM.E2E
    - Reporter: HTML
-   - Test credentials: e2e-auto@example.com / Test123!
-   
-9. ✅ **Generate Playwright Summary**
+   - Test credentials: <e2e-auto@example.com> / Test123!
+
+2. ✅ **Generate Playwright Summary**
    - Tool: summarize-report.mjs
    - Output: markdown format
 
 #### Part 4: Reporting & Cleanup
+
 10. ✅ **Upload Playwright HTML Report** - GitHub Actions artifact (7 days retention)
-11. ✅ **Comment on PR** - Auto-comment with summary (if PR)
-12. ✅ **Upload to GitHub Pages** - `playwright-report` (main branch only)
-13. ✅ **Cleanup Database** - Delete test entries
-14. ✅ **Stop Applications** - Kill backend/frontend processes
+2. ✅ **Comment on PR** - Auto-comment with summary (if PR)
+3. ✅ **Upload to GitHub Pages** - `playwright-report` (main branch only)
+4. ✅ **Cleanup Database** - Delete test entries
+5. ✅ **Stop Applications** - Kill backend/frontend processes
 
 ### Deploy Job
+
 ```
 Name: deploy-pages
 Condition: main branch push only
@@ -189,12 +206,14 @@ Purpose: Make Playwright reports publicly accessible
 **Status:** ✅ Configured correctly
 
 ### Triggers
+
 ```
 - Push na main
 - Pull requests na main
 ```
 
 ### Configuration
+
 ```
 Tool: markdownlint-cli2
 Action: DavidAnson/markdownlint-cli2-action@v17
@@ -212,6 +231,7 @@ Globs:
 ## 📊 Workflow Configuration Analysis
 
 ### Cross-Platform Testing
+
 | OS | CI | Build | E2E | Markdown |
 |-----|----|----|-----|----------|
 | **Ubuntu** | ✅ | ✅ | ✅ | ✅ |
@@ -234,19 +254,24 @@ Globs:
 ## 🔍 Potential Issues & Recommendations
 
 ### Issue 1: Build Workflow vs CI Workflow (Slight Duplication)
+
 **Observation:** Máme 2 build workflows (CI.yml a build.yml)
 
 **Analysis:**
+
 - `CI.yml`: Cross-platform (.NET build on Windows/macOS/Linux)
 - `build.yml`: Backend-specific with PostgreSQL integration tests
 
 **Recommendation:** ✅ OK - Intentional:
+
 - CI checks .NET compatibility across OSes
 - Build workflow validates database integration
 - Mají různé triggers (CI: main/develop, Build: push+PR na main/develop)
 
 ### Issue 2: Hard-coded Database Credentials in E2E
+
 **Observation:** Credentials jsou v .yml souboru:
+
 ```
 POSTGRES_PASSWORD: mimmpass
 TEST_EMAIL: e2e-auto@example.com
@@ -256,24 +281,29 @@ TEST_PASSWORD: Test123!
 **Severity:** 🟡 MEDIUM (But acceptable for E2E)
 
 **Analysis:**
+
 - Jsou to E2E test credentials, ne production credentials
 - Databáze běží v ephemeral container (CI environment)
 - Jsou viditelné v logu (ale šifrované v Git)
 
 **Recommendation:** ✅ Accept (Standard for E2E)
+
 - Není to production secret
 - CI environment je izolovaný
 - Test account je určený jen pro CI
 
 ### Issue 3: No Secrets in Use
+
 **Observation:** CODECOV_TOKEN je přes secrets (dobře!)
 
 **Status:** ✅ CORRECT
 
 ### Issue 4: E2E Report Deployment
+
 **Observation:** Playwright reports jdou na GitHub Pages (main only)
 
 **Status:** ✅ GOOD PRACTICE
+
 - Accessible reports: ✅
 - Limited to main branch: ✅
 - 7-day retention: ✅
@@ -302,10 +332,11 @@ TEST_PASSWORD: Test123!
 ## 🚀 Recommended Improvements (Optional)
 
 ### Priority 1: Low-hanging Fruit
+
 1. **Add build workflow for macOS/Windows** (currently only Ubuntu)
    - Impact: Find OS-specific issues early
    - Effort: Low
-   
+
 2. **Add caching for Playwright browsers**
    - Impact: Speed up E2E runs
    - Effort: Low
@@ -315,15 +346,16 @@ TEST_PASSWORD: Test123!
    - Effort: Medium
 
 ### Priority 2: Nice-to-Have
+
 4. **Add OWASP security scanning**
    - Impact: Automated security checks
    - Effort: Low
-   
-5. **Add code quality tool (SonarQube)**
+
+2. **Add code quality tool (SonarQube)**
    - Impact: Track code health metrics
    - Effort: Medium
 
-6. **Add dependency update checks (Dependabot)**
+3. **Add dependency update checks (Dependabot)**
    - Impact: Stay current with packages
    - Effort: Low
 
@@ -353,6 +385,7 @@ Status: Workflows should be running on push
 **GitHub Actions Status: ✅ EXCELLENT**
 
 **What's Working:**
+
 - ✅ All 4 workflows properly configured
 - ✅ Cross-platform testing (Ubuntu, Windows, macOS)
 - ✅ Database integration testing (PostgreSQL, Redis)
@@ -362,6 +395,7 @@ Status: Workflows should be running on push
 - ✅ Automated reporting & deployment
 
 **What Could Be Better:**
+
 - 🟡 Add macOS/Windows backend builds (currently Ubuntu only)
 - 🟡 Add Playwright caching for faster runs
 - 🟡 Add security scanning (optional)

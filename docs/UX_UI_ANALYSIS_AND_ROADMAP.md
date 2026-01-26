@@ -853,7 +853,7 @@ background: radial-gradient(circle at 20% 20%, #1e3a8a 0, transparent 30%),
 
 ## 🎯 UX Metrics & KPIs (Pro Testování)
 
-### Po implementaci změn měřit:
+### Po implementaci změn měřit
 
 #### 1. Task Completion Rate
 
@@ -948,9 +948,9 @@ background: radial-gradient(circle at 20% 20%, #1e3a8a 0, transparent 30%),
 
 ### **Vysoká Priorita:**
 
-4. **Debounce pro Music Search** - zlepší UX vyhledávání
-5. **Analytics charts** - data musí být vizuální
-6. **Entry List empty state** - first impressions matter
+1. **Debounce pro Music Search** - zlepší UX vyhledávání
+2. **Analytics charts** - data musí být vizuální
+3. **Entry List empty state** - first impressions matter
 
 **Časový odhad:** 3-5 dní  
 **Impact:** Střední až vysoký (quality of life)
@@ -959,9 +959,9 @@ background: radial-gradient(circle at 20% 20%, #1e3a8a 0, transparent 30%),
 
 ### **Střední Priorita:**
 
-7. **MoodSelector accessibility** - inclusivity
-8. **Entry Dialog wizard (multi-step)** - snižuje cognitive load
-9. **Custom color system** - brand consistency
+1. **MoodSelector accessibility** - inclusivity
+2. **Entry Dialog wizard (multi-step)** - snižuje cognitive load
+3. **Custom color system** - brand consistency
 
 **Časový odhad:** 5-7 dní  
 **Impact:** Střední (polish & accessibility)
@@ -970,9 +970,9 @@ background: radial-gradient(circle at 20% 20%, #1e3a8a 0, transparent 30%),
 
 ### **Nízká Priorita (Polish):**
 
-10. **Light/Dark mode toggle** - user preference
-11. **Micro-interactions** - professional feel
-12. **Advanced responsive tweaks** - edge cases
+1. **Light/Dark mode toggle** - user preference
+2. **Micro-interactions** - professional feel
+3. **Advanced responsive tweaks** - edge cases
 
 **Časový odhad:** 3-5 dní  
 **Impact:** Nízký (nice-to-have)

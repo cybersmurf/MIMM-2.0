@@ -47,6 +47,7 @@ Phase 4 introduces 7 advanced features to transform MIMM from a personal journal
 ### New Tables (EF Core Entities)
 
 #### 1. **Notifications** (P0)
+
 ```csharp
 public class Notification
 {
@@ -67,6 +68,7 @@ public class Notification
 ```
 
 #### 2. **UserFriendships** (P3)
+
 ```csharp
 public class UserFriendship
 {
@@ -92,6 +94,7 @@ public enum FriendshipStatus
 ```
 
 #### 3. **SharedEntries** (P3)
+
 ```csharp
 public class SharedEntry
 {
@@ -115,6 +118,7 @@ public enum SharePermission
 ```
 
 #### 4. **AnalyticsSnapshot** (P1)
+
 ```csharp
 public class AnalyticsSnapshot
 {
@@ -138,6 +142,7 @@ public class AnalyticsSnapshot
 ```
 
 #### 5. **UserSettings** (P2-P4)
+
 ```csharp
 public class UserSettings
 {
@@ -165,6 +170,7 @@ public class UserSettings
 ```
 
 #### 6. **AdminAuditLog** (P3)
+
 ```csharp
 public class AdminAuditLog
 {
@@ -189,6 +195,7 @@ public class AdminAuditLog
 ### New Controllers
 
 #### 1. **NotificationController** (P0)
+
 ```csharp
 [ApiController]
 [Route("api/[controller]")]
@@ -218,6 +225,7 @@ public class NotificationController : ControllerBase
 ```
 
 #### 2. **AnalyticsController** (P1)
+
 ```csharp
 [ApiController]
 [Route("api/[controller]")]
@@ -247,6 +255,7 @@ public class AnalyticsController : ControllerBase
 ```
 
 #### 3. **SocialController** (P3)
+
 ```csharp
 [ApiController]
 [Route("api/[controller]")]
@@ -284,6 +293,7 @@ public class SocialController : ControllerBase
 ```
 
 #### 4. **ExportController** (P2)
+
 ```csharp
 [ApiController]
 [Route("api/[controller]")]
@@ -309,6 +319,7 @@ public class ExportController : ControllerBase
 ```
 
 #### 5. **AdminController** (P3)
+
 ```csharp
 [ApiController]
 [Route("api/[controller]")]
@@ -340,6 +351,7 @@ public class AdminController : ControllerBase
 ### New Services
 
 #### 1. **NotificationService** (P0)
+
 ```csharp
 public interface INotificationService
 {
@@ -356,6 +368,7 @@ public interface INotificationService
 ```
 
 #### 2. **AnalyticsService** (P1) - Extend existing
+
 ```csharp
 public interface IAnalyticsService
 {
@@ -371,6 +384,7 @@ public interface IAnalyticsService
 ```
 
 #### 3. **SocialService** (P3)
+
 ```csharp
 public interface ISocialService
 {
@@ -393,6 +407,7 @@ public interface ISocialService
 ```
 
 #### 4. **ExportService** (P2)
+
 ```csharp
 public interface IExportService
 {
@@ -405,6 +420,7 @@ public interface IExportService
 ```
 
 #### 5. **AdminService** (P3)
+
 ```csharp
 public interface IAdminService
 {
@@ -420,6 +436,7 @@ public interface IAdminService
 ### SignalR Hub
 
 #### **NotificationHub** (P0)
+
 ```csharp
 public class NotificationHub : Hub
 {
@@ -472,6 +489,7 @@ public class NotificationHub : Hub
 ### New Blazor Components/Pages
 
 #### 1. **Real-time Notifications** (P0)
+
 ```
 Components/
   ├─ NotificationBell.razor (AppBar component)
@@ -487,6 +505,7 @@ Pages/
 ```
 
 **SignalR Integration in Blazor:**
+
 ```csharp
 @implements IAsyncDisposable
 @inject NavigationManager Navigation
@@ -526,6 +545,7 @@ async ValueTask IAsyncDisposable.DisposeAsync()
 ```
 
 #### 2. **Advanced Analytics Pages** (P1)
+
 ```
 Pages/
   ├─ Analytics.razor (enhanced with new data)
@@ -542,10 +562,12 @@ Pages/
 ```
 
 **Chart Libraries:**
+
 - **ChartJS** (via NuGet package) for interactive charts
 - **PDFSharp** for PDF export
 
 #### 3. **Offline Support (PWA)** (P2)
+
 ```
 wwwroot/
   ├─ manifest.json (PWA manifest)
@@ -558,11 +580,13 @@ index.html
 ```
 
 **Service Worker Strategy:**
+
 - Cache-first for static assets (CSS, JS, images)
 - Network-first for API calls (with fallback to cache)
 - Background sync for queued entries (sync when online)
 
 #### 4. **Export/Import UI** (P2)
+
 ```
 Pages/
   ├─ DataManagement.razor
@@ -580,6 +604,7 @@ Pages/
 ```
 
 #### 5. **Enhanced Dark Mode** (P2)
+
 ```css
 /* Additional color palette variables */
 :root {
@@ -602,6 +627,7 @@ Pages/
 ```
 
 #### 6. **Social Features Pages** (P3)
+
 ```
 Pages/
   ├─ Friends.razor
@@ -622,6 +648,7 @@ Pages/
 ```
 
 #### 7. **Admin Panel** (P3)
+
 ```
 Pages/Admin/
   ├─ AdminDashboard.razor
@@ -651,9 +678,11 @@ Pages/Admin/
 ## Implementation Timeline
 
 ### Sprint 4.1 (2 weeks: Week 1-2 of Feb)
+
 **Focus:** Real-time + Dark Mode + Analytics Foundation
 
 **Tasks:**
+
 1. ✅ Create `Notification` entity + migration
 2. ✅ Implement `NotificationHub` (SignalR)
 3. ✅ Build `NotificationService` + `NotificationController`
@@ -665,6 +694,7 @@ Pages/Admin/
 9. ✅ Update `ThemeService` with new color tokens
 
 **Deliverables:**
+
 - Real-time notifications working end-to-end
 - Advanced analytics with yearly report
 - Dark mode palette improvements
@@ -673,9 +703,11 @@ Pages/Admin/
 ---
 
 ### Sprint 4.2 (2 weeks: Week 3-4 of Feb)
+
 **Focus:** Offline + Export/Import + Settings
 
 **Tasks:**
+
 1. ✅ Create `UserSettings` entity + migration
 2. ✅ Implement PWA manifest + service worker
 3. ✅ Implement `ExportService` (JSON/CSV)
@@ -687,6 +719,7 @@ Pages/Admin/
 9. ✅ Test service worker caching
 
 **Deliverables:**
+
 - PWA fully functional (installable, offline fallback)
 - Export/Import working with validation
 - User settings panel
@@ -695,9 +728,11 @@ Pages/Admin/
 ---
 
 ### Sprint 4.3 (2 weeks: Week 5-6 of March)
+
 **Focus:** Social + Admin
 
 **Tasks:**
+
 1. ✅ Create `UserFriendship`, `SharedEntry` entities + migrations
 2. ✅ Create `UserRole` entity + authorization (Admin, User)
 3. ✅ Implement `SocialService` + `SocialController`
@@ -709,6 +744,7 @@ Pages/Admin/
 9. ✅ Add friend notifications to SignalR
 
 **Deliverables:**
+
 - Complete social feature set
 - Admin panel fully functional
 - Role-based access control (RBAC)
@@ -718,9 +754,11 @@ Pages/Admin/
 ---
 
 ### Sprint 4.4 (2 weeks: Week 7-8 of March)
+
 **Focus:** Integration, Testing, Hardening
 
 **Tasks:**
+
 1. ✅ E2E tests for all 7 features
 2. ✅ Performance testing (SignalR load testing)
 3. ✅ Security audit (JWT with roles, CORS for admin)
@@ -731,6 +769,7 @@ Pages/Admin/
 8. ✅ Release notes + migration guide
 
 **Deliverables:**
+
 - All 7 features fully tested
 - Documentation complete
 - Release ready for Phase 4 beta
@@ -757,6 +796,7 @@ Pages/Admin/
 | **Mobile offline experience** | Bad UX | Progressive enhancement, UI feedback |
 
 ### Low Risk Items
+
 - Dark mode palette (visual only)
 - Analytics calculations (read-only)
 - Admin audit logging (append-only)
@@ -774,7 +814,7 @@ Pages/Admin/
 5. **Performance:** API response time <500ms (p95), SignalR <100ms latency
 6. **Accessibility:** WCAG 2.1 AA on all new pages
 7. **Security:** No OWASP Top 10 vulnerabilities
-8. **Documentation:** 
+8. **Documentation:**
    - API docs (OpenAPI/Swagger)
    - Component documentation (Storybook-style comments)
    - User guide for new features
@@ -804,7 +844,9 @@ Pages/Admin/
 ```
 
 ### Database Migrations
+
 All 6 new entities require migrations:
+
 ```bash
 dotnet ef migrations add Phase4_Notifications -p src/MIMM.Backend
 dotnet ef migrations add Phase4_UserFriendships -p src/MIMM.Backend

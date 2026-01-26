@@ -7,6 +7,7 @@
 ## Summary
 
 Successfully completed:
+
 1. ✅ **Backend API Startup** - Fixed `PendingModelChangesWarning` by adding `.ConfigureWarnings()` to Program.cs DbContext configuration
 2. ✅ **Database Connection** - PostgreSQL 16-alpine running, InitialCreate migration applied, 3 tables created
 3. ✅ **E2E Authentication Test** - Full auth flow tested and verified
@@ -18,14 +19,17 @@ Successfully completed:
 #### ✅ Backend Startup Issue Resolution
 
 **Problem:**
+
 - Backend failed to start with `System.InvalidOperationException`: "The model for context 'ApplicationDbContext' has pending changes"
 - Root cause: EF Core PendingModelChangesWarning being converted to error during `MigrateAsync()`
 
 **Solution Applied:**
+
 - Modified `src/MIMM.Backend/Program.cs` line 24-28
 - Added `.ConfigureWarnings()` to ignore `RelationalEventId.PendingModelChangesWarning`
 
 **Code Change:**
+
 ```csharp
 // Before:
 options.UseNpgsql(connectionString);
@@ -37,6 +41,7 @@ options.UseNpgsql(connectionString)
 ```
 
 **Verification:**
+
 - ✅ Backend starts successfully
 - ✅ Database migrations applied on startup
 - ✅ Health endpoint returns `{"status":"healthy"}`
@@ -44,10 +49,12 @@ options.UseNpgsql(connectionString)
 #### Database Infrastructure
 
 **Running Services:**
+
 - PostgreSQL 16-alpine: Container `mimm-postgres` (localhost:5432)
 - Redis 7-alpine: Container `mimm-redis` (localhost:6379)
 
 **Database Structure:**
+
 - Database: `mimm`
 - Tables: `Users`, `Entries`, `LastFmTokens`, `__EFMigrationsHistory`
 - Seed User: `e2e-auto@example.com` (password: `Test123!`)
@@ -59,6 +66,7 @@ options.UseNpgsql(connectionString)
 **Test Script:** `docs/testing/e2e-auth-flow.sh`
 
 **Flow Tested:**
+
 1. ✅ **Register New User** - Created test user `e2e-test-1769335972@example.com`
    - Status: 201 Created
    - Response: UserDto with id, email, displayName, language
@@ -73,7 +81,7 @@ options.UseNpgsql(connectionString)
      - `language`
      - **`jti` (JWT ID)** - Unique token identifier for revocation tracking
      - `exp` - Expiration timestamp
-     - `iss` - Issuer (http://localhost:5001)
+     - `iss` - Issuer (<http://localhost:5001>)
      - `aud` - Audience (mimm-frontend)
 
 3. ✅ **Protected Endpoint** - Accessed `/api/entries` with access token
@@ -89,6 +97,7 @@ options.UseNpgsql(connectionString)
 #### JWT Token Validation
 
 **Access Token Structure (decoded):**
+
 ```json
 {
   "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier": "14f2b32a-3bc8-4858-8417-2ec6da91ab86",
@@ -105,17 +114,20 @@ options.UseNpgsql(connectionString)
 ## Current System Status
 
 ### Running Services (All Healthy ✅)
+
 - Backend API: `http://localhost:5001`
 - Swagger UI: `http://localhost:5001/swagger`
 - PostgreSQL: `localhost:5432/mimm`
 - Redis: `localhost:6379`
 
 ### Code Status
+
 - ✅ Backend builds successfully (0 errors, 4 CS warnings from nullable reference types)
 - ✅ All 43 Application.Tests passing
 - ✅ 0 database inconsistencies
 
 ### Configuration Status
+
 - ✅ JWT authentication working
 - ✅ Bearer token validation implemented
 - ✅ Refresh token mechanism verified
@@ -125,6 +137,7 @@ options.UseNpgsql(connectionString)
 ## Frontend Status (Ready for Testing)
 
 **Prepared Components:**
+
 - ✅ EntryList.razor (pagination, filtering, CRUD triggers)
 - ✅ EntryCreateDialog.razor (music search integration)
 - ✅ EntryEditDialog.razor (modify existing entries)
@@ -133,6 +146,7 @@ options.UseNpgsql(connectionString)
 - ✅ MusicTrackCard.razor (track display component)
 
 **Services Configured:**
+
 - ✅ IAuthStateService (JWT token storage/retrieval)
 - ✅ IAuthApiService (register/login/refresh)
 - ✅ IEntryApiService (CRUD operations)
