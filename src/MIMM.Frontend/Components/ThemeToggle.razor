@@ -1,0 +1,56 @@
+@using MIMM.Frontend.Services
+@inject IThemeService ThemeService
+@implements IDisposable
+
+<MudIconButton Icon="@_themeIcon" 
+               Color="Color.Inherit" 
+               Style="min-height: 48px; min-width: 48px;"
+               Class="btn-hover-scale"
+               OnClick="CycleThemeAsync"
+               aria-label="@_themeTooltip"
+               title="@_themeTooltip" />
+
+@code {
+    private string _themeIcon = Icons.Material.Filled.DarkMode;
+    private string _themeTooltip = "Cycle theme";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Subscribe to theme changes
+        ThemeService.ThemeChanged += OnThemeChanged;
+
+        // Set initial icon based on current theme
+        UpdateIcon(ThemeService.CurrentTheme);
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task CycleThemeAsync()
+    {
+        await ThemeService.CycleThemeAsync();
+    }
+
+    private void OnThemeChanged(object? sender, string newTheme)
+    {
+        UpdateIcon(newTheme);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdateIcon(string theme)
+    {
+        _themeIcon = theme switch
+        {
+            "midnight" => Icons.Material.Filled.Brightness2,
+            "twilight" => Icons.Material.Filled.LightMode,
+            "ocean" => Icons.Material.Filled.Waves,
+            "forest" => Icons.Material.Filled.Landscape,
+            _ => Icons.Material.Filled.DarkMode
+        };
+        _themeTooltip = $"Current: {theme} (click to cycle)";
+    }
+
+    public void Dispose()
+    {
+        ThemeService.ThemeChanged -= OnThemeChanged;
+    }
+}

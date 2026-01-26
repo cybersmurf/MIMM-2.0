@@ -9,6 +9,7 @@ using MIMM.Backend.Data;
 using MIMM.Backend.Services;
 using MIMM.Backend.Middleware;
 using FluentValidation;
+using MIMM.Backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,7 +81,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policyBuilder =>
     {
         var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() 
-            ?? new[] { "https://localhost:5001", "http://localhost:5000" };
+            ?? new[] { "https://localhost:5001", "http://localhost:5000", "http://localhost:5173", "https://localhost:5173" };
         
         policyBuilder
             .WithOrigins(allowedOrigins)
@@ -95,10 +96,13 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IExportService, ExportService>();
+builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<ILastFmService, LastFmService>();
 builder.Services.AddScoped<ISpotifyService, SpotifyService>();
 builder.Services.AddHttpClient<IMusicSearchService, MusicSearchService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddHttpClient("lastfm", c => c.BaseAddress = new Uri("https://ws.audioscrobbler.com/2.0/"));
 
 // Caching
@@ -192,7 +196,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // SignalR Hubs
-// app.MapHub<AnalyticsHub>("/hubs/analytics");
+app.MapHub<NotificationHub>("/hubs/notification");
 
 // Health check endpoint
 app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));

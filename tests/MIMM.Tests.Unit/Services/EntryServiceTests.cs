@@ -14,6 +14,7 @@ public class EntryServiceTests : IAsyncLifetime
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly Mock<ILogger<EntryService>> _mockLogger;
+    private readonly Mock<INotificationService> _mockNotificationService;
     private EntryService? _entryService;
     private Guid _testUserId;
 
@@ -26,6 +27,7 @@ public class EntryServiceTests : IAsyncLifetime
 
         _dbContext = new ApplicationDbContext(options);
         _mockLogger = new Mock<ILogger<EntryService>>();
+        _mockNotificationService = new Mock<INotificationService>();
         _testUserId = Guid.NewGuid();
     }
 
@@ -46,7 +48,7 @@ public class EntryServiceTests : IAsyncLifetime
         _dbContext.Users.Add(testUser);
         await _dbContext.SaveChangesAsync();
         
-        _entryService = new EntryService(_dbContext, _mockLogger.Object);
+        _entryService = new EntryService(_dbContext, _mockLogger.Object, _mockNotificationService.Object);
     }
 
     public async Task DisposeAsync()

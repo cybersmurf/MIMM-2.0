@@ -16,6 +16,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<MusicBrainzArtist> MusicBrainzArtists { get; set; } = null!;
     public DbSet<MusicBrainzRelease> MusicBrainzReleases { get; set; } = null!;
     public DbSet<MusicBrainzRecording> MusicBrainzRecordings { get; set; } = null!;
+    public DbSet<Notification> Notifications { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -111,6 +112,20 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.CoverUrl).HasMaxLength(500);
             entity.HasIndex(e => e.ArtistId);
             entity.HasIndex(e => e.ReleaseId);
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Type).HasMaxLength(50).HasDefaultValue("info");
+            entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Message).HasMaxLength(1000).IsRequired();
+            entity.Property(e => e.Link).HasMaxLength(500);
+            entity.HasIndex(e => new { e.UserId, e.IsRead });
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

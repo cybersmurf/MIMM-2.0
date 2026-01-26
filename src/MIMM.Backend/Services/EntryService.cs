@@ -102,14 +102,17 @@ public class EntryService : IEntryService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly ILogger<EntryService> _logger;
+    private readonly INotificationService _notificationService;
 
     public EntryService(
         ApplicationDbContext dbContext,
-        ILogger<EntryService> logger
+        ILogger<EntryService> logger,
+        INotificationService notificationService
     )
     {
         _dbContext = dbContext;
         _logger = logger;
+        _notificationService = notificationService;
     }
 
     /// <summary>
@@ -161,6 +164,15 @@ public class EntryService : IEntryService
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Entry created: {EntryId} for user {UserId}", entry.Id, userId);
+
+            await _notificationService.CreateAsync(new CreateNotificationRequest
+            {
+                UserId = userId,
+                Type = "entry_created",
+                Title = "New entry created",
+                Message = $"Added {entry.SongTitle}",
+                Link = $"/entries/{entry.Id}"
+            }, cancellationToken);
 
             var dto = MapToDto(entry);
             return (true, null, dto);
@@ -365,13 +377,13 @@ public class EntryService : IEntryService
                 entry.ArtistName = string.IsNullOrWhiteSpace(request.ArtistName) ? null : request.ArtistName.Trim();
 
             if (request.AlbumName != null)
-                entry.AlbumName = string.IsNullOrWhiteSpace(request.AlbumName) ? null : request.AlbumName.Trim();
+                entry.AlbumName = string.IsNullOrWhiteSpace(request.AlbumName) ? "Unknown Album" : request.AlbumName.Trim();
 
             if (request.CoverUrl != null)
-                entry.CoverUrl = request.CoverUrl ?? string.Empty;
+                entry.CoverUrl = request.CoverUrl;
 
             if (request.SongId != null)
-                entry.SongId = request.SongId ?? string.Empty;
+                entry.SongId = request.SongId;
 
             if (request.Source != null)
                 entry.Source = request.Source;
@@ -518,7 +530,7 @@ public class EntryService : IEntryService
             Source = entry.Source,
             Valence = (double)entry.Valence,
             Arousal = (double)entry.Arousal,
-            TensionLevel = entry.TensionLevel,
+            TensionLevel = entry.TensionLevel ?? 50,
             SomaticTags = entry.SomaticTags,
             Notes = entry.Notes,
             ScrobbledToLastFm = entry.ScrobbledToLastFm,

@@ -1,17 +1,72 @@
 @inherits LayoutComponentBase
+@using MIMM.Frontend.Services
+@using MIMM.Frontend.Components
+@inject IThemeService ThemeService
+
+<SkipNavigation />
 
 <MudLayout Class="app-shell">
-    <MudAppBar Elevation="0" Dense Color="Color.Transparent" Class="glass-bar">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
-        <MudText Typo="Typo.h6" Class="brand">MIMM 2.0</MudText>
+    <MudDrawer @bind-Open="_drawerOpen" 
+               Elevation="2" 
+               Variant="DrawerVariant.Temporary" 
+               Anchor="Anchor.Start"
+               role="navigation"
+               aria-label="Main navigation drawer">
+        <NavMenu OnNavigate="CloseDrawer" />
+    </MudDrawer>
+    
+    <MudAppBar Elevation="0" 
+               Dense 
+               Color="Color.Transparent" 
+               Class="glass-bar"
+               role="banner">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" 
+                       Color="Color.Inherit" 
+                       Edge="Edge.Start" 
+                       Style="min-height: 48px; min-width: 48px;"
+                       aria-label="Open navigation menu"
+                       OnClick="ToggleDrawer" />
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" />
+        <MudText Typo="Typo.h6" Class="brand">MIMM</MudText>
+        <MudSpacer />
+        <ThemeSelector />
+        <ThemeToggle />
+        <NotificationBell />
+        <MudIconButton Icon="@Icons.Material.Filled.Person" 
+                       Color="Color.Inherit" 
+                       Style="min-height: 48px; min-width: 48px;"
+                       aria-label="User profile" />
     </MudAppBar>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium" Class="page-container">
-            <MudPaper Elevation="3" Class="page-surface">
+            <MudPaper Elevation="3" 
+                      Class="page-surface" 
+                      id="main-content"
+                      role="main"
+                      tabindex="-1">
                 @Body
             </MudPaper>
         </MudContainer>
     </MudMainContent>
 </MudLayout>
+
+@code {
+    private bool _drawerOpen;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialize theme service on app start
+        await ThemeService.InitializeAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private void CloseDrawer()
+    {
+        _drawerOpen = false;
+    }
+}

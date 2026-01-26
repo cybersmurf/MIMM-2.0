@@ -8,14 +8,23 @@
 
 <PageTitle>Login - MIMM</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
-    <MudPaper Elevation="3" Class="pa-8">
+<LiveRegion Message="@_liveRegionMessage" AriaLive="assertive" />
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8 animate-fade-in-up pa-responsive">
+    <MudPaper Elevation="3" Class="pa-responsive">
         <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">
             🎵 Music & Mood Journal
         </MudText>
         <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary" Class="mb-6">
             @(isLoginMode ? "Welcome Back" : "Create Account")
         </MudText>
+
+        @if (!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Class="mb-4">
+                @_errorMessage
+            </MudAlert>
+        }
 
         <EditForm Model="@model" OnValidSubmit="HandleSubmit">
             <DataAnnotationsValidator />
@@ -77,7 +86,7 @@
                        FullWidth="true"
                        Size="Size.Large"
                        Disabled="@isSubmitting"
-                       Class="mb-4">
+                       Class="mb-4 btn-hover-lift">
                 @if (isSubmitting)
                 {
                     <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
@@ -125,6 +134,8 @@
     private bool isLoginMode = true;
     private bool isSubmitting = false;
     private bool showPassword = false;
+    private string? _errorMessage = null;
+    private string? _liveRegionMessage;
 
     private string passwordIcon => showPassword ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
     private InputType passwordInputType => showPassword ? InputType.Text : InputType.Password;
@@ -138,11 +149,15 @@
     {
         isLoginMode = !isLoginMode;
         model = new LoginFormModel { Language = "en" };
+        _errorMessage = null;
     }
 
     private async Task HandleSubmit()
     {
         isSubmitting = true;
+        _errorMessage = null;
+        _liveRegionMessage = null;
+        StateHasChanged();
 
         try
         {
@@ -164,7 +179,9 @@
                 // Register
                 if (model.Password != model.ConfirmPassword)
                 {
-                    Snackbar.Add("Passwords do not match", Severity.Error);
+                    _errorMessage = "Passwords do not match";
+                    _liveRegionMessage = _errorMessage;
+                    Snackbar.Add(_errorMessage, Severity.Error);
                     return;
                 }
 
@@ -184,30 +201,51 @@
                 // Store tokens
                 await AuthState.SetTokensAsync(response.AccessToken, response.RefreshToken);
 
-                Snackbar.Add(
-                    isLoginMode ? "Welcome back!" : "Account created successfully!",
-                    Severity.Success
-                );
+                var successMessage = isLoginMode ? "Welcome back!" : "Account created successfully!";
+                _liveRegionMessage = successMessage;
+                Snackbar.Add(successMessage, Severity.Success);
 
                 // Redirect to dashboard
                 Navigation.NavigateTo("/dashboard");
             }
             else
             {
-                Snackbar.Add(
-                    isLoginMode ? "Invalid email or password" : "Registration failed. Email may already be in use.",
-                    Severity.Error
-                );
+                _errorMessage = isLoginMode ? "Invalid email or password" : "Registration failed. Email may already be in use.";
+                _liveRegionMessage = _errorMessage;
+                Snackbar.Add(_errorMessage, Severity.Error);
             }
+        }
+        catch (HttpRequestException hexEx)
+        {
+            _errorMessage = ParseHttpError(hexEx.Message);
+            _liveRegionMessage = _errorMessage;
+            Snackbar.Add(_errorMessage, Severity.Error);
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
+            _errorMessage = "An unexpected error occurred. Please try again.";
+            _liveRegionMessage = _errorMessage;
+            Snackbar.Add($"{_errorMessage}: {ex.Message}", Severity.Error);
         }
         finally
         {
             isSubmitting = false;
+            StateHasChanged();
         }
+    }
+
+    private string ParseHttpError(string rawError)
+    {
+        if (rawError.Contains("401", StringComparison.OrdinalIgnoreCase))
+            return "Invalid email or password.";
+        if (rawError.Contains("email", StringComparison.OrdinalIgnoreCase) || rawError.Contains("already", StringComparison.OrdinalIgnoreCase))
+            return "Email is already registered or invalid.";
+        if (rawError.Contains("password", StringComparison.OrdinalIgnoreCase))
+            return "Password does not meet requirements (min 8 chars, 1 uppercase, 1 lowercase, 1 number).";
+        if (rawError.Contains("network", StringComparison.OrdinalIgnoreCase))
+            return "Network error. Please check your connection.";
+        
+        return "An error occurred. Please try again.";
     }
 
     private class LoginFormModel

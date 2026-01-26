@@ -17,6 +17,9 @@ builder.Services.AddMudServices();
 // Auth state service (must be scoped for JSInterop)
 builder.Services.AddScoped<IAuthStateService, AuthStateService>();
 
+// Theme service (singleton for shared state across components)
+builder.Services.AddSingleton<IThemeService, ThemeService>();
+
 // HTTP client with auth handler
 builder.Services.AddScoped<AuthorizationMessageHandler>();
 builder.Services.AddScoped(sp =>
@@ -37,6 +40,10 @@ builder.Services.AddScoped<IAuthApiService, AuthApiService>();
 builder.Services.AddScoped<IEntryApiService, EntryApiService>();
 builder.Services.AddScoped<IMusicSearchApiService, MusicSearchApiService>();
 builder.Services.AddScoped<ILastFmApiService, LastFmApiService>();
+builder.Services.AddScoped<IAnalyticsApiService, AnalyticsApiService>();
+builder.Services.AddScoped<IExportImportApiService, ExportImportApiService>();
+builder.Services.AddScoped<INotificationApiService, NotificationApiService>();
+builder.Services.AddScoped<INotificationHubService, NotificationHubService>();
 
 // Logging
 builder.Logging.SetMinimumLevel(LogLevel.Information);

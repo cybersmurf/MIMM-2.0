@@ -5,8 +5,9 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-<MudDialog>
+<MudDialog aria-modal="true" role="dialog">
     <DialogContent>
+        <div tabindex="0" @onfocus="FocusFirstAsync" class="sr-only"></div>
         @if (_isLoading)
         {
             <MudProgressCircular Indeterminate />
@@ -35,7 +36,7 @@
                                     <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
                                         @if (!string.IsNullOrEmpty(_selectedTrack.CoverUrl))
                                         {
-                                            <MudAvatar Src="@_selectedTrack.CoverUrl" Size="Size.Large" Class="rounded" />
+                                            <MudAvatar src="@_selectedTrack.CoverUrl" Size="Size.Large" Class="rounded" />
                                         }
                                         else
                                         {
@@ -116,7 +117,7 @@
         }
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Cancel" ButtonType="ButtonType.Button" @ref="_firstFocusable">Cancel</MudButton>
         <MudButton Color="Color.Error" 
                    Variant="Variant.Outlined" 
                    OnClick="HandleDeleteAsync" 
@@ -133,8 +134,12 @@
             }
             Save changes
         </MudButton>
+        <div tabindex="0" @onfocus="FocusFirstAsync" class="sr-only"></div>
     </DialogActions>
 </MudDialog>
+
+    <div tabindex="0" @onfocus="FocusFirstAsync" class="sr-only"></div>
+
 
 @code {
     [CascadingParameter]
@@ -150,7 +155,9 @@
     private bool _isFormValid;
     private bool _isSubmitting;
     private bool _isLoading = true;
+    private bool _hasFocused;
     private MusicTrackDto? _selectedTrack;
+    private MudButton? _firstFocusable;
 
     private UpdateEntryModel Model { get; set; } = new();
     private HashSet<string> SelectedTags { get; set; } = [];
@@ -162,6 +169,23 @@
         "Warm", "Cold", "Tingling", "Heavy", 
         "Light", "Grounded", "Floating", "Centered"
     ];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_hasFocused)
+        {
+            _hasFocused = true;
+            await FocusFirstAsync();
+        }
+    }
+
+    private async Task FocusFirstAsync()
+    {
+        if (_firstFocusable is not null)
+        {
+            await _firstFocusable.FocusAsync();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -187,7 +211,7 @@
                     SongId = entry.SongId,
                     Valence = entry.Valence,
                     Arousal = entry.Arousal,
-                    TensionLevel = entry.TensionLevel,
+                    TensionLevel = entry.TensionLevel ?? 50,
                     SomaticTags = entry.SomaticTags,
                     Notes = entry.Notes
                 };

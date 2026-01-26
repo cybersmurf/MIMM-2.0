@@ -1,202 +1,385 @@
 @page "/analytics"
 @using MIMM.Shared.Dtos
-@using System.Globalization
-@using System.Net.Http.Json
-@inject HttpClient Http
-@inject ISnackbar Snackbar
+@using MIMM.Frontend.Services
 
-<PageTitle>Analytics Dashboard - MIMM</PageTitle>
+@inject IAnalyticsApiService AnalyticsApi
+@inject ISnackbar Snackbar
+@inject IAuthStateService AuthState
+@inject NavigationManager NavigationManager
+
+<PageTitle>Analytics - MIMM</PageTitle>
+
+<LiveRegion Message="@_liveMessage" AriaLive="polite" />
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-8">
-    <MudText Typo="Typo.h4" GutterBottom>📊 Analytics Dashboard</MudText>
+    <MudStack Spacing="4">
+        <!-- Page Header -->
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.h4">Analytics</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">Track your mood trends and music preferences</MudText>
+        </MudStack>
 
-    @if (_isLoading)
-    {
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" Class="mb-4" />
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" Class="mb-4" />
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
-    }
-    else if (_error != null)
-    {
-        <MudAlert Severity="Severity.Error">
-            <MudText>@_error</MudText>
-        </MudAlert>
-    }
-    else
-    {
-        <!-- Mood Trends Section -->
-        <MudText Typo="Typo.h5" Class="mt-6 mb-3">Mood Trends (Last @_daysLookback Days)</MudText>
-        
-        <MudGrid>
+        <!-- Summary Cards -->
+        <MudGrid Spacing="2">
             <MudItem xs="12" sm="6" md="3">
-                <MudCard>
+                <MudCard Elevation="0" Class="glass-card card-hover-subtle">
                     <MudCardContent>
-                        <MudText Typo="Typo.caption">Total Entries</MudText>
-                        <MudText Typo="Typo.h4">@_moodTrend?.TotalEntries</MudText>
+                        <MudStack Spacing="1">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Total Entries</MudText>
+                            @if (_isLoading)
+                            {
+                                <MudSkeleton Width="100px" Height="32px" Class="skeleton-shimmer" />
+                            }
+                            else
+                            {
+                                <MudText Typo="Typo.h5">@_totalEntries</MudText>
+                            }
+                        </MudStack>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
+
             <MudItem xs="12" sm="6" md="3">
-                <MudCard>
+                <MudCard Elevation="0" Class="glass-card card-hover-subtle">
                     <MudCardContent>
-                        <MudText Typo="Typo.caption">Avg. Valence</MudText>
-                        <MudText Typo="Typo.h4">@_moodTrend?.AverageValence.ToString("F2")</MudText>
+                        <MudStack Spacing="1">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Avg. Arousal</MudText>
+                            @if (_isLoading)
+                            {
+                                <MudSkeleton Width="100px" Height="32px" Class="skeleton-shimmer" />
+                            }
+                            else
+                            {
+                                <MudText Typo="Typo.h5">@_avgArousal.ToString("F1")</MudText>
+                            }
+                        </MudStack>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
+
             <MudItem xs="12" sm="6" md="3">
-                <MudCard>
+                <MudCard Elevation="0" Class="glass-card card-hover-subtle">
                     <MudCardContent>
-                        <MudText Typo="Typo.caption">Avg. Arousal</MudText>
-                        <MudText Typo="Typo.h4">@_moodTrend?.AverageArousal.ToString("F2")</MudText>
+                        <MudStack Spacing="1">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Avg. Valence</MudText>
+                            @if (_isLoading)
+                            {
+                                <MudSkeleton Width="100px" Height="32px" Class="skeleton-shimmer" />
+                            }
+                            else
+                            {
+                                <MudText Typo="Typo.h5">@_avgValence.ToString("F1")</MudText>
+                            }
+                        </MudStack>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
+
             <MudItem xs="12" sm="6" md="3">
-                <MudCard>
+                <MudCard Elevation="0" Class="glass-card card-hover-subtle">
                     <MudCardContent>
-                        <MudText Typo="Typo.caption">Scrobble Rate</MudText>
-                        <MudText Typo="Typo.h4">@(_musicStats?.ScrobbleRate.ToString("P0") ?? "N/A")</MudText>
+                        <MudStack Spacing="1">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Top Genre</MudText>
+                            @if (_isLoading)
+                            {
+                                <MudSkeleton Width="100px" Height="32px" />
+                            }
+                            else
+                            {
+                                <MudText Typo="Typo.h5">@(_topGenre ?? "—")</MudText>
+                            }
+                        </MudStack>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
         </MudGrid>
 
-        <!-- Mood Distribution -->
-        <MudText Typo="Typo.h5" Class="mt-6 mb-3">Mood Distribution</MudText>
-        <MudGrid>
-            <MudItem xs="12" sm="6" md="3">
-                <MudCard Class="mud-success">
-                    <MudCardContent>
-                        <MudText Typo="Typo.caption" Color="Color.Success">Happy</MudText>
-                        <MudText Typo="Typo.h5">@_moodTrend?.MoodDistribution.HappyPercent.ToString("F1")%</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="3">
-                <MudCard Class="mud-info">
-                    <MudCardContent>
-                        <MudText Typo="Typo.caption" Color="Color.Info">Calm</MudText>
-                        <MudText Typo="Typo.h5">@_moodTrend?.MoodDistribution.CalmPercent.ToString("F1")%</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="3">
-                <MudCard Class="mud-warning">
-                    <MudCardContent>
-                        <MudText Typo="Typo.caption" Color="Color.Warning">Angry</MudText>
-                        <MudText Typo="Typo.h5">@_moodTrend?.MoodDistribution.AngryPercent.ToString("F1")%</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="3">
-                <MudCard Class="mud-error">
-                    <MudCardContent>
-                        <MudText Typo="Typo.caption" Color="Color.Error">Sad</MudText>
-                        <MudText Typo="Typo.h5">@_moodTrend?.MoodDistribution.SadPercent.ToString("F1")%</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-        </MudGrid>
+        <!-- Data Loaded Section -->
+        @if (!_isLoading && _trends != null)
+        {
+            <MudGrid Spacing="3">
+                <!-- Mood Distribution -->
+                <MudItem xs="12" sm="12" md="6" lg="6">
+                    <MudCard Elevation="0" Class="glass-card">
+                        <MudCardContent>
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.subtitle1">Mood Distribution (Quadrants)</MudText>
+                                <MudGrid Spacing="1">
+                                    <MudItem xs="6" sm="6">
+                                        <MudPaper Class="pa-2" Elevation="0" Style="background-color:rgba(255,87,34,0.1);">
+                                            <MudText Typo="Typo.caption" Color="Color.Secondary">Energetic & Positive</MudText>
+                                            <MudText Typo="Typo.h6">@_quadrants["energetic"]</MudText>
+                                        </MudPaper>
+                                    </MudItem>
+                                    <MudItem xs="6">
+                                        <MudPaper Class="pa-2" Elevation="0" Style="background-color:rgba(76,175,80,0.1);">
+                                            <MudText Typo="Typo.caption" Color="Color.Secondary">Calm & Positive</MudText>
+                                            <MudText Typo="Typo.h6">@_quadrants["calm"]</MudText>
+                                        </MudPaper>
+                                    </MudItem>
+                                    <MudItem xs="6">
+                                        <MudPaper Class="pa-2" Elevation="0" Style="background-color:rgba(244,67,54,0.1);">
+                                            <MudText Typo="Typo.caption" Color="Color.Secondary">Agitated & Negative</MudText>
+                                            <MudText Typo="Typo.h6">@_quadrants["angry"]</MudText>
+                                        </MudPaper>
+                                    </MudItem>
+                                    <MudItem xs="6">
+                                        <MudPaper Class="pa-2" Elevation="0" Style="background-color:rgba(33,150,243,0.1);">
+                                            <MudText Typo="Typo.caption" Color="Color.Secondary">Sad & Negative</MudText>
+                                            <MudText Typo="Typo.h6">@_quadrants["sad"]</MudText>
+                                        </MudPaper>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
 
-        <!-- Music Statistics -->
-        <MudText Typo="Typo.h5" Class="mt-6 mb-3">Music Statistics</MudText>
-        <MudGrid>
-            <MudItem xs="12" sm="6">
-                <MudCard>
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h6">Top Artists</MudText>
-                    </MudCardHeader>
+                <!-- Top Artists -->
+                <MudItem xs="12" sm="12" md="6" lg="6">
+                    <MudCard Elevation="0" Class="glass-card">
+                        <MudCardContent>
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.subtitle1">Top Artists (Last 30 days)</MudText>
+                                <MudList T="string" Dense>
+                                    @foreach (var artist in _topArtists.Take(5))
+                                    {
+                                        <MudListItem T="string">
+                                            <MudText Typo="Typo.body2">@artist</MudText>
+                                        </MudListItem>
+                                    }
+                                </MudList>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+
+                <!-- Mood Timeline -->
+                <MudItem xs="12">
+                    <MudCard Elevation="0" Class="glass-card">
+                        <MudCardContent>
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.subtitle1">Mood Timeline (Last 30 days)</MudText>
+                                <MudTimeline TimelineAlign="TimelineAlign.Default">
+                                    @foreach (var daily in _trends.DailyAverages.OrderByDescending(d => d.Date).Take(10))
+                                    {
+                                        <MudTimelineItem Elevation="0">
+                                            <MudText Typo="Typo.body2">@daily.Date.ToString("MMM dd")</MudText>
+                                            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                                Valence: @daily.AverageValence.ToString("F1") | Arousal: @daily.AverageArousal.ToString("F1")
+                                            </MudText>
+                                        </MudTimelineItem>
+                                    }
+                                </MudTimeline>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            </MudGrid>
+
+            <!-- Advanced Analytics Section -->
+            <MudDivider Class="mt-4 mb-4" />
+
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.h6">Advanced Analytics</MudText>
+                
+                <!-- Yearly Report -->
+                <MudCard Elevation="0" Class="glass-card">
                     <MudCardContent>
-                        @if (_musicStats?.TopArtists?.Count > 0)
-                        {
-                            <MudList T="ArtistStatDto">
-                                @foreach (var artist in _musicStats.TopArtists)
+                        <MudStack Spacing="2">
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                <MudText Typo="Typo.subtitle1">Annual Reports</MudText>
+                                <MudSpacer />
+                                <MudSelect T="int" @bind-Value="_selectedYear" Label="Year" Dense>
+                                    @for (int year = DateTime.Now.Year; year >= DateTime.Now.Year - 4; year--)
+                                    {
+                                        <MudSelectItem Value="@year">@year</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudStack>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                View detailed annual statistics including monthly breakdown, top artists, and mood distribution
+                            </MudText>
+                            <MudButton Variant="Variant.Outlined" OnClick="@(() => ViewYearlyReportAsync())" FullWidth StartIcon="@Icons.Material.Filled.BarChart">
+                                View @_selectedYear Report
+                            </MudButton>
+                        </MudStack>
+                    </MudCardContent>
+                </MudCard>
+
+                <!-- Mood by Artist Analysis -->
+                <MudCard Elevation="0" Class="glass-card">
+                    <MudCardContent>
+                        <MudStack Spacing="2">
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                <MudText Typo="Typo.subtitle1">Mood by Artist</MudText>
+                                <MudSpacer />
+                                @if (_moodCorrelationLoading)
                                 {
-                                    <MudListItem T="ArtistStatDto">
-                                        <MudText>@artist.Name</MudText>
-                                        <MudText Typo="Typo.caption">@artist.Count entries</MudText>
-                                    </MudListItem>
+                                    <MudProgressCircular Indeterminate Size="Size.Small" />
                                 }
-                            </MudList>
-                        }
-                        else
-                        {
-                            <MudText Typo="Typo.caption">No data available</MudText>
-                        }
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudCard>
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h6">Top Songs</MudText>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        @if (_musicStats?.TopSongs?.Count > 0)
-                        {
-                            <MudList T="SongStatDto">
-                                @foreach (var song in _musicStats.TopSongs)
+                                else
                                 {
-                                    <MudListItem T="SongStatDto">
-                                        <MudText>@song.Title</MudText>
-                                        <MudText Typo="Typo.caption">@song.Artist (@song.Count plays)</MudText>
-                                    </MudListItem>
+                                    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Refresh" OnClick="@LoadMoodCorrelationAsync">
+                                        Refresh
+                                    </MudButton>
                                 }
-                            </MudList>
-                        }
-                        else
-                        {
-                            <MudText Typo="Typo.caption">No data available</MudText>
-                        }
+                            </MudStack>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                Analyze how your mood correlates with different artists and music sources
+                            </MudText>
+
+                            @if (_moodCorrelation != null && (_moodCorrelation.ArtistMoods?.Count > 0 || _moodCorrelation.SourceMoods?.Count > 0))
+                            {
+                                <MudTabs>
+                                    <!-- Artists Tab -->
+                                    @if (_moodCorrelation.ArtistMoods?.Count > 0)
+                                    {
+                                        <MudTabPanel Text="By Artist">
+                                            <MudList T="ArtistMoodDto" Dense>
+                                                @foreach (var artist in _moodCorrelation.ArtistMoods.Take(15))
+                                                {
+                                                    <MudListItem T="ArtistMoodDto">
+                                                        <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Style="width: 100%;">
+                                                            <MudText Typo="Typo.body2" Style="min-width: 200px;">@artist.Artist</MudText>
+                                                            <MudStack Row Spacing="1" Class="flex-wrap" Style="flex: 1;">
+                                                                <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.LibraryMusic">
+                                                                    @artist.EntryCount
+                                                                </MudChip>
+                                                                <MudChip T="string" Size="Size.Small" Color="Color.Success">
+                                                                    Valence: @artist.AverageValence.ToString("F2")
+                                                                </MudChip>
+                                                                <MudChip T="string" Size="Size.Small" Color="Color.Warning">
+                                                                    Energy: @artist.AverageArousal.ToString("F2")
+                                                                </MudChip>
+                                                            </MudStack>
+                                                        </MudStack>
+                                                    </MudListItem>
+                                                }
+                                            </MudList>
+                                        </MudTabPanel>
+                                    }
+
+                                    <!-- Sources Tab -->
+                                    @if (_moodCorrelation.SourceMoods?.Count > 0)
+                                    {
+                                        <MudTabPanel Text="By Source">
+                                            <MudList T="SourceMoodDto" Dense>
+                                                @foreach (var source in _moodCorrelation.SourceMoods)
+                                                {
+                                                    <MudListItem T="SourceMoodDto">
+                                                        <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Style="width: 100%;">
+                                                            <MudText Typo="Typo.body2" Style="min-width: 200px;">@source.Source</MudText>
+                                                            <MudStack Row Spacing="1" Style="flex: 1;">
+                                                                <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.LibraryMusic">
+                                                                    @source.EntryCount
+                                                                </MudChip>
+                                                                <MudChip T="string" Size="Size.Small" Color="Color.Success">
+                                                                    Valence: @source.AverageValence.ToString("F2")
+                                                                </MudChip>
+                                                                <MudChip T="string" Size="Size.Small" Color="Color.Warning">
+                                                                    Energy: @source.AverageArousal.ToString("F2")
+                                                                </MudChip>
+                                                            </MudStack>
+                                                        </MudStack>
+                                                    </MudListItem>
+                                                }
+                                            </MudList>
+                                        </MudTabPanel>
+                                    }
+                                </MudTabs>
+                            }
+                            else if (!_moodCorrelationLoading)
+                            {
+                                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                    No mood correlation data available. Create more entries to see patterns.
+                                </MudText>
+                            }
+                        </MudStack>
                     </MudCardContent>
                 </MudCard>
-            </MudItem>
-        </MudGrid>
-
-        <!-- Period Selection -->
-        <MudPaper Class="pa-4 mt-6">
-            <MudText Typo="Typo.h6" Class="mb-3">Analysis Period</MudText>
-            <MudSelect T="int" Value="_daysLookback" ValueChanged="OnPeriodChanged" Label="Days">
-                <MudSelectItem Value="7">Last 7 days</MudSelectItem>
-                <MudSelectItem Value="30">Last 30 days</MudSelectItem>
-                <MudSelectItem Value="90">Last 90 days</MudSelectItem>
-                <MudSelectItem Value="365">Last year</MudSelectItem>
-            </MudSelect>
-        </MudPaper>
-    }
+            </MudStack>
+        }
+        else if (!_isLoading)
+        {
+            <MudAlert Severity="Severity.Info">No mood entries yet. Create your first entry to see analytics.</MudAlert>
+        }
+    </MudStack>
 </MudContainer>
 
 @code {
-    private MoodTrendDto? _moodTrend;
-    private MusicStatisticsDto? _musicStats;
-    private int _daysLookback = 30;
     private bool _isLoading = true;
-    private string? _error;
+    private string? _liveMessage;
+    private int _totalEntries;
+    private double _avgValence;
+    private int _selectedYear = DateTime.Now.Year;
+    private bool _moodCorrelationLoading;
+    private MoodCorrelationDto? _moodCorrelation;
+
+    private double _avgArousal;
+    private string? _topGenre;
+
+    private MoodTrendDto? _trends;
+    private List<ArtistStatDto> _topArtists = [];
+    private Dictionary<string, int> _quadrants = new()
+    {
+        { "energetic", 0 },
+        { "calm", 0 },
+        { "sad", 0 },
+        { "angry", 0 }
+    };
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadAnalyticsAsync();
+        var isAuthenticated = await AuthState.IsAuthenticatedAsync();
+        if (!isAuthenticated)
+        {
+            return;
+        }
+
+        await LoadAnalyticsDataAsync();
     }
 
-    private async Task LoadAnalyticsAsync()
+    private async Task LoadAnalyticsDataAsync()
     {
-        _isLoading = true;
-        _error = null;
-
         try
         {
-            // Load mood trends
-            var trendData = await Http.GetFromJsonAsync<MoodTrendDto>($"api/analytics/mood-trends?daysLookback={_daysLookback}");
-            _moodTrend = trendData;
+            _isLoading = true;
+            _liveMessage = "Loading analytics data...";
 
-            // Load music statistics
-            var statsData = await Http.GetFromJsonAsync<MusicStatisticsDto>("api/analytics/music-stats");
-            _musicStats = statsData;
+            // Fetch trends and stats
+            _trends = await AnalyticsApi.GetMoodTrendsAsync(30);
+            var stats = await AnalyticsApi.GetMusicStatisticsAsync();
+
+            // Calculate summary metrics
+            if (_trends is not null && _trends.DailyAverages?.Any() == true)
+            {
+                _totalEntries = _trends.TotalEntries;
+                _avgValence = _trends.AverageValence;
+                _avgArousal = _trends.AverageArousal;
+
+                // Calculate mood quadrants from distribution
+                if (_trends.MoodDistribution is not null)
+                {
+                    _quadrants["energetic"] = (int)(_trends.MoodDistribution.HappyPercent / 100 * _totalEntries);
+                    _quadrants["calm"] = (int)(_trends.MoodDistribution.CalmPercent / 100 * _totalEntries);
+                    _quadrants["sad"] = (int)(_trends.MoodDistribution.SadPercent / 100 * _totalEntries);
+                    _quadrants["angry"] = (int)(_trends.MoodDistribution.AngryPercent / 100 * _totalEntries);
+                }
+            }
+
+            if (stats is not null && stats.TopArtists?.Any() == true)
+            {
+                _topGenre = stats.TopArtists.FirstOrDefault()?.Name;
+                _topArtists = stats.TopArtists;
+            }
+
+            _liveMessage = "Analytics loaded successfully.";
         }
         catch (Exception ex)
         {
-            _error = $"Error loading analytics: {ex.Message}";
+            _liveMessage = "Failed to load analytics.";
+            Snackbar.Add($"Failed to load analytics: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -204,27 +387,55 @@
         }
     }
 
-    private async Task OnPeriodChanged(int days)
+    private async Task LoadMoodCorrelationAsync()
     {
-        _daysLookback = days;
-        await LoadAnalyticsAsync();
+        try
+        {
+            _moodCorrelationLoading = true;
+            _moodCorrelation = await AnalyticsApi.GetMoodByArtistAsync();
+
+            if (_moodCorrelation == null)
+            {
+                Snackbar.Add("Failed to load mood correlation data", Severity.Error);
+            }
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Snackbar.Add("Authentication required", Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading mood correlation: {ex.Message}", Severity.Error);
+            Console.Error.WriteLine($"Error: {ex}");
+        }
+        finally
+        {
+            _moodCorrelationLoading = false;
+        }
+    }
+
+    private async Task ViewYearlyReportAsync()
+    {
+        // Navigate to yearly report page
+        // NavigationManager.NavigateTo($"/analytics/yearly/{_selectedYear}");
+        // For now, load and show the data in a dialog
+        var report = await AnalyticsApi.GetYearlyReportAsync(_selectedYear);
+        if (report != null)
+        {
+            Snackbar.Add($"Loaded {_selectedYear} annual report with {report.TotalEntries} entries", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add($"No data available for {_selectedYear}", Severity.Warning);
+        }
     }
 }
 
 <style>
-    .mud-success {
-        background-color: rgba(76, 175, 80, 0.1) !important;
-    }
-
-    .mud-info {
-        background-color: rgba(33, 150, 243, 0.1) !important;
-    }
-
-    .mud-warning {
-        background-color: rgba(255, 152, 0, 0.1) !important;
-    }
-
-    .mud-error {
-        background-color: rgba(244, 67, 54, 0.1) !important;
-    }
+.glass-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+}
 </style>

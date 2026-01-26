@@ -1,0 +1,31 @@
+@using MIMM.Frontend.Services
+@inject IAuthStateService AuthState
+@inject NavigationManager Navigation
+
+<MudNavMenu>
+    <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" Match="NavLinkMatch.All" OnClick="OnNavigate">
+        Dashboard
+    </MudNavLink>
+    <MudNavLink Href="/analytics" Icon="@Icons.Material.Filled.DatasetLinked" Match="NavLinkMatch.All" OnClick="OnNavigate">
+        Analytics
+        <MudNavLink Href="/export-import" Icon="@Icons.Material.Filled.FileDownload" Match="NavLinkMatch.All" OnClick="OnNavigate">
+            Export & Import
+        </MudNavLink>
+    </MudNavLink>
+    <MudDivider Class="my-2" />
+    <MudNavLink OnClick="HandleLogout" Icon="@Icons.Material.Filled.Logout">
+        Logout
+    </MudNavLink>
+</MudNavMenu>
+
+@code {
+    [Parameter]
+    public EventCallback OnNavigate { get; set; }
+
+    private async Task HandleLogout()
+    {
+        await AuthState.ClearTokensAsync();
+        Navigation.NavigateTo("/login");
+        await OnNavigate.InvokeAsync();
+    }
+}

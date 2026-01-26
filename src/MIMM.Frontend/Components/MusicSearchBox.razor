@@ -1,18 +1,25 @@
 @using MIMM.Shared.Dtos
+@using System.Threading
 @inject IMusicSearchApiService MusicApi
 @inject ISnackbar Snackbar
 
 <MudPaper Class="pa-4" Elevation="1">
     <MudStack Spacing="2">
         <MudText Typo="Typo.subtitle1">Search music</MudText>
-        <MudTextField @bind-Value="_query"
-                      Label="Song or artist"
-                      Variant="Variant.Outlined"
-                      OnKeyDown="HandleKeyDown"
-                      Adornment="Adornment.End"
-                      AdornmentIcon="@Icons.Material.Filled.Search"
-                      OnAdornmentClick="SearchAsync"
-                      Disabled="_loading" />
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+            <MudTextField @bind-Value="_query"
+                          Label="Song or artist (min 3 chars)"
+                          Variant="Variant.Outlined"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@(_loading ? null : Icons.Material.Filled.Search)"
+                          OnKeyDown="HandleKeyDown"
+                          Immediate="true"
+                          Class="search-field" />
+            @if (_loading)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate />
+            }
+        </MudStack>
 
         @if (_loading)
         {
@@ -29,9 +36,13 @@
                 }
             </MudList>
         }
-        else if (!_loading && _searchedOnce)
+        else if (!_loading && _searchedOnce && string.IsNullOrWhiteSpace(_query))
         {
-            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">No results</MudAlert>
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">Enter a search term to find music</MudAlert>
+        }
+        else if (!_loading && _searchedOnce && _results.Count == 0)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">No results found</MudAlert>
         }
     </MudStack>
 </MudPaper>
@@ -41,30 +52,73 @@
     private bool _loading;
     private bool _searchedOnce;
     private List<MusicTrackDto> _results = [];
+    
+    private Timer? _debounceTimer;
+    private CancellationTokenSource? _searchCts;
 
     [Parameter]
     public EventCallback<MusicTrackDto> OnTrackSelected { get; set; }
 
-    private async Task SearchAsync()
+    // Watch for query changes and trigger debounce
+    private Task _queryChangeTask = Task.CompletedTask;
+
+    protected override void OnAfterRender(bool firstRender)
     {
-        if (string.IsNullOrWhiteSpace(_query))
+        if (firstRender)
         {
-            Snackbar.Add("Enter a search term", Severity.Warning);
+            // Set up value changed handler
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    protected void OnQueryChanged()
+    {
+        _debounceTimer?.Dispose();
+
+        if (string.IsNullOrWhiteSpace(_query) || _query.Length < 3)
+        {
+            _results.Clear();
+            StateHasChanged();
             return;
         }
+
+        _debounceTimer = new Timer(_ =>
+        {
+            InvokeAsync(SearchAsync);
+        }, null, 300, Timeout.Infinite);
+    }
+
+    private async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_query) || _query.Length < 3)
+        {
+            _searchedOnce = false;
+            _results.Clear();
+            StateHasChanged();
+            return;
+        }
+
+        // Cancel previous search
+        _searchCts?.Cancel();
+        _searchCts = new CancellationTokenSource();
 
         _loading = true;
         StateHasChanged();
 
         try
         {
-            var response = await MusicApi.SearchAsync(_query, 10);
+            var response = await MusicApi.SearchAsync(_query, 10, _searchCts.Token);
             _searchedOnce = true;
             _results = response?.Items ?? [];
+        }
+        catch (OperationCanceledException)
+        {
+            // Search was cancelled (new search started)
         }
         catch (Exception ex)
         {
             Snackbar.Add($"Search failed: {ex.Message}", Severity.Error);
+            _searchedOnce = true;
         }
         finally
         {
@@ -77,6 +131,7 @@
     {
         if (e.Key == "Enter")
         {
+            _debounceTimer?.Dispose();
             await SearchAsync();
         }
     }
@@ -87,5 +142,12 @@
         {
             await OnTrackSelected.InvokeAsync(track);
         }
+    }
+
+    public void Dispose()
+    {
+        _debounceTimer?.Dispose();
+        _searchCts?.Cancel();
+        _searchCts?.Dispose();
     }
 }

@@ -44,7 +44,7 @@ public class JournalEntry
     
     // Body sensations
     [Range(0, 100)]
-    public int TensionLevel { get; set; } // 0-100 scale
+    public int? TensionLevel { get; set; } // 0-100 scale
     
     public string[] SomaticTags { get; set; } = Array.Empty<string>(); // ["headache", "butterflies", ...]
     

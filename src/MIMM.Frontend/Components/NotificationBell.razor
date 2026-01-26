@@ -1,0 +1,145 @@
+@using MIMM.Shared.Dtos
+@implements IAsyncDisposable
+@inject INotificationApiService NotificationApi
+@inject INotificationHubService NotificationHubService
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<MudMenu Dense
+         AnchorOrigin="Origin.BottomRight"
+         TransformOrigin="Origin.TopRight">
+    <ActivatorContent>
+        <MudBadge Color="Color.Error"
+                   Content="@_unreadCount"
+                   Visible="_unreadCount > 0"
+                   Overlap="true">
+            <MudIconButton Icon="@Icons.Material.Filled.Notifications"
+                           Color="Color.Inherit"
+                           Style="min-height: 48px; min-width: 48px;"
+                           aria-label="Notifications" />
+        </MudBadge>
+    </ActivatorContent>
+
+    <ChildContent>
+        <div class="notification-panel" role="region" aria-label="Notifications">
+            @if (_notifications.Count == 0)
+            {
+                <MudText Class="pa-2" Typo="Typo.body2">No notifications yet</MudText>
+            }
+            else
+            {
+                <MudList Dense Class="notification-list" T="NotificationDto">
+                    @foreach (var notification in _notifications)
+                    {
+                        <MudListItem Class="notification-item" T="NotificationDto" @onclick="() => OnNotificationClickAsync(notification)">
+                            <MudStack Spacing="1">
+                                <MudText Typo="Typo.subtitle2" Class="notification-title">
+                                    @notification.Title
+                                </MudText>
+                                <MudText Typo="Typo.body2" Class="notification-message">
+                                    @notification.Message
+                                </MudText>
+                                <MudText Typo="Typo.caption" Class="notification-date">
+                                    @notification.CreatedAt.ToLocalTime().ToString("g")
+                                </MudText>
+                            </MudStack>
+                            @if (!notification.IsRead)
+                            {
+                                <MudChip Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small">New</MudChip>
+                            }
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+            <MudDivider Class="mt-2 mb-2" />
+            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="px-2 pb-2">
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="MarkAllReadAsync" Disabled="_notifications.Count == 0">Mark all as read</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="ReloadClicked">Refresh</MudButton>
+            </MudStack>
+        </div>
+    </ChildContent>
+</MudMenu>
+
+@code {
+    private List<NotificationDto> _notifications = [];
+    private int _unreadCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadAsync();
+        NotificationHubService.NotificationReceived += OnNotificationReceived;
+        await NotificationHubService.StartAsync();
+    }
+
+    private async Task ReloadAsync()
+    {
+        var response = await NotificationApi.GetNotificationsAsync(1, 10);
+        if (response?.Items is { } items)
+        {
+            _notifications = items;
+            _unreadCount = items.Count(n => !n.IsRead);
+        }
+        else
+        {
+            _notifications = [];
+            _unreadCount = 0;
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnNotificationReceived(NotificationDto notification)
+    {
+        _notifications.Insert(0, notification);
+        _unreadCount++;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnNotificationClickAsync(NotificationDto notification)
+    {
+        if (!notification.IsRead)
+        {
+            var success = await NotificationApi.MarkAsReadAsync(notification.Id);
+            if (success)
+            {
+                UpdateNotification(notification with { IsRead = true, ReadAt = DateTime.UtcNow });
+                _unreadCount = Math.Max(0, _unreadCount - 1);
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(notification.Link))
+        {
+            Navigation.NavigateTo(notification.Link!);
+        }
+    }
+
+    private async Task MarkAllReadAsync()
+    {
+        var updated = await NotificationApi.MarkAllAsReadAsync();
+        if (updated.HasValue)
+        {
+            for (var i = 0; i < _notifications.Count; i++)
+            {
+                _notifications[i] = _notifications[i] with { IsRead = true, ReadAt = DateTime.UtcNow };
+            }
+            _unreadCount = 0;
+        }
+    }
+
+    private void UpdateNotification(NotificationDto updated)
+    {
+        var index = _notifications.FindIndex(n => n.Id == updated.Id);
+        if (index >= 0)
+        {
+            _notifications[index] = updated;
+        }
+    }
+
+    private async Task ReloadClicked(MouseEventArgs args) => await ReloadAsync();
+
+    public async ValueTask DisposeAsync()
+    {
+        NotificationHubService.NotificationReceived -= OnNotificationReceived;
+        await NotificationHubService.DisposeAsync();
+    }
+}

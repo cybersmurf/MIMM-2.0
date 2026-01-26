@@ -4,6 +4,8 @@
 @inject ILastFmApiService LastFmApi
 @inject ISnackbar Snackbar
 
+<LiveRegion Message="@_liveMessage" AriaLive="polite" />
+
 <MudPaper Elevation="2" Class="pa-4">
     <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-3">
         <MudText Typo="Typo.h6">Recent entries</MudText>
@@ -14,32 +16,55 @@
         }
         else
         {
-            <MudIconButton Icon="@Icons.Material.Filled.Refresh" Size="Size.Small" OnClick="LoadEntriesAsync" />
+            <MudIconButton Icon="@Icons.Material.Filled.Refresh" 
+                           Size="Size.Small" 
+                           Style="min-height: 44px; min-width: 44px;"
+                           OnClick="LoadEntriesAsync" />
         }
     </MudStack>
 
     @if (IsLoading && Entries.Count == 0)
     {
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="60px" Class="mb-2" />
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="60px" Class="mb-2" />
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="60px" />
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="60px" Class="mb-2 skeleton-shimmer" />
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="60px" Class="mb-2 skeleton-shimmer" />
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="60px" Class="skeleton-shimmer" />
     }
     else if (Entries.Count == 0)
     {
-        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
-            No entries yet. Create your first mood log!
-        </MudAlert>
+        <MudStack AlignItems="AlignItems.Center" Spacing="3" Class="pa-8 animate-fade-in-up">
+            <MudIcon Icon="@Icons.Material.Filled.MusicNote" 
+                     Color="Color.Primary" 
+                     Style="font-size: 120px; opacity: 0.5;" />
+            
+            <MudText Typo="Typo.h5" Align="Align.Center">
+                No entries yet
+            </MudText>
+            
+            <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">
+                Start tracking your mood and music journey.<br />
+                Your first entry is just a click away!
+            </MudText>
+            
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Primary" 
+                       Size="Size.Large"
+                       Class="btn-hover-lift"
+                       StartIcon="@Icons.Material.Filled.AddCircle"
+                       OnClick="@(() => OnCreateFirstEntry.InvokeAsync())">
+                Create Your First Entry
+            </MudButton>
+        </MudStack>
     }
     else
     {
         <MudList T="string" Dense>
             @foreach (var entry in Entries)
             {
-                <MudListItem T="string">
+                <MudListItem T="string" Class="list-item-stagger transition-colors">
                     <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
                         @if (!string.IsNullOrEmpty(entry.CoverUrl))
                         {
-                            <MudAvatar Src="@entry.CoverUrl" Size="Size.Medium" Class="rounded" />
+                            <MudAvatar src="@entry.CoverUrl" Size="Size.Medium" Class="rounded" />
                         }
                         else
                         {
@@ -88,17 +113,21 @@
 
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" 
                                        Size="Size.Small" 
+                                       Style="min-height: 44px; min-width: 44px;"
                                        OnClick="@(() => OnEditEntry.InvokeAsync(entry))" />
                         @if (!entry.ScrobbledToLastFm)
                         {
                             <MudIconButton Icon="@Icons.Material.Filled.MusicNote" 
                                            Size="Size.Small" 
                                            Color="Color.Secondary"
-                                           Title="Scrobble to Last.fm"
-                                           OnClick="@(() => HandleScrobbleAsync(entry))" />
+                                           Style="min-height: 44px; min-width: 44px;"
+                                           OnClick="@(() => HandleScrobbleAsync(entry))"
+                                           aria-label="Scrobble to Last.fm"
+                                           title="Scrobble to Last.fm" />
                         }
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                                       Size="Size.Small" 
+                                       Size="Size.Small"
+                                       Style="min-height: 44px; min-width: 44px;" 
                                        Color="Color.Error"
                                        OnClick="@(() => HandleDeleteAsync(entry.Id))" />
                     </MudStack>
@@ -126,9 +155,13 @@
     [Parameter]
     public EventCallback OnEntryChanged { get; set; }
 
+    [Parameter]
+    public EventCallback OnCreateFirstEntry { get; set; }
+
     private List<EntryDto> Entries { get; set; } = new();
     private PagedResponse<EntryDto>? PagedResponse { get; set; }
     private bool IsLoading { get; set; }
+    private string? _liveMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -138,6 +171,7 @@
     public async Task LoadEntriesAsync()
     {
         IsLoading = true;
+        _liveMessage = "Loading entries...";
         StateHasChanged();
 
         try
@@ -155,9 +189,11 @@
             if (PagedResponse != null)
             {
                 Entries = PagedResponse.Items;
+                _liveMessage = $"Loaded {Entries.Count} entries.";
             }
             else
             {
+                _liveMessage = "Failed to load entries.";
                 Snackbar.Add("Failed to load entries", Severity.Error);
             }
         }
@@ -171,6 +207,7 @@
     private async Task OnPageChangedAsync(int page)
     {
         IsLoading = true;
+        _liveMessage = "Loading entries...";
         StateHasChanged();
 
         try
@@ -188,6 +225,7 @@
             if (PagedResponse != null)
             {
                 Entries = PagedResponse.Items;
+                _liveMessage = $"Page {page} loaded with {Entries.Count} entries.";
             }
         }
         finally
@@ -204,11 +242,13 @@
         if (success)
         {
             Snackbar.Add("Entry deleted", Severity.Success);
+            _liveMessage = "Entry deleted.";
             await LoadEntriesAsync();
             await OnEntryChanged.InvokeAsync();
         }
         else
         {
+            _liveMessage = "Failed to delete entry.";
             Snackbar.Add("Failed to delete entry", Severity.Error);
         }
     }
@@ -224,11 +264,13 @@
         if (success)
         {
             Snackbar.Add($"Scrobbled '{entry.SongTitle}' to Last.fm", Severity.Success);
+            _liveMessage = $"Scrobbled {entry.SongTitle} to Last.fm.";
             await LoadEntriesAsync();
             await OnEntryChanged.InvokeAsync();
         }
         else
         {
+            _liveMessage = "Failed to scrobble to Last.fm.";
             Snackbar.Add("Failed to scrobble to Last.fm", Severity.Error);
         }
     }

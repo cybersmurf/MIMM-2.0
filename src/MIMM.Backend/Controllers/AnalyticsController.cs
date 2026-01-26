@@ -105,4 +105,93 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
             return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
         }
     }
+
+    /// <summary>
+    /// Get yearly report for the current user
+    /// </summary>
+    /// <param name="year">Year to report on</param>
+    /// <returns>Yearly report with monthly breakdown, top artists/songs, mood distribution</returns>
+    /// <response code="200">Returns yearly report</response>
+    /// <response code="400">Invalid year parameter</response>
+    /// <response code="401">Unauthorized</response>
+    /// <response code="500">Internal server error</response>
+    [HttpGet("yearly-report/{year:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<YearlyReportDto>> GetYearlyReport(
+        int year,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var userId = User.FindFirst("sub")?.Value;
+            if (string.IsNullOrWhiteSpace(userId) || !Guid.TryParse(userId, out var userGuid))
+            {
+                _logger.LogWarning("Invalid or missing user ID in JWT claims");
+                return Unauthorized(new { error = "Invalid user context" });
+            }
+
+            if (year < 2020 || year > DateTime.Now.Year)
+            {
+                return BadRequest(new { error = $"Year must be between 2020 and {DateTime.Now.Year}" });
+            }
+
+            _logger.LogInformation("Fetching yearly report for user {UserId}, year {Year}", userGuid, year);
+            var report = await _analyticsService.GetYearlyReportAsync(userGuid, year, cancellationToken);
+
+            return Ok(report);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Request cancelled for yearly report");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "Request timeout" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting yearly report for user");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
+    }
+
+    /// <summary>
+    /// Get mood correlation with artists and sources
+    /// </summary>
+    /// <returns>Mood correlation data for artists and sources</returns>
+    /// <response code="200">Returns mood correlation data</response>
+    /// <response code="401">Unauthorized</response>
+    /// <response code="500">Internal server error</response>
+    [HttpGet("mood-by-artist")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<MoodCorrelationDto>> GetMoodByArtist(
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var userId = User.FindFirst("sub")?.Value;
+            if (string.IsNullOrWhiteSpace(userId) || !Guid.TryParse(userId, out var userGuid))
+            {
+                _logger.LogWarning("Invalid or missing user ID in JWT claims");
+                return Unauthorized(new { error = "Invalid user context" });
+            }
+
+            _logger.LogInformation("Fetching mood by artist for user {UserId}", userGuid);
+            var correlation = await _analyticsService.GetMoodByArtistAsync(userGuid, cancellationToken);
+
+            return Ok(correlation);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Request cancelled for mood by artist");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "Request timeout" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting mood by artist for user");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
+    }
 }

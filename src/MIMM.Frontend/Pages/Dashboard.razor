@@ -1,70 +1,97 @@
 @page "/dashboard"
 @using MIMM.Frontend.Services
 @using MIMM.Frontend.Components
+@using MIMM.Shared.Dtos
 @inject IAuthStateService AuthState
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IAnalyticsApiService AnalyticsApi
+@inject ILastFmApiService LastFmApi
 
 <PageTitle>Dashboard - MIMM</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
+<LiveRegion Message="@_liveRegionMessage" AriaLive="polite" />
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6" role="region" aria-label="Dashboard overview">
     <MudGrid Class="mb-4">
-        <MudItem xs="12" sm="8">
+        <MudItem xs="12" sm="12" md="7">
             <MudText Typo="Typo.h4" Class="mb-1">Welcome back</MudText>
             <MudText Typo="Typo.subtitle1" Color="Color.Secondary">
-                Capture today’s mood and soundtrack.
+                Capture today's mood and soundtrack.
             </MudText>
         </MudItem>
-        <MudItem xs="12" sm="4" Class="d-flex justify-end">
+        <MudItem xs="12" sm="12" md="5" Class="d-flex justify-sm-start justify-md-end gap-2">
             <MudButton Variant="Variant.Filled" 
                        Color="Color.Primary" 
-                       Class="mr-2" 
+                       Class="btn-hover-lift" 
+                       Style="min-height: 44px; min-width: 44px;"
                        StartIcon="@Icons.Material.Filled.AddCircle"
                        OnClick="OpenCreateDialog">
                 New Entry
             </MudButton>
-            <MudButton Variant="Variant.Outlined" Color="Color.Info" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="ConnectLastFm">
+            <MudButton Variant="Variant.Outlined" 
+                       Color="Color.Info" 
+                       Class="btn-hover-lift" 
+                       Style="min-height: 44px; min-width: 44px;"
+                       StartIcon="@Icons.Material.Filled.CloudUpload" 
+                       OnClick="ConnectLastFm">
                 Connect Last.fm
             </MudButton>
         </MudItem>
     </MudGrid>
 
     <MudGrid Class="mb-4" Spacing="2">
-        <MudItem xs="12" sm="6" md="4">
-            <MudPaper Elevation="3" Class="pa-4" Style="background: linear-gradient(135deg,#0ea5e9,#38bdf8); color: #0b1120;">
-                <MudText Typo="Typo.caption" Class="mb-1">Mood balance</MudText>
-                <MudText Typo="Typo.h5">Valence: +0.12</MudText>
-                <MudText Typo="Typo.body2">Averaged last 7 days</MudText>
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="4">
-            <MudPaper Elevation="3" Class="pa-4" Style="background: linear-gradient(135deg,#a855f7,#c084fc); color: #0b1120;">
-                <MudText Typo="Typo.caption" Class="mb-1">Energy trend</MudText>
-                <MudText Typo="Typo.h5">Arousal: +0.08</MudText>
-                <MudText Typo="Typo.body2">Last 10 sessions</MudText>
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="4">
-            <MudPaper Elevation="3" Class="pa-4" Style="background: linear-gradient(135deg,#22c55e,#86efac); color: #0b1120;">
-                <MudText Typo="Typo.caption" Class="mb-1">Scrobbles</MudText>
-                <MudText Typo="Typo.h5">Synced: 0</MudText>
-                <MudText Typo="Typo.body2">Connect Last.fm to start</MudText>
-            </MudPaper>
-        </MudItem>
+        @if (_isLoadingStats)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="120px" Class="skeleton-shimmer" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="120px" Class="skeleton-shimmer" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="120px" Class="skeleton-shimmer" />
+            </MudItem>
+        }
+        else if (_moodTrend != null)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Elevation="3" Class="pa-4 card-hover-subtle" Style="background: linear-gradient(135deg,#0ea5e9,#38bdf8); color: #0b1120;">
+                    <MudText Typo="Typo.caption" Class="mb-1">Mood balance</MudText>
+                    <MudText Typo="Typo.h5">Valence: @_moodTrend.AverageValence.ToString("F2")</MudText>
+                    <MudText Typo="Typo.body2">Averaged last 7 days</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Elevation="3" Class="pa-4 card-hover-subtle" Style="background: linear-gradient(135deg,#a855f7,#c084fc); color: #0b1120;">
+                    <MudText Typo="Typo.caption" Class="mb-1">Energy trend</MudText>
+                    <MudText Typo="Typo.h5">Arousal: @_moodTrend.AverageArousal.ToString("F2")</MudText>
+                    <MudText Typo="Typo.body2">Last @_moodTrend.TotalEntries sessions</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Elevation="3" Class="pa-4 card-hover-subtle" Style="background: linear-gradient(135deg,#22c55e,#86efac); color: #0b1120;">
+                    <MudText Typo="Typo.caption" Class="mb-1">Mood entries</MudText>
+                    <MudText Typo="Typo.h5">Total: @(_moodTrend?.TotalEntries ?? 0)</MudText>
+                    <MudText Typo="Typo.body2">@(_moodTrend?.TotalEntries ?? 0) moods logged</MudText>
+                </MudPaper>
+            </MudItem>
+        }
     </MudGrid>
 
     <MudGrid Spacing="2">
-        <MudItem xs="12" md="7">
-            <EntryList @ref="_entryList" OnEditEntry="OpenEditDialog" OnEntryChanged="RefreshData" />
+        <MudItem xs="12" sm="12" md="8" lg="7">
+            <EntryList @ref="_entryList" OnEditEntry="OpenEditDialog" OnEntryChanged="RefreshData" OnCreateFirstEntry="OpenCreateDialog" />
         </MudItem>
-        <MudItem xs="12" md="5">
+        <MudItem xs="12" sm="12" md="4" lg="5">
             <MudPaper Elevation="2" Class="pa-4 mb-3">
                 <MudText Typo="Typo.h6" Class="mb-2">Quick actions</MudText>
                 <MudStack Row Spacing="1">
-                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth StartIcon="@Icons.Material.Filled.Edit" Disabled>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth StartIcon="@Icons.Material.Filled.Edit" OnClick="OpenCreateDialog">
                         Add mood entry
                     </MudButton>
-                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth StartIcon="@Icons.Material.Filled.AutoGraph" Disabled>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth StartIcon="@Icons.Material.Filled.AutoGraph" Href="/analytics">
                         View analytics
                     </MudButton>
                     <MudButton Variant="Variant.Text" Color="Color.Error" FullWidth StartIcon="@Icons.Material.Filled.Logout" OnClick="HandleLogout">
@@ -79,20 +106,24 @@
 
 @code {
     private EntryList _entryList = null!;
-    [Inject] private ILastFmApiService LastFmApi { get; set; } = null!;
-    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    private string? _liveRegionMessage;
+    
+    private bool _isLoadingStats = true;
+    private MoodTrendDto? _moodTrend;
+    private MusicStatisticsDto? _musicStats;
 
     protected override async Task OnInitializedAsync()
     {
-        // Check if user is authenticated
         var isAuthenticated = await AuthState.IsAuthenticatedAsync();
         
         if (!isAuthenticated)
         {
             Navigation.NavigateTo("/login");
+            return;
         }
 
-        // Surface Last.fm connection result via query params
+        await LoadStatsAsync();
+
         var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
         var queryParams = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var raw = uri.Query.StartsWith("?") ? uri.Query[1..] : uri.Query;
@@ -108,6 +139,7 @@
             if (string.Equals(lastfm, "connected", StringComparison.OrdinalIgnoreCase))
             {
                 Snackbar.Add("Last.fm connected successfully", Severity.Success);
+                await LoadStatsAsync();
             }
             else if (string.Equals(lastfm, "error", StringComparison.OrdinalIgnoreCase))
             {
@@ -117,35 +149,53 @@
         }
     }
 
+    private async Task LoadStatsAsync()
+    {
+        _isLoadingStats = true;
+        _liveRegionMessage = "Loading dashboard statistics...";
+        StateHasChanged();
+
+        try
+        {
+            var moodTask = AnalyticsApi.GetMoodTrendsAsync(daysLookback: 7);
+            var musicTask = AnalyticsApi.GetMusicStatisticsAsync();
+            await Task.WhenAll(moodTask, musicTask);
+            _moodTrend = await moodTask;
+            _musicStats = await musicTask;
+            _liveRegionMessage = $"Dashboard loaded. {_moodTrend?.TotalEntries ?? 0} mood entries found.";
+        }
+        catch (Exception ex)
+        {
+            _liveRegionMessage = "Failed to load statistics. Please try again.";
+            Snackbar.Add($"Failed to load statistics: {ex.Message}", Severity.Warning);
+            _moodTrend = new MoodTrendDto { AverageValence = 0.0, AverageArousal = 0.0, TotalEntries = 0 };
+            _musicStats = null;
+        }
+        finally
+        {
+            _isLoadingStats = false;
+            StateHasChanged();
+        }
+    }
+
     private async Task OpenCreateDialog()
     {
         var dialog = await DialogService.ShowAsync<EntryCreateDialog>("Create new entry");
         var result = await dialog.Result;
-
-        if (result is { Canceled: false })
-        {
-            await RefreshData();
-        }
+        if (result is { Canceled: false }) await RefreshData();
     }
 
     private async Task OpenEditDialog(MIMM.Shared.Dtos.EntryDto entry)
     {
-        var parameters = new DialogParameters
-        {
-            { "EntryId", entry.Id }
-        };
-
+        var parameters = new DialogParameters { { "EntryId", entry.Id } };
         var dialog = await DialogService.ShowAsync<EntryEditDialog>($"Edit: {entry.SongTitle}", parameters);
         var result = await dialog.Result;
-
-        if (result is { Canceled: false })
-        {
-            await RefreshData();
-        }
+        if (result is { Canceled: false }) await RefreshData();
     }
 
     private async Task RefreshData()
     {
+        await LoadStatsAsync();
         await _entryList.LoadEntriesAsync();
     }
 
@@ -163,7 +213,6 @@
             Snackbar.Add("Failed to start Last.fm authentication", Severity.Error);
             return;
         }
-        // Open auth in new window/tab
         Navigation.NavigateTo(url, true);
     }
 }

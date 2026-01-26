@@ -1,124 +1,128 @@
 @using MIMM.Shared.Dtos
 @using MIMM.Frontend.Services
 @using MIMM.Frontend.Models
+@using MudBlazor
 @inject IEntryApiService EntryApi
 @inject ISnackbar Snackbar
 
-<MudDialog>
+<MudDialog aria-modal="true" role="dialog">
     <DialogContent>
-        <MudForm @ref="_form" @bind-IsValid="@_isFormValid">
-            <MudStack Spacing="3">
-                <MudTextField @bind-Value="Model.SongTitle" 
-                              Label="Song title *" 
-                              Required 
-                              RequiredError="Song title is required"
-                              HelperText="@(string.IsNullOrEmpty(Model.SongId) ? "" : $"MusicBrainz ID: {Model.SongId}")" />
+        <div tabindex="0" @onfocus="FocusFirstAsync" class="sr-only"></div>
+        <MudTabs Elevation="0" ApplyEffectsToContainer="true">
+            <!-- Tab 1: Music Search -->
+            <MudTabPanel Text="Music">
+                <MudStack Spacing="3" Class="pa-3">
+                    <MudText Typo="Typo.body1">Find and select a track</MudText>
 
-                <MudTextField @bind-Value="Model.ArtistName" Label="Artist" />
+                    <MusicSearchBox OnTrackSelected="@HandleTrackSelected" />
 
-                <MudTextField @bind-Value="Model.AlbumName" Label="Album" />
-
-                <MudPaper Class="pa-3" Elevation="0" Style="background-color:rgba(0,0,0,0.02);">
-                    <MudStack Spacing="2">
-                        <MudText Typo="Typo.subtitle2">Find a track</MudText>
-
-                        @if (_selectedTrack is not null)
-                        {
-                            <MudPaper Class="pa-2" Elevation="0" Style="background-color:rgba(33,150,243,0.1); border-left:4px solid #2196F3;">
-                                <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
-                                    @if (!string.IsNullOrEmpty(_selectedTrack.CoverUrl))
-                                    {
-                                        <MudAvatar Src="@_selectedTrack.CoverUrl" Size="Size.Large" Class="rounded" />
-                                    }
-                                    else
-                                    {
-                                        <MudAvatar Color="Color.Primary" Size="Size.Large">
-                                            <MudIcon Icon="@Icons.Material.Filled.MusicNote" />
-                                        </MudAvatar>
-                                    }
-                                    
-                                    <MudStack Spacing="0" Style="flex:1;">
-                                        <MudText Typo="Typo.body1" Style="font-weight:500;">@_selectedTrack.Title</MudText>
-                                        <MudText Typo="Typo.body2" Color="Color.Secondary">@_selectedTrack.Artist</MudText>
-                                        @if (!string.IsNullOrEmpty(_selectedTrack.Album))
-                                        {
-                                            <MudText Typo="Typo.caption" Color="Color.Secondary">@_selectedTrack.Album</MudText>
-                                        }
-                                        @if (!string.IsNullOrWhiteSpace(_selectedTrack.ExternalId))
-                                        {
-                                            <MudText Typo="Typo.caption" Color="Color.Tertiary">
-                                                <strong>@(_selectedTrack.Source == "musicbrainz" ? "🎵 MusicBrainz" : "🎵 " + _selectedTrack.Source)</strong>
-                                            </MudText>
-                                        }
-                                    </MudStack>
-                                    
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small" OnClick="ClearSelection">
-                                        Change
-                                    </MudButton>
-                                </MudStack>
-                            </MudPaper>
-                        }
-
-                        <MusicSearchBox OnTrackSelected="HandleTrackSelected" />
-                    </MudStack>
-                </MudPaper>
-
-                <MudDivider Class="my-2" />
-
-                <MoodSelector2D @bind-Valence="Model.Valence"
-                                 @bind-Arousal="Model.Arousal" />
-
-                <MudStack Spacing="2">
-                    <MudText Typo="Typo.body2">Tension level: @Model.TensionLevel</MudText>
-                    <MudSlider @bind-Value="Model.TensionLevel" 
-                               Min="0" 
-                               Max="100" 
-                               Step="5" 
-                               Color="Color.Tertiary" />
-                </MudStack>
-
-                <MudDivider Class="my-2" />
-
-                <MudText Typo="Typo.subtitle2">Somatic tags (optional)</MudText>
-                <MudStack Row Wrap="Wrap.Wrap" Spacing="1">
-                    @foreach (var tag in CommonSomaticTags)
+                    @if (_selectedTrack is not null)
                     {
-                        <MudChip T="string" Size="Size.Small" 
-                                 Color="@(SelectedTags.Contains(tag) ? Color.Primary : Color.Default)"
-                                 Variant="@(SelectedTags.Contains(tag) ? Variant.Filled : Variant.Outlined)"
-                                 OnClick="@(() => ToggleTag(tag))">
-                            @tag
-                        </MudChip>
+                        <MudPaper Class="pa-3" Elevation="0" Style="background-color:rgba(33,150,243,0.1); border-left:4px solid #2196F3;">
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                @if (!string.IsNullOrEmpty(_selectedTrack.CoverUrl))
+                                {
+                                    <MudAvatar src="@_selectedTrack.CoverUrl" Size="Size.Large" Class="rounded" />
+                                }
+                                else
+                                {
+                                    <MudAvatar Color="Color.Primary" Size="Size.Large">
+                                        <MudIcon Icon="@Icons.Material.Filled.MusicNote" />
+                                    </MudAvatar>
+                                }
+                                
+                                <MudStack Spacing="0" Style="flex:1;">
+                                    <MudText Typo="Typo.body1" Style="font-weight:500;">@_selectedTrack.Title</MudText>
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary">@_selectedTrack.Artist</MudText>
+                                    @if (!string.IsNullOrEmpty(_selectedTrack.Album))
+                                    {
+                                        <MudText Typo="Typo.caption" Color="Color.Secondary">@_selectedTrack.Album</MudText>
+                                    }
+                                </MudStack>
+                                <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="@ClearTrackSelection" Color="Color.Default" Size="Size.Small" />
+                            </MudStack>
+                        </MudPaper>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">Or enter music manually</MudText>
+                        <MudStack Spacing="2">
+                            <MudTextField @bind-Value="Model.SongTitle" Label="Song title *" Required RequiredError="Song title is required" />
+                            <MudTextField @bind-Value="Model.ArtistName" Label="Artist (optional)" />
+                            <MudTextField @bind-Value="Model.AlbumName" Label="Album (optional)" />
+                        </MudStack>
                     }
                 </MudStack>
+            </MudTabPanel>
 
-                <MudTextField @bind-Value="CustomTag" 
-                              Label="Add custom tag" 
-                              Adornment="Adornment.End" 
-                              AdornmentIcon="@Icons.Material.Filled.Add"
-                              OnAdornmentClick="AddCustomTag" 
-                              OnKeyDown="OnCustomTagKeyDown" />
+            <!-- Tab 2: Mood & Tension -->
+            <MudTabPanel Text="Mood">
+                <MudStack Spacing="3" Class="pa-3">
+                    <MudText Typo="Typo.body1">How were you feeling?</MudText>
 
-                <MudTextField @bind-Value="Model.Notes" 
-                              Label="Notes (optional)" 
-                              Lines="4" 
-                              MaxLength="2000"
-                              Counter="2000" />
-            </MudStack>
-        </MudForm>
+                    <MoodSelector2D @bind-Valence="Model.Valence" @bind-Arousal="Model.Arousal" Size="200" />
+
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.subtitle2">Physical Tension</MudText>
+                        <MudSlider @bind-Value="Model.TensionLevel" 
+                                   Min="0" 
+                                   Max="100" 
+                                   Step="5" />
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">0 = Relaxed • 50 = Neutral • 100 = Tense</MudText>
+                    </MudStack>
+                </MudStack>
+            </MudTabPanel>
+
+            <!-- Tab 3: Tags & Notes -->
+            <MudTabPanel Text="Tags & Notes">
+                <MudStack Spacing="3" Class="pa-3">
+                    <MudText Typo="Typo.body1">Add context and details</MudText>
+
+                    <div>
+                        <MudText Typo="Typo.subtitle2" Class="mb-2">Somatic Tags</MudText>
+                        <MudStack Row Wrap="Wrap.Wrap" Spacing="1">
+                            @foreach (var tag in CommonSomaticTags)
+                            {
+                                <MudButton Variant="@(_selectedTags.Contains(tag) ? Variant.Filled : Variant.Outlined)"
+                                           Color="@(_selectedTags.Contains(tag) ? Color.Primary : Color.Default)"
+                                           Size="Size.Small"
+                                           OnClick="@(() => ToggleTag(tag))">
+                                    @tag
+                                </MudButton>
+                            }
+                        </MudStack>
+                    </div>
+
+                    <MudTextField @bind-Value="_customTag" 
+                                  Label="Add custom tag" 
+                                  Placeholder="Press Enter to add"
+                                  OnKeyDown="@OnCustomTagKeyDown" 
+                                  Clearable />
+
+                    <MudTextField @bind-Value="Model.Notes" 
+                                  Label="Notes (optional)" 
+                                  Lines="4" 
+                                  MaxLength="2000"
+                                  Counter="2000"
+                                  Placeholder="How did this music affect your mood?" />
+                </MudStack>
+            </MudTabPanel>
+        </MudTabs>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="@CancelDialog" ButtonType="ButtonType.Button" @ref="_firstFocusable">Cancel</MudButton>
         <MudButton Color="Color.Primary" 
                    Variant="Variant.Filled" 
                    OnClick="SubmitAsync" 
-                   Disabled="@(!_isFormValid || _isSubmitting)">
+                   Disabled="@(!IsFormValid || _isSubmitting)"
+                   ButtonType="ButtonType.Button">
             @if (_isSubmitting)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate Class="mr-2" />
             }
-            Create entry
+            Create Entry
         </MudButton>
+        <div tabindex="0" @onfocus="FocusFirstAsync" class="sr-only"></div>
     </DialogActions>
 </MudDialog>
 
@@ -129,10 +133,11 @@
     [Parameter]
     public EventCallback OnEntryCreated { get; set; }
 
-    private MudForm _form = null!;
-    private bool _isFormValid;
     private bool _isSubmitting;
+    private bool _hasFocused;
     private MusicTrackDto? _selectedTrack;
+    private string _customTag = string.Empty;
+    private MudButton? _firstFocusable;
 
     private CreateEntryModel Model { get; set; } = new()
     {
@@ -141,8 +146,7 @@
         TensionLevel = 50
     };
 
-    private HashSet<string> SelectedTags { get; set; } = [];
-    private string CustomTag { get; set; } = string.Empty;
+    private HashSet<string> _selectedTags = [];
 
     private static readonly string[] CommonSomaticTags =
     [
@@ -151,33 +155,45 @@
         "Light", "Grounded", "Floating", "Centered"
     ];
 
+    private bool IsFormValid => !string.IsNullOrWhiteSpace(Model.SongTitle);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_hasFocused)
+        {
+            _hasFocused = true;
+            await FocusFirstAsync();
+        }
+    }
+
+    private async Task FocusFirstAsync()
+    {
+        if (_firstFocusable is not null)
+        {
+            await _firstFocusable.FocusAsync();
+        }
+    }
+
     private void ToggleTag(string tag)
     {
-        if (SelectedTags.Contains(tag))
+        if (_selectedTags.Contains(tag))
         {
-            SelectedTags.Remove(tag);
+            _selectedTags.Remove(tag);
         }
         else
         {
-            SelectedTags.Add(tag);
+            _selectedTags.Add(tag);
         }
+        StateHasChanged();
     }
 
-    private void AddCustomTag()
+    private void ClearTrackSelection()
     {
-        if (!string.IsNullOrWhiteSpace(CustomTag))
-        {
-            SelectedTags.Add(CustomTag.Trim());
-            CustomTag = string.Empty;
-        }
-    }
-
-    private void OnCustomTagKeyDown(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
-        {
-            AddCustomTag();
-        }
+        _selectedTrack = null;
+        Model.SongTitle = string.Empty;
+        Model.ArtistName = string.Empty;
+        Model.AlbumName = string.Empty;
+        StateHasChanged();
     }
 
     private void HandleTrackSelected(MusicTrackDto track)
@@ -192,18 +208,29 @@
         StateHasChanged();
     }
 
-    private void ClearSelection()
+    private void OnCustomTagKeyDown(KeyboardEventArgs e)
     {
-        _selectedTrack = null;
-        StateHasChanged();
+        if (e.Key == "Enter")
+        {
+            if (!string.IsNullOrWhiteSpace(_customTag))
+            {
+                _selectedTags.Add(_customTag.Trim());
+                _customTag = string.Empty;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void CancelDialog()
+    {
+        MudDialog.Cancel();
     }
 
     private async Task SubmitAsync()
     {
-        await _form.Validate();
-
-        if (!_isFormValid)
+        if (string.IsNullOrWhiteSpace(Model.SongTitle))
         {
+            Snackbar.Add("Song title is required", Severity.Warning);
             return;
         }
 
@@ -222,7 +249,7 @@
                 Valence = Model.Valence,
                 Arousal = Model.Arousal,
                 TensionLevel = Model.TensionLevel,
-                SomaticTags = [.. SelectedTags],
+                SomaticTags = [.._selectedTags],
                 Notes = Model.Notes
             };
 
@@ -239,11 +266,13 @@
                 Snackbar.Add("Failed to create entry", Severity.Error);
             }
         }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
         finally
         {
             _isSubmitting = false;
         }
     }
-
-    private void Cancel() => MudDialog.Cancel();
 }

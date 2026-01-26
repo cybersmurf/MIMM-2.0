@@ -1,0 +1,191 @@
+@page "/analytics/yearly/{year:int}"
+@using MIMM.Shared.Dtos
+@using MIMM.Frontend.Services
+@inject IAnalyticsApiService AnalyticsApi
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<PageTitle>Annual Report - Music & Mood Journal</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="py-8">
+    <MudStack Spacing="3">
+        <!-- Header -->
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+            <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@GoBack" Color="Color.Default" />
+            <MudText Typo="Typo.h4">@Year Annual Report</MudText>
+            <MudSpacer />
+            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Refresh" OnClick="@LoadReportAsync">
+                Refresh
+            </MudButton>
+        </MudStack>
+
+        <!-- Loading State -->
+        @if (_isLoading)
+        {
+            <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="py-8">
+                <MudProgressCircular Indeterminate />
+                <MudText>Loading annual report...</MudText>
+            </MudStack>
+        }
+        <!-- Empty State -->
+        else if (_report == null)
+        {
+            <MudPaper Class="pa-8" Outlined>
+                <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center">
+                    No data available for @Year
+                </MudText>
+            </MudPaper>
+        }
+        <!-- Report Content -->
+        else
+        {
+            <!-- Summary Stats -->
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudPaper Class="pa-4" Outlined>
+                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                            <MudIcon Icon="@Icons.Material.Filled.LibraryMusic" Size="Size.Large" Color="Color.Primary" />
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Total Entries</MudText>
+                            <MudText Typo="Typo.h5">@_report.TotalEntries</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="3">
+                    <MudPaper Class="pa-4" Outlined>
+                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                            <MudIcon Icon="@Icons.Material.Filled.SentimentSatisfied" Size="Size.Large" Color="Color.Success" />
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Avg Valence</MudText>
+                            <MudText Typo="Typo.h5">@_report.AverageValence.ToString("F2")</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="3">
+                    <MudPaper Class="pa-4" Outlined>
+                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                            <MudIcon Icon="@Icons.Material.Filled.ElectricBolt" Size="Size.Large" Color="Color.Warning" />
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Avg Arousal</MudText>
+                            <MudText Typo="Typo.h5">@_report.AverageArousal.ToString("F2")</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="3">
+                    <MudPaper Class="pa-4" Outlined>
+                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                            <MudIcon Icon="@Icons.Material.Filled.DateRange" Size="Size.Large" Color="Color.Info" />
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Avg per Month</MudText>
+                            <MudText Typo="Typo.h5">@((_report.TotalEntries / (double)(_report.MonthlyStats?.Count ?? 1)).ToString("F1"))</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+
+            <!-- Top Artists -->
+            @if (_report.TopArtists?.Count > 0)
+            {
+                <MudPaper Class="pa-6" Outlined>
+                    <MudText Typo="Typo.h6" Class="mb-4">Top Artists</MudText>
+                    <MudGrid>
+                        @foreach (var artist in _report.TopArtists.Take(10))
+                        {
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudCard>
+                                    <MudCardContent>
+                                        <MudStack Spacing="2">
+                                            <MudText Typo="Typo.body2" Style="font-weight: 600;">@artist.Name</MudText>
+                                            <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                                                <MudIcon Icon="@Icons.Material.Filled.LibraryMusic" Size="Size.Small" />
+                                                <MudText Typo="Typo.caption">@artist.Count entries</MudText>
+                                            </MudStack>
+                                            <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                                                <MudIcon Icon="@Icons.Material.Filled.SentimentSatisfied" Size="Size.Small" />
+                                                <MudText Typo="Typo.caption">Mood: @artist.AverageMoodValence.ToString("F2")</MudText>
+                                            </MudStack>
+                                        </MudStack>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                </MudPaper>
+            }
+
+            <!-- Top Songs -->
+            @if (_report.TopSongs?.Count > 0)
+            {
+                <MudPaper Class="pa-6" Outlined>
+                    <MudText Typo="Typo.h6" Class="mb-4">Top Songs</MudText>
+                    <MudList T="TopSongDto" Dense>
+                        @foreach (var song in _report.TopSongs.Take(10))
+                        {
+                            <MudListItem T="TopSongDto">
+                                <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Style="width: 100%;">
+                                    <MudIcon Icon="@Icons.Material.Filled.MusicNote" />
+                                    <MudStack Spacing="0" Style="flex: 1;">
+                                        <MudText Typo="Typo.body2">@song.Title</MudText>
+                                        <MudText Typo="Typo.caption" Color="Color.Secondary">@song.Artist</MudText>
+                                    </MudStack>
+                                    <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.LibraryMusic">
+                                        @song.Count plays
+                                    </MudChip>
+                                </MudStack>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudPaper>
+            }
+
+            <!-- Generated timestamp -->
+            <MudText Typo="Typo.caption" Color="Color.Secondary" Align="Align.Center">
+                Generated: @_report.GeneratedAt.ToString("g")
+            </MudText>
+        }
+    </MudStack>
+</MudContainer>
+
+@code {
+    [Parameter]
+    public int Year { get; set; } = DateTime.Now.Year;
+
+    private YearlyReportDto? _report;
+    private bool _isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadReportAsync();
+    }
+
+    private async Task LoadReportAsync()
+    {
+        try
+        {
+            _isLoading = true;
+            _report = await AnalyticsApi.GetYearlyReportAsync(Year);
+
+            if (_report == null)
+            {
+                Snackbar.Add("Failed to load yearly report", Severity.Error);
+            }
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Snackbar.Add("Authentication required", Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            Console.Error.WriteLine($"Error loading yearly report: {ex}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/analytics");
+    }
+}

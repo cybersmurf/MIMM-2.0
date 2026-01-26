@@ -1,10 +1,12 @@
-<MudDialog>
+<MudDialog aria-modal="true" role="dialog">
     <DialogContent>
+        <div tabindex="0" @onfocus="FocusPrimaryAsync" class="sr-only"></div>
         <MudText>@ContentText</MudText>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit">@ButtonText</MudButton>
+        <MudButton OnClick="Cancel" ButtonType="ButtonType.Button" @ref="_cancelButton">Cancel</MudButton>
+        <MudButton Color="@Color" Variant="Variant.Filled" OnClick="Submit" ButtonType="ButtonType.Button" @ref="_primaryButton">@ButtonText</MudButton>
+        <div tabindex="0" @onfocus="FocusPrimaryAsync" class="sr-only"></div>
     </DialogActions>
 </MudDialog>
 
@@ -20,6 +22,31 @@
 
     [Parameter]
     public Color Color { get; set; } = Color.Primary;
+
+    private MudButton? _primaryButton;
+    private MudButton? _cancelButton;
+    private bool _hasFocused;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_hasFocused)
+        {
+            _hasFocused = true;
+            await FocusPrimaryAsync();
+        }
+    }
+
+    private async Task FocusPrimaryAsync()
+    {
+        if (_primaryButton is not null)
+        {
+            await _primaryButton.FocusAsync();
+        }
+        else if (_cancelButton is not null)
+        {
+            await _cancelButton.FocusAsync();
+        }
+    }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();

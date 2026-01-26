@@ -335,7 +335,7 @@ public class AuthService : IAuthService
                 return Task.FromResult((false, default(ClaimsPrincipal?), (string?)"Invalid token format"));
             }
 
-            return Task.FromResult((true, principal, (string?)null));
+            return Task.FromResult((true, (ClaimsPrincipal?)principal, (string?)null));
         }
         catch (Exception ex)
         {

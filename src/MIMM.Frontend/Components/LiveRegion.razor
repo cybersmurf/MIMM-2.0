@@ -1,0 +1,42 @@
+@* ARIA live region for screen reader announcements *@
+<div class="sr-only" 
+     role="status" 
+     aria-live="@AriaLive" 
+     aria-atomic="@AriaAtomic.ToString().ToLower()">
+    @Message
+</div>
+
+@code {
+    /// <summary>
+    /// Message to announce to screen readers
+    /// </summary>
+    [Parameter]
+    public string? Message { get; set; }
+
+    /// <summary>
+    /// Politeness level: "polite" (default) or "assertive"
+    /// </summary>
+    [Parameter]
+    public string AriaLive { get; set; } = "polite";
+
+    /// <summary>
+    /// Whether to announce the entire region or just changes
+    /// </summary>
+    [Parameter]
+    public bool AriaAtomic { get; set; } = true;
+}
+
+<style>
+/* Screen reader only - visually hidden but accessible */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+</style>

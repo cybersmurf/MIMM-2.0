@@ -1,0 +1,61 @@
+@* Skip navigation link for keyboard users and screen readers *@
+<a href="#main-content" 
+   class="skip-nav" 
+   tabindex="0"
+   @onkeydown="HandleKeyDown">
+    Skip to main content
+</a>
+
+@code {
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" || e.Key == " ")
+        {
+            // Focus will naturally move to target on click
+            await Task.CompletedTask;
+        }
+    }
+}
+
+<style>
+/* Skip navigation - visually hidden but accessible */
+.skip-nav {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: var(--z-priority);
+    background: var(--color-primary-600);
+    color: white;
+    padding: var(--space-3) var(--space-6);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: var(--font-semibold);
+    transition: all var(--duration-fast) var(--ease-out);
+}
+
+.skip-nav:focus,
+.skip-nav:active {
+    position: fixed;
+    left: var(--space-4);
+    top: var(--space-4);
+    width: auto;
+    height: auto;
+    overflow: visible;
+    box-shadow: var(--shadow-xl);
+    outline: 3px solid var(--color-primary-400);
+    outline-offset: 2px;
+}
+
+/* Light mode */
+[data-theme="light"] .skip-nav {
+    background: var(--color-primary-500);
+}
+
+[data-theme="light"] .skip-nav:focus,
+[data-theme="light"] .skip-nav:active {
+    box-shadow: var(--shadow-lg);
+}
+</style>

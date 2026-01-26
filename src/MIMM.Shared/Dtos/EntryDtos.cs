@@ -52,7 +52,7 @@ public record CreateEntryRequest
     /// Physical tension level (0-100)
     /// </summary>
     [Range(0, 100, ErrorMessage = "Tension level must be between 0 and 100")]
-    public int TensionLevel { get; init; } = 50;
+    public int? TensionLevel { get; init; } = 50;
 
     /// <summary>
     /// Somatic (bodily) sensations/tags (e.g., "happy", "anxious", "relaxed")
@@ -132,7 +132,7 @@ public record EntryDto
 
     public double Arousal { get; init; }
 
-    public int TensionLevel { get; init; }
+    public int? TensionLevel { get; init; }
 
     public string[]? SomaticTags { get; init; }
 

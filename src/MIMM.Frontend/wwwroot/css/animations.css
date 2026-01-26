@@ -1,0 +1,562 @@
+/**
+ * MIMM 2.0 - Micro-interactions & Animations
+ * Version: 3.0.0
+ * Date: January 26, 2026
+ * 
+ * Smooth transitions, hover effects, and loading animations
+ * Respects prefers-reduced-motion for accessibility
+ */
+
+/* ============================================
+   BASE TRANSITIONS
+   Apply to interactive elements
+   ============================================ */
+
+/* All transitions */
+.transition-all {
+  transition-property: all;
+  transition-duration: var(--duration-base);
+  transition-timing-function: var(--ease-in-out);
+}
+
+/* Specific property transitions */
+.transition-colors {
+  transition-property: color, background-color, border-color, fill, stroke;
+  transition-duration: var(--duration-base);
+  transition-timing-function: var(--ease-in-out);
+}
+
+.transition-opacity {
+  transition-property: opacity;
+  transition-duration: var(--duration-base);
+  transition-timing-function: var(--ease-in-out);
+}
+
+.transition-transform {
+  transition-property: transform;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-out);
+}
+
+.transition-shadow {
+  transition-property: box-shadow;
+  transition-duration: var(--duration-medium);
+  transition-timing-function: var(--ease-in-out);
+}
+
+/* ============================================
+   BUTTON HOVER EFFECTS
+   Enhanced interaction feedback
+   ============================================ */
+
+.btn-hover-lift {
+  position: relative;
+  transition: transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-medium) var(--ease-in-out);
+}
+
+.btn-hover-lift:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-hover-lift:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-hover-glow {
+  position: relative;
+  transition: box-shadow var(--duration-medium) var(--ease-in-out);
+}
+
+.btn-hover-glow:hover:not(:disabled) {
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-hover-scale {
+  transition: transform var(--duration-fast) var(--ease-elastic);
+}
+
+.btn-hover-scale:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.btn-hover-scale:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   CARD & SURFACE HOVER EFFECTS
+   ============================================ */
+
+.card-hover {
+  transition: transform var(--duration-medium) var(--ease-out),
+              box-shadow var(--duration-medium) var(--ease-in-out),
+              border-color var(--duration-base) var(--ease-in-out);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--color-border-emphasis);
+}
+
+.card-hover-subtle {
+  transition: box-shadow var(--duration-medium) var(--ease-in-out),
+              border-color var(--duration-base) var(--ease-in-out);
+}
+
+.card-hover-subtle:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-border-emphasis);
+}
+
+/* ============================================
+   LOADING ANIMATIONS
+   ============================================ */
+
+/* Pulsing effect for loading states */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse var(--duration-slower) var(--ease-in-out) infinite;
+}
+
+/* Skeleton loading shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 0%,
+    var(--color-bg-elevated) 20%,
+    var(--color-bg-tertiary) 40%,
+    var(--color-bg-tertiary) 100%
+  );
+  background-size: 800px 100%;
+  animation: shimmer var(--duration-slower) linear infinite;
+}
+
+/* Spinning loader */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin var(--duration-slow) linear infinite;
+}
+
+/* Bounce animation for attention */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce var(--duration-slow) var(--ease-bounce) infinite;
+}
+
+/* ============================================
+   FADE & SLIDE ANIMATIONS
+   Page transitions
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--duration-medium) var(--ease-out);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp var(--duration-medium) var(--ease-out);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown var(--duration-medium) var(--ease-out);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight var(--duration-medium) var(--ease-out);
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft var(--duration-medium) var(--ease-out);
+}
+
+/* ============================================
+   SCALE & ZOOM ANIMATIONS
+   ============================================ */
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--duration-medium) var(--ease-out);
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-zoom-in {
+  animation: zoomIn var(--duration-medium) var(--ease-elastic);
+}
+
+/* ============================================
+   ICON ANIMATIONS
+   Subtle icon feedback
+   ============================================ */
+
+.icon-hover-rotate {
+  transition: transform var(--duration-base) var(--ease-in-out);
+}
+
+.icon-hover-rotate:hover {
+  transform: rotate(15deg);
+}
+
+.icon-hover-shake {
+  transition: transform var(--duration-fast) var(--ease-in-out);
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+.icon-hover-shake:hover {
+  animation: shake var(--duration-medium) var(--ease-in-out);
+}
+
+/* ============================================
+   RIPPLE EFFECT
+   Material Design ripple enhancement
+   ============================================ */
+
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  transition: width var(--duration-medium) var(--ease-out),
+              height var(--duration-medium) var(--ease-out),
+              opacity var(--duration-medium) var(--ease-out);
+  opacity: 0;
+}
+
+.ripple-effect:active::before {
+  width: 300px;
+  height: 300px;
+  opacity: 0.3;
+  transition: width 0s, height 0s, opacity var(--duration-medium);
+}
+
+/* ============================================
+   MOOD SELECTOR ANIMATIONS
+   Enhanced 2D mood plane interactions
+   ============================================ */
+
+.mood-indicator {
+  transition: transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-base) var(--ease-in-out),
+              scale var(--duration-fast) var(--ease-elastic);
+}
+
+.mood-indicator:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
+}
+
+.mood-indicator:active {
+  transform: scale(0.95);
+}
+
+.mood-quadrant {
+  transition: background-color var(--duration-base) var(--ease-in-out),
+              opacity var(--duration-base) var(--ease-in-out);
+}
+
+.mood-quadrant:hover {
+  opacity: 0.8;
+}
+
+/* ============================================
+   FORM INPUT ANIMATIONS
+   Enhanced input feedback
+   ============================================ */
+
+.input-focus-glow {
+  transition: box-shadow var(--duration-base) var(--ease-in-out),
+              border-color var(--duration-base) var(--ease-in-out);
+}
+
+.input-focus-glow:focus,
+.input-focus-glow:focus-within {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  border-color: var(--color-primary-500);
+}
+
+/* ============================================
+   LIST & MENU ANIMATIONS
+   Staggered fade-in for lists
+   ============================================ */
+
+.list-item-stagger {
+  animation: fadeInUp var(--duration-medium) var(--ease-out) backwards;
+}
+
+.list-item-stagger:nth-child(1) { animation-delay: 0ms; }
+.list-item-stagger:nth-child(2) { animation-delay: 50ms; }
+.list-item-stagger:nth-child(3) { animation-delay: 100ms; }
+.list-item-stagger:nth-child(4) { animation-delay: 150ms; }
+.list-item-stagger:nth-child(5) { animation-delay: 200ms; }
+.list-item-stagger:nth-child(6) { animation-delay: 250ms; }
+.list-item-stagger:nth-child(7) { animation-delay: 300ms; }
+.list-item-stagger:nth-child(8) { animation-delay: 350ms; }
+.list-item-stagger:nth-child(9) { animation-delay: 400ms; }
+.list-item-stagger:nth-child(10) { animation-delay: 450ms; }
+
+/* ============================================
+   NAVIGATION ANIMATIONS
+   Drawer & menu transitions
+   ============================================ */
+
+.nav-item {
+  transition: background-color var(--duration-base) var(--ease-in-out),
+              color var(--duration-base) var(--ease-in-out),
+              padding-left var(--duration-fast) var(--ease-out);
+}
+
+.nav-item:hover {
+  padding-left: var(--space-5);
+}
+
+.nav-item-active {
+  position: relative;
+}
+
+.nav-item-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: var(--color-primary-500);
+  border-radius: 0 var(--radius-base) var(--radius-base) 0;
+  animation: slideInLeft var(--duration-fast) var(--ease-out);
+}
+
+/* ============================================
+   TOAST & NOTIFICATION ANIMATIONS
+   ============================================ */
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.toast-enter {
+  animation: slideInFromTop var(--duration-medium) var(--ease-elastic);
+}
+
+@keyframes slideOutToTop {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+.toast-exit {
+  animation: slideOutToTop var(--duration-fast) var(--ease-in);
+}
+
+/* ============================================
+   MODAL & DIALOG ANIMATIONS
+   ============================================ */
+
+@keyframes modalBackdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-backdrop-enter {
+  animation: modalBackdropFadeIn var(--duration-base) var(--ease-out);
+}
+
+@keyframes modalContentSlideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-content-enter {
+  animation: modalContentSlideUp var(--duration-medium) var(--ease-out);
+}
+
+/* ============================================
+   ACCESSIBILITY - REDUCED MOTION
+   Respect user preferences
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Keep essential loading spinners */
+  .animate-spin,
+  .loading-spinner {
+    animation-duration: var(--duration-slow) !important;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   Quick animation helpers
+   ============================================ */
+
+/* Animation delays */
+.delay-50 { animation-delay: 50ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* Transform origin */
+.origin-center { transform-origin: center; }
+.origin-top { transform-origin: top; }
+.origin-bottom { transform-origin: bottom; }
+.origin-left { transform-origin: left; }
+.origin-right { transform-origin: right; }
+
+/* Will-change for performance */
+.will-change-transform { will-change: transform; }
+.will-change-opacity { will-change: opacity; }
+.will-change-auto { will-change: auto; }
