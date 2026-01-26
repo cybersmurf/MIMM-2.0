@@ -251,7 +251,9 @@ private async Task SubmitAsync() {
 
 **Problem:** MudSlider requires non-nullable generic type `T`, but UpdateEntryRequest uses `double?` for optional fields.
 
-**Solution:** UpdateEntryModel uses non-nullable `double` and `int` with default values (0.0, 50). When loading existing entry, values are populated from database. When submitting, backend treats any value as "set" (no distinction between "not changed" and "changed to 0").
+**Solution:** UpdateEntryModel uses non-nullable `double` and `int` with default values (0.0, 50).
+When loading existing entry, values are populated from database. When submitting, backend treats
+any value as "set" (no distinction between "not changed" and "changed to 0").
 
 **Implication:** Future enhancement needed for "partial updates" (only send changed fields). Current implementation always sends all mood values.
 
