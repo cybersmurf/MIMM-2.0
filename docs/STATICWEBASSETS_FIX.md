@@ -11,108 +11,82 @@ error : InvalidOperationException: Sequence contains more than one element
 
 ## Root Cause
 
-This error occurs when:
-1. **Stale cache files** in `obj/staticwebassets/` from previous builds
-2. **Duplicate manifest files** after switching .NET versions or build configurations
-3. **Inconsistent state** between `bin/`, `obj/`, and NuGet cache
+**System.Text.Json NuGet Package Conflict**
 
-## Solution (3 Steps)
+In .NET 9.0, `System.Text.Json` is part of the runtime and **already provides static web assets**. 
 
-### Step 1: Deep Clean (On VPS)
-
-```bash
-cd ~/mimm-app
-bash scripts/deep-clean-vps.sh
+When the code had:
+```xml
+<PackageReference Include="System.Text.Json" Version="9.0.0" />
 ```
 
-This script:
-- Stops all dotnet processes
-- Removes ALL `bin/` and `obj/` directories
-- Clears NuGet caches (`dotnet nuget locals all -c`)
-- Verifies clean state
-
-### Step 2: Fresh Build (On VPS)
-
-```bash
-cd ~/mimm-app
-bash scripts/update-vps-frontend.sh
+This created a **duplicate static web asset definition**, causing:
+```
+InvalidOperationException: Sequence contains more than one element
+at GenerateStaticWebAssetsDevelopmentManifest.ComputeManifestAssets()
 ```
 
-The updated script now:
-- Deep cleans build artifacts first
-- Removes `obj/staticwebassets` specifically
-- Forces fresh restore (`--force`)
-- Publishes with `--no-restore` (uses clean cache)
+## Why This Happens
 
-### Step 3: Verify
+Blazor WASM's `GenerateStaticWebAssetsDevelopmentManifest` task:
+1. Collects all static assets from:
+   - Runtime (includes System.Text.Json)
+   - NuGet packages (MudBlazor, Blazored.LocalStorage, etc.)
+   - Project files
+2. Expects **exactly one entry per asset type**
+3. Fails if **System.Text.Json appears twice** (runtime + NuGet package)
 
-```bash
-# Check publish output exists
-ls -lah ~/mimm-app/publish/frontend/wwwroot/
+## Solution
 
-# Test frontend
-curl -I https://musicinmymind.app/login
-```
+**Already Fixed** ✅ in commit `ded5bee`
 
-Expected:
-- `wwwroot/` folder with `index.html`, `_framework/`, etc.
-- HTTP 200 OK response from frontend
+The issue was a configuration problem, not a build infrastructure issue.
+
+**Already Fixed** ✅ in commit `ded5bee`
+
+The issue was a configuration problem, not a build infrastructure issue.
 
 ---
 
 ## Manual Troubleshooting (If Scripts Fail)
 
-### Option A: Manual Deep Clean
+If you still encounter this error despite the fix, it means duplicate NuGet packages are defined elsewhere.
+
+### Check for Duplicates
 
 ```bash
-cd ~/mimm-app
+grep "System.Text.Json" src/*/MIMM.*.csproj
+# Should return NOTHING - if it does, remove the line
 
-# Stop dotnet
-pkill -f "dotnet" || true
-
-# Remove all build artifacts
-rm -rf src/MIMM.Frontend/bin src/MIMM.Frontend/obj
-rm -rf src/MIMM.Shared/bin src/MIMM.Shared/obj
-
-# Clean NuGet
-dotnet nuget locals all -c
-
-# Fresh restore
-dotnet restore src/MIMM.Frontend/MIMM.Frontend.csproj --force
-
-# Publish (no restore)
-dotnet publish src/MIMM.Frontend/MIMM.Frontend.csproj \
-  -c Release \
-  -o ~/mimm-app/publish/frontend \
-  --no-restore
+grep "System.Net.Http" src/*/MIMM.*.csproj
+# System.Net.Http also comes with .NET 9.0 - remove if explicit NuGet
 ```
 
-### Option B: Nuclear Clean (If Option A Fails)
+### Option A: Manual Fix
 
+Edit `src/MIMM.Frontend/MIMM.Frontend.csproj`:
+
+```xml
+<ItemGroup>
+    <!-- Remove any of these that appear - they're built into .NET 9.0 -->
+    <!-- DELETE these lines if present: -->
+    <!-- <PackageReference Include="System.Text.Json" Version="9.0.0" /> -->
+    <!-- <PackageReference Include="System.Net.Http.Json" Version="9.0.0" /> -->
+    <!-- <PackageReference Include="System.Reflection.*" ... /> -->
+    
+    <!-- Keep these - they're needed: -->
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
+    <PackageReference Include="MudBlazor" Version="7.0.0" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
+</ItemGroup>
+```
+
+Then clean & rebuild:
 ```bash
-cd ~/mimm-app
-
-# Stop everything
-docker-compose down || true
-pkill -f "dotnet" || true
-
-# Remove EVERYTHING
-find . -type d -name "bin" -exec rm -rf {} + 2>/dev/null || true
-find . -type d -name "obj" -exec rm -rf {} + 2>/dev/null || true
-
-# Clean ALL NuGet caches
+rm -rf src/MIMM.Frontend/bin src/MIMM.Frontend/obj
 dotnet nuget locals all -c
-rm -rf ~/.nuget/packages/microsoft.aspnetcore.components.webassembly*
-rm -rf ~/.nuget/packages/microsoft.net.sdk.staticwebassets*
-
-# Pull latest code (in case something was corrupted)
-git fetch origin
-git reset --hard origin/main
-
-# Full rebuild
-dotnet restore MIMM.sln --force
-dotnet build MIMM.sln -c Release
-dotnet publish src/MIMM.Frontend/MIMM.Frontend.csproj -c Release -o ~/publish
+dotnet restore src/MIMM.Frontend/MIMM.Frontend.csproj
+dotnet publish src/MIMM.Frontend/MIMM.Frontend.csproj -c Release
 ```
 
 ---
@@ -214,17 +188,42 @@ dotnet publish src/MIMM.Frontend/MIMM.Frontend.csproj -c Release -o /tmp/test-pu
 
 ---
 
-## Summary
+---
 
-**Root Cause:** Stale StaticWebAssets manifest files in `obj/`
+## Prevention for Future
 
-**Quick Fix:**
-```bash
-cd ~/mimm-app
-bash scripts/deep-clean-vps.sh
-bash scripts/update-vps-frontend.sh
+### .NET 9.0 Built-in Packages
+
+These packages are **already included in .NET 9.0 runtime**. Do NOT add them to MIMM.Frontend.csproj:
+
+```
+❌ DO NOT ADD:
+- System.Text.Json
+- System.Net.Http.Json
+- System.Collections
+- System.Reflection.*
+- System.Linq
+- System.IO
+- System.Threading.Tasks
 ```
 
-**Prevention:** Always deep clean after .NET version changes or failed builds.
+These **should** be in .csproj:
+```
+✅ DO ADD:
+- Microsoft.AspNetCore.Components.WebAssembly
+- Microsoft.AspNetCore.Components.Authorization
+- Microsoft.AspNetCore.SignalR.Client
+- MudBlazor
+- Blazored.LocalStorage
+- Refit
+```
 
-**Fallback:** If scripts fail, use manual nuclear clean (Option B above).
+---
+
+## Summary
+
+**Root Cause:** Explicit `System.Text.Json` NuGet package conflicted with built-in .NET 9.0 version
+
+**Fix:** Removed from [src/MIMM.Frontend/MIMM.Frontend.csproj](../src/MIMM.Frontend/MIMM.Frontend.csproj)
+
+**Status:** ✅ Fixed in commit `ded5bee`

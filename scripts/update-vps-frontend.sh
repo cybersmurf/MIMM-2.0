@@ -19,18 +19,13 @@ echo "=== 3. Deep clean build artifacts ==="
 rm -rf src/MIMM.Frontend/bin src/MIMM.Frontend/obj
 rm -rf src/MIMM.Shared/bin src/MIMM.Shared/obj
 
-# Remove StaticWebAssets intermediate files (causes "Sequence contains more than one element" error)
-rm -rf src/MIMM.Frontend/obj/staticwebassets
-rm -rf src/MIMM.Frontend/obj/Debug
-rm -rf src/MIMM.Frontend/obj/Release
-
-# Clean NuGet cache for this project specifically
+# Clean NuGet cache
 dotnet nuget locals temp -c
-echo "✅ Cleaned bin/obj/staticwebassets/nuget cache"
+echo "✅ Cleaned bin/obj/nuget cache"
 
 echo ""
 echo "=== 4. Restoring frontend dependencies ==="
-dotnet restore "src/MIMM.Frontend/MIMM.Frontend.csproj" --force
+dotnet restore "src/MIMM.Frontend/MIMM.Frontend.csproj"
 
 echo ""
 echo "=== 5. Publishing Blazor WASM frontend (Release) ==="
