@@ -1,0 +1,75 @@
+name: Deploy to Production VPS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/MIMM.Backend/**'
+      - 'src/MIMM.Shared/**'
+      - 'src/MIMM.Frontend/**'
+      - 'Dockerfile'
+      - 'docker-compose.prod.yml'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Deploy to VPS
+      env:
+        VPS_HOST: ${{ secrets.VPS_HOST }}
+        VPS_PORT: ${{ secrets.VPS_PORT }}
+        VPS_USER: ${{ secrets.VPS_USER }}
+        VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        VPS_APPDIR: /home/mimm/mimm-app
+      run: |
+        # Setup SSH
+        mkdir -p ~/.ssh
+        echo "$VPS_SSH_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -p $VPS_PORT -H $VPS_HOST >> ~/.ssh/known_hosts 2>/dev/null || true
+        
+        # Deploy commands
+        ssh -p $VPS_PORT $VPS_USER@$VPS_HOST << 'EOF'
+        set -e
+        echo "📥 MIMM 2.0 Production Deployment"
+        echo "===================================="
+        
+        APP_DIR="/home/mimm/mimm-app"
+        cd $APP_DIR
+        
+        echo "📥 Pulling latest code..."
+        git fetch origin main
+        git reset --hard origin/main
+        
+        echo "🐳 Building Docker image..."
+        docker compose -f docker-compose.prod.yml build --no-cache backend
+        
+        echo "🚀 Restarting services..."
+        docker compose -f docker-compose.prod.yml up -d
+        
+        echo "⏳ Waiting for backend to be healthy..."
+        sleep 5
+        
+        echo "📊 Service status:"
+        docker compose -f docker-compose.prod.yml ps
+        
+        echo "✅ Deployment complete!"
+        echo "Frontend: https://musicinmymind.app"
+        echo "Backend: https://api.musicinmymind.app"
+        EOF
+
+    - name: Notification on failure
+      if: failure()
+      run: |
+        echo "❌ Deployment failed!"
+        echo "Check VPS SSH access and GitHub Secrets configuration"
