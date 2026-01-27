@@ -18,6 +18,7 @@ echo "=== 3. Publishing Blazor WASM frontend (Release) ==="
 dotnet publish "src/MIMM.Frontend/MIMM.Frontend.csproj" \
     -c Release \
     -o ~/mimm-app/publish/frontend \
+    -r browser-wasm \
     --no-restore
 
 echo ""
