@@ -75,18 +75,27 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_HTTP_PORTS: 8080
       ASPNETCORE_HTTPS_PORTS: ""
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};SSL Mode=Prefer;Trust Server Certificate=true"
+      # PostgreSQL Connection (via environment variables - SAME as docker-compose.yml)
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      # Redis
       ConnectionStrings__Redis: "redis:6379,password=${REDIS_PASSWORD}"
-      Jwt__Key: ${JWT_SECRET_KEY}
-      Jwt__Issuer: ${JWT_ISSUER}
-      Jwt__Audience: ${JWT_AUDIENCE}
+      # JWT Settings
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_AUDIENCE: ${JWT_AUDIENCE}
+      # CORS
       Cors__AllowedOrigins__0: ${FRONTEND_URL}
-      Lastfm__ApiKey: ${LASTFM_API_KEY}
-      Lastfm__ApiSecret: ${LASTFM_API_SECRET}
-      Spotify__ClientId: ${SPOTIFY_CLIENT_ID}
-      Spotify__ClientSecret: ${SPOTIFY_CLIENT_SECRET}
-      Discogs__ConsumerKey: ${DISCOGS_CONSUMER_KEY}
-      Discogs__ConsumerSecret: ${DISCOGS_CONSUMER_SECRET}
+      # Optional: External API integrations (if configured)
+      Lastfm__ApiKey: ${LASTFM_API_KEY:-}
+      Lastfm__ApiSecret: ${LASTFM_API_SECRET:-}
+      Spotify__ClientId: ${SPOTIFY_CLIENT_ID:-}
+      Spotify__ClientSecret: ${SPOTIFY_CLIENT_SECRET:-}
+      Discogs__ConsumerKey: ${DISCOGS_CONSUMER_KEY:-}
+      Discogs__ConsumerSecret: ${DISCOGS_CONSUMER_SECRET:-}
     ports:
       - "127.0.0.1:8080:8080"  # Bind only to localhost (Nginx will proxy)
     depends_on:
@@ -96,7 +105,6 @@ services:
         condition: service_healthy
     volumes:
       - ./logs:/app/logs:rw
-      - ./appsettings.Production.json:/app/appsettings.Production.json:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
