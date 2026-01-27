@@ -129,17 +129,58 @@ curl -k https://api.musicinmymind.app/health
 
 ### Phase 4: Frontend Deployment (8 min)
 
-#### 4.1 Publish Frontend Locally (on your machine)
+#### 4.1 Deep Clean (CRITICAL - Prevents StaticWebAssets Error)
+
+```bash
+# On VPS:
+bash scripts/deep-clean-vps.sh
+
+# This script:
+# - Stops all dotnet processes
+# - Removes ALL bin/obj directories
+# - Clears NuGet caches
+# - Verifies clean state
+
+# Expected output: "✅ Deep clean complete!"
+```
+
+**Why?** Prevents "Sequence contains more than one element" error from stale StaticWebAssets manifest files.
+
+See [docs/STATICWEBASSETS_FIX.md](docs/STATICWEBASSETS_FIX.md) for troubleshooting.
+
+#### 4.2 Deploy Frontend (VPS - Updated Script)
+
+```bash
+# On VPS:
+bash scripts/update-vps-frontend.sh
+
+# This script now includes:
+# - Automatic deep clean of obj/staticwebassets
+# - NuGet cache clear
+# - Force restore
+# - Clean publish
+
+# Expected: "✅ Frontend update complete!"
+```
+
+#### 4.3 Publish Frontend Locally (Alternative - if VPS build fails)
 
 ```bash
 # On your LOCAL machine (macOS):
 cd ~/AntigravityProjects/MIMM-2.0
+
+# Deep clean first
+rm -rf src/MIMM.Frontend/bin src/MIMM.Frontend/obj
+rm -rf src/MIMM.Shared/bin src/MIMM.Shared/obj
+dotnet nuget locals all -c
+
+# Publish
 dotnet publish src/MIMM.Frontend/MIMM.Frontend.csproj \
   -c Release \
   -o ~/publish-frontend-v2.0.1
 ```
 
-#### 4.2 Copy to VPS (via rsync)
+#### 4.4 Copy to VPS (via rsync - if published locally)
 
 ```bash
 # From your LOCAL machine:

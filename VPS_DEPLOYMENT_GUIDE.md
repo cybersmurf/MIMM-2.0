@@ -62,14 +62,41 @@ docker run -d \
 
 ### 5. Deploy Frontend (Static Assets via Nginx)
 
+**IMPORTANT:** Before deploying frontend, run deep clean to prevent StaticWebAssets errors:
+
 ```bash
-# Publish Blazor WASM frontend locally
+# On VPS:
+bash scripts/deep-clean-vps.sh
+```
+
+**Why?** Prevents "Sequence contains more than one element" error. See [STATICWEBASSETS_FIX.md](docs/STATICWEBASSETS_FIX.md).
+
+#### Option A: Build on VPS (Recommended)
+
+```bash
+# On VPS:
+bash scripts/update-vps-frontend.sh
+
+# Script automatically:
+# - Deep cleans obj/staticwebassets
+# - Clears NuGet cache
+# - Restores dependencies
+# - Publishes to ~/mimm-app/publish/frontend
+# - Restarts nginx
+```
+
+#### Option B: Build Locally & Copy
+
+```bash
+# On your LOCAL machine:
+# Deep clean first
+rm -rf src/MIMM.Frontend/bin src/MIMM.Frontend/obj
+dotnet nuget locals all -c
+
+# Publish
 dotnet publish src/MIMM.Frontend/MIMM.Frontend.csproj -c Release -o ~/publish-output
 
-# Copy wwwroot to Nginx on VPS
-scp -r ~/publish-output/wwwroot/* user@musicinmymind.app:/var/www/mimm-frontend/
-
-# Or via rsync (faster for updates)
+# Copy wwwroot to VPS
 rsync -av ~/publish-output/wwwroot/ user@musicinmymind.app:/var/www/mimm-frontend/
 ```
 
@@ -144,6 +171,28 @@ curl -k -X GET https://api.musicinmymind.app/signalr/negotiate
 ```
 
 ## Troubleshooting
+
+### Frontend Build Fails: "Sequence contains more than one element"
+
+**Error:**
+```
+error : InvalidOperationException: Sequence contains more than one element
+   at Microsoft.AspNetCore.StaticWebAssets.Tasks.GenerateStaticWebAssetsDevelopmentManifest.ComputeManifestAssets()
+```
+
+**Solution:**
+
+```bash
+# On VPS:
+bash scripts/deep-clean-vps.sh
+bash scripts/update-vps-frontend.sh
+```
+
+**Full troubleshooting guide:** [docs/STATICWEBASSETS_FIX.md](docs/STATICWEBASSETS_FIX.md)
+
+**Root Cause:** Stale `obj/staticwebassets` manifest files from previous builds or .NET version switches.
+
+---
 
 ### Docker Image Build Fails
 
