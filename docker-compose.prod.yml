@@ -62,9 +62,11 @@ services:
       - /tmp:noexec,nosuid
 
   backend:
-    # Pull pre-built image from GitHub Container Registry (built by GitHub Actions)
-    image: ghcr.io/cybersmurf/mimm-2.0/mimm-backend:latest
-    pull_policy: always  # Always pull latest image on startup
+    # Build locally from Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mimm-backend:${VERSION:-latest}
     container_name: mimm-backend
     restart: unless-stopped
     user: "1000:1000"  # Run as non-root user (matches appuser in Dockerfile)
