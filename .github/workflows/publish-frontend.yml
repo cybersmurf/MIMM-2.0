@@ -1,0 +1,48 @@
+name: Publish Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/MIMM.Frontend/**'
+      - 'src/MIMM.Shared/**'
+      - '.github/workflows/publish-frontend.yml'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore src/MIMM.Frontend/MIMM.Frontend.csproj
+      
+      - name: Publish Frontend
+        run: dotnet publish src/MIMM.Frontend/MIMM.Frontend.csproj -c Release -o publish-frontend \
+          -p:GenerateStaticWebAssetsDevelopmentManifest=false \
+          -p:SkipStaticWebAssetsBuild=true
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-wwwroot
+          path: publish-frontend/wwwroot
+          retention-days: 5
+      
+      - name: Create Release
+        if: success()
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: frontend-${{ github.run_number }}
+          release_name: Frontend Build ${{ github.run_number }}
+          body: |
+            Frontend published successfully
+            Download wwwroot.zip from artifacts and deploy to VPS
