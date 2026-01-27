@@ -3,15 +3,15 @@ services:
     image: postgres:16-alpine
     container_name: mimm-postgres
     environment:
-      POSTGRES_USER: mimmuser
-      POSTGRES_PASSWORD: mimmpass
-      POSTGRES_DB: mimm
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mimmuser"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -34,21 +34,31 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: mimm-backend
-    user: "1000:1000"  # Run as non-root user (adjust UID/GID for your system)
+    user: "1000:1000"
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_HTTP_PORTS: 8080
       ASPNETCORE_HTTPS_PORTS: ""
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=mimm;Username=mimmuser;Password=mimmpass"
+      # PostgreSQL Connection
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      # Alternative: Full connection string (commented out - we use components above)
+      # ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       ConnectionStrings__Redis: "redis:6379"
-      Jwt__Key: "development-secret-key-at-least-32-characters-long-for-jwt-signing"
-      Jwt__Issuer: "http://localhost:8080"
-      Jwt__Audience: "mimm-frontend"
+      # JWT Settings
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_AUDIENCE: ${JWT_AUDIENCE}
+      # CORS
       Cors__AllowedOrigins__0: "http://localhost:5000"
       Cors__AllowedOrigins__1: "http://localhost:8080"
+      Cors__AllowedOrigins__2: ${FRONTEND_URL}
     ports:
-      - "8080:8080"  # Non-privileged port for rootless Docker
+      - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
@@ -57,10 +67,10 @@ services:
     volumes:
       - ./logs:/app/logs
     security_opt:
-      - no-new-privileges:true  # Prevent privilege escalation
-    read_only: false  # Allow writing to /app for logs
+      - no-new-privileges:true
+    read_only: false
     tmpfs:
-      - /tmp:noexec,nosuid  # Secure tmp directory
+      - /tmp:noexec,nosuid
 
 volumes:
   postgres_data:
