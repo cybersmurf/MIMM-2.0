@@ -76,9 +76,10 @@ public class AuthServiceTests : IAsyncLifetime
         // Assert
         result.Success.Should().BeTrue();
         result.ErrorMessage.Should().BeNull();
-        result.User.Should().NotBeNull();
-        result.User!.Email.Should().Be("test@example.com");
-        result.User.DisplayName.Should().Be("Test User");
+        result.Response.Should().NotBeNull();
+        result.Response!.User.Should().NotBeNull();
+        result.Response!.User!.Email.Should().Be("test@example.com");
+        result.Response!.User.DisplayName.Should().Be("Test User");
 
         // Verify user was persisted to database
         var dbUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == "test@example.com");
