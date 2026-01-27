@@ -14,8 +14,10 @@ echo "=== 2. Pulling latest code from GitHub ==="
 git pull origin main
 
 echo ""
-echo "=== 3. Cleaning previous build artifacts ==="
-dotnet clean "src/MIMM.Frontend/MIMM.Frontend.csproj" -c Release || echo "Clean had issues, continuing..."
+echo "=== 3. Removing bin and obj directories ==="
+rm -rf src/MIMM.Frontend/bin src/MIMM.Frontend/obj
+rm -rf src/MIMM.Shared/bin src/MIMM.Shared/obj
+echo "Removed bin/obj artifacts"
 
 echo ""
 echo "=== 4. Restoring frontend dependencies with browser-wasm runtime ==="
@@ -27,8 +29,7 @@ echo "=== 5. Publishing Blazor WASM frontend (Release) ==="
 dotnet publish "src/MIMM.Frontend/MIMM.Frontend.csproj" \
     -c Release \
     -o ~/mimm-app/publish/frontend \
-    -r browser-wasm \
-    --no-restore
+    -r browser-wasm
 
 echo ""
 echo "=== 6. Restarting nginx ==="
