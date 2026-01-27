@@ -57,6 +57,7 @@ npx playwright test --reporter=list
 **Test Name:** `login → dashboard → create entry via API → list shows entry`
 
 **Steps:**
+
 1. Navigate to login page
 2. Fill email (`e2e-auto@example.com`) and password (`Test123!`)
 3. Click "Sign In" button
@@ -68,6 +69,7 @@ npx playwright test --reporter=list
 **Expected Outcome:** Entry created via API is visible on dashboard
 
 **Potential Failures:**
+
 - Login page doesn't load → Check FRONTEND_URL env var
 - "Welcome Back" heading not found → Check auth redirect logic
 - API returns 401 → Check JWT token generation in backend
@@ -77,18 +79,21 @@ npx playwright test --reporter=list
 ### 2. **Entries UI** (`entries-ui.spec.ts`)
 
 **Tests:**
+
 - `list entries with filters`
 - `create new entry via form`
 - `edit entry`
 - `delete entry`
 
 **Key Validations:**
+
 - Mood selector updates valence/arousal values
 - Song search integrates with backend
 - Save button persists entry to database
 - Delete removes entry from list
 
 **Environment:**
+
 - Uses test data with known mood values
 - Cleans up test entries after each test
 
@@ -97,16 +102,19 @@ npx playwright test --reporter=list
 ### 3. **Mood and Music** (`mood-and-music.spec.ts`)
 
 **Tests:**
+
 - `mood selector updates entry values`
 - `music search returns results`
 - `tag selection persists`
 
 **Key Features Tested:**
+
 - 2D mood selector (arousal x valence)
 - Music search API integration with Last.fm
 - Somatic and emotional tags
 
 **Potential Issues:**
+
 - Last.fm API rate limit → Mock API responses
 - Network timeout → Increase timeout to 60s in playwright.config.ts
 
@@ -117,6 +125,7 @@ npx playwright test --reporter=list
 **Test:** `paginate through entries list`
 
 **Validations:**
+
 - Page 1 shows 10 entries
 - "Next" button navigates to page 2
 - Previous button works correctly
@@ -127,11 +136,13 @@ npx playwright test --reporter=list
 ### 5. **Validation** (`validation.spec.ts`)
 
 **Tests:**
+
 - `email validation on register`
 - `password validation on login`
 - `mood range validation (0-1)`
 
 **Examples:**
+
 - Empty email → Shows "Email is required"
 - Invalid email format → Shows "Invalid email"
 - Password too short → Shows "Min 8 characters"
@@ -361,6 +372,7 @@ test.describe('Feature Group', () => {
 ### Best Practices
 
 1. **Use data attributes for selectors:**
+
    ```typescript
    // ❌ Avoid brittle CSS selectors
    await page.click('div > button:nth-child(3)');
@@ -370,6 +382,7 @@ test.describe('Feature Group', () => {
    ```
 
 2. **Wait for network requests:**
+
    ```typescript
    // ❌ Race condition
    await page.click('button');
@@ -382,6 +395,7 @@ test.describe('Feature Group', () => {
    ```
 
 3. **Clean up test data:**
+
    ```typescript
    test.afterEach(async ({ request }) => {
      // Delete test entries created during test
@@ -392,6 +406,7 @@ test.describe('Feature Group', () => {
    ```
 
 4. **Use meaningful test names:**
+
    ```typescript
    // ✅ Clear intent
    test('user can create journal entry with valid mood data', async () => {

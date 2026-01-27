@@ -8,6 +8,7 @@
 ## Problem #1: Postgres Permissions in Rootless Docker
 
 ### ❌ What Went Wrong
+
 ```
 chmod: /var/lib/postgresql/data: Operation not permitted
 chmod: /var/run/postgresql: Operation not permitted
@@ -15,17 +16,21 @@ initdb: error: could not change permissions of directory "/var/lib/postgresql/da
 ```
 
 ### Root Cause
+
 - Original compose file had `user: "999:999"` on postgres service
 - Rootless Docker runs container with UID 1000 (your user), not root
 - User 999 (postgres inside container) can't chown a volume mounted from UID 1000
 
 ### ✅ Fix Applied
+
 Removed `user: "999:999"` from postgres service in docker-compose.prod.yml
+
 - Allows postgres entrypoint to run as root inside the container
 - The container's root (inside UTS namespace) has permissions to chown `/var/lib/postgresql/data`
 - Security: Still safe because rootless Docker isolates the namespace
 
 ### How to Detect This on Your VPS
+
 ```bash
 docker compose -f docker-compose.prod.yml logs postgres | grep -i "permission\|chmod"
 ```
@@ -37,17 +42,20 @@ If you see permission errors → check for explicit `user:` overrides on postgre
 ## Problem #2: dotnet ef Not in Runtime Image
 
 ### ❌ What Went Wrong
+
 ```
 The application 'ef' does not exist.
 No .NET SDKs were found.
 ```
 
 ### Root Cause
+
 - Production Dockerfile uses `mcr.microsoft.com/dotnet/aspnet:9.0` (runtime only)
 - Runtime image doesn't include SDK tools like `dotnet-ef`
 - Can't run `docker compose exec backend dotnet ef database update`
 
 ### ✅ Workaround: Use SDK Container for Migrations
+
 ```bash
 docker run --rm \
   --env-file .env \
@@ -61,12 +69,14 @@ docker run --rm \
 ```
 
 **Why this works:**
+
 - SDK container can access the network (`--network mimm-app_default`)
 - Can access .env variables
 - Can reach postgres via docker network (postgres:5432)
 - SDK has all tools needed for EF Core migrations
 
 ### Alternative: Pre-run Migrations in CI/CD
+
 Consider adding a migration step to GitHub Actions before Docker build, so you ship migrations already applied.
 
 ---
@@ -74,6 +84,7 @@ Consider adding a migration step to GitHub Actions before Docker build, so you s
 ## Problem #3: Nginx Not Yet Tackled
 
 ### What's Missing
+
 1. Nginx config for rootless backend (port 8080, not 5001)
 2. SSL/TLS setup (Let's Encrypt)
 3. Frontend static files serving
@@ -81,6 +92,7 @@ Consider adding a migration step to GitHub Actions before Docker build, so you s
 5. Health check endpoint
 
 ### Files You Need to Create
+
 - `/etc/nginx/sites-available/mimm-backend` (proxy to localhost:8080)
 - `/etc/nginx/sites-available/mimm-frontend` (serve static files)
 - Certbot setup for HTTPS
@@ -106,17 +118,20 @@ Consider adding a migration step to GitHub Actions before Docker build, so you s
 ## What You Actually Need (in order)
 
 ### Phase 0: Pre-Flight (Do BEFORE deploying)
+
 - [ ] Domain registered, DNS A record → VPS IP
 - [ ] SSH keys generated on local machine
 - [ ] `.env` template filled with secrets (keep locally, never in git)
 - [ ] Frontend built (Blazor WASM output to `/wwwroot`)
 
 ### Phase 1: Server Setup (Do once)
+
 - [ ] SSH hardening (port 2222, no root login, etc.)
 - [ ] UFW firewall (allow 22/2222, 80, 443)
 - [ ] Rootless Docker installed and tested
 
 ### Phase 2: Nginx Setup (BEFORE Docker services)
+
 - [ ] Nginx installed
 - [ ] HTTP → HTTPS redirect configured
 - [ ] Certbot SSL certs obtained
@@ -125,6 +140,7 @@ Consider adding a migration step to GitHub Actions before Docker build, so you s
 - [ ] SignalR support configured
 
 ### Phase 3: Application Deployment
+
 - [ ] Git clone / SFTP upload
 - [ ] `.env` file created on VPS (not from git)
 - [ ] Docker images built
@@ -134,6 +150,7 @@ Consider adding a migration step to GitHub Actions before Docker build, so you s
 - [ ] Nginx reverse proxy working: `curl https://api.your-domain.com/health`
 
 ### Phase 4: Verification
+
 - [ ] Frontend loads: `https://your-domain.com`
 - [ ] Backend API responds: `https://api.your-domain.com/health`
 - [ ] Can register new user
@@ -145,6 +162,7 @@ Consider adding a migration step to GitHub Actions before Docker build, so you s
 ## Commands You'll Actually Run (Copypasta Ready)
 
 ### On Local Machine
+
 ```bash
 # Pre-deployment
 ssh-keygen -t ed25519 -C "your@email.com"  # if not done
@@ -152,6 +170,7 @@ scp ~/.ssh/id_ed25519.pub user@VPS_IP:.ssh/authorized_keys
 ```
 
 ### On VPS (as root first)
+
 ```bash
 apt update && apt upgrade -y
 adduser mimm && usermod -aG sudo mimm
@@ -162,6 +181,7 @@ ufw allow 2222/tcp && ufw allow 80/tcp && ufw allow 443/tcp && ufw enable
 ```
 
 ### On VPS (as mimm user)
+
 ```bash
 # Rootless Docker
 su - mimm
@@ -219,6 +239,7 @@ curl https://api.your-domain.com/health
 ## How to Debug When Things Go Wrong
 
 ### Postgres won't start
+
 ```bash
 docker compose -f docker-compose.prod.yml logs postgres | tail -50
 docker compose -f docker-compose.prod.yml down
@@ -227,6 +248,7 @@ docker compose -f docker-compose.prod.yml up -d postgres
 ```
 
 ### Backend won't reach postgres
+
 ```bash
 docker compose -f docker-compose.prod.yml logs backend | grep -i "connection\|host\|fail"
 # Check backend logs for connection string errors
@@ -234,6 +256,7 @@ docker exec -it mimm-postgres psql -U mimmuser -d mimm -c "\dt"  # List tables
 ```
 
 ### Backend unhealthy
+
 ```bash
 docker compose -f docker-compose.prod.yml ps  # Check status
 docker compose -f docker-compose.prod.yml logs backend -f  # Follow logs
@@ -241,6 +264,7 @@ curl http://localhost:8080/health  # Test locally
 ```
 
 ### Nginx not working
+
 ```bash
 sudo nginx -t  # Test config
 sudo journalctl -u nginx -n 50  # Nginx logs
@@ -249,6 +273,7 @@ curl -v https://api.your-domain.com/health  # Test through Nginx
 ```
 
 ### Port conflicts
+
 ```bash
 sudo lsof -i :80
 sudo lsof -i :443
@@ -289,4 +314,3 @@ sudo lsof -i :8080
 | SSL/TLS | Self-signed or skipped | Let's Encrypt required |
 | Secrets | appsettings.json + user-secrets | .env file (gitignored) |
 | Monitoring | Visual Studio debug | Container logs + health checks |
-

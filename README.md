@@ -103,7 +103,6 @@ MIMM stands for **"Music In My Mind"** – It's the music that plays internally 
     - **[Production Issues & Fixes Guide](docs/deployment/PRODUCTION_ISSUES_AND_FIXES.md)** ✅ (Docker cache, JWT response structure)
     - **[Update Strategy & Deployment Plan](docs/deployment/UPDATE_STRATEGY.md)** ✅ (Version management, deployment procedure, rollback)
 
-
 - **UX/UI Polish** (100% complete)
   - Phase 1: Navigation drawer + dashboard data + login feedback + empty states ✅
   - Phase 2: Search debounce + MoodSelector accessibility + wizard tabs + charts ✅
@@ -481,19 +480,10 @@ Cors__AllowedOrigins__1=https://www.mimm.app
 
 ---
 
-## 📚 Documentation
+## 🏆 Quick Start
 
-### Quick Links
+See **[📚 Documentation](#-documentation)** section above for comprehensive guides.
 
-- **[Setup Guide](docs/SETUP_GUIDE.md)** – Local development environment
-- **[Developer Guide](docs/DEVELOPER_GUIDE.md)** – Architecture & code patterns
-- **[Admin Onboarding Guide](docs/ADMIN_ONBOARDING_GUIDE.md)** – New admin setup steps
-- **[Docker Deployment Plan](docs/deployment/DEPLOYMENT_PLAN_LITE.md)** – 10-step VPS deployment
-- **[Docker Operations Guide](docs/deployment/DOCKER_OPERATIONS.md)** – Post-deployment, monitoring, troubleshooting, updates
-- **[Rootless Docker Setup](docs/deployment/ROOTLESS_DOCKER_SETUP.md)** – Secure rootless Docker on VPS
-- **[E2E Test Guide](docs/testing/E2E_TEST_GUIDE.md)** – Running Playwright tests
-- **[User Guide](docs/USER_GUIDE.md)** – End-user features and workflows
-- **[Code Review Plan](docs/CODE_REVIEW_PLAN.md)** – Refactoring roadmap
 - **[Migration Guide](docs/MIGRATION_GUIDE.md)** – Database schema changes
 
 ---

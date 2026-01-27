@@ -23,6 +23,7 @@ services:
 ```
 
 **Proč?**
+
 - Rootless Docker běží pod UID uživatele (např. 1000)
 - Postgres entrypoint potřebuje chown na `/var/lib/postgresql/data`
 - Explicitní `user: "999:999"` způsobí "Operation not permitted"
@@ -90,6 +91,7 @@ docker run --rm \
 ```
 
 **Kritické parametry:**
+
 - `--network <network-name>` - MUSÍ být Docker network (zjisti: `docker network ls | grep mimm`)
 - `-e POSTGRES_HOST=postgres` - Docker hostname, NE localhost
 - `--env-file .env` - načte DB credentials
@@ -230,6 +232,7 @@ ls -ld /home/mimm
 ### 3. SSL/TLS Certificates
 
 **Let's Encrypt chicken-egg problém:**
+
 - Nginx config chce SSL certy → certy neexistují → nginx -t failuje
 - Certbot potřebuje běžící nginx → nginx nemůže startovat → certbot failuje
 
@@ -345,6 +348,7 @@ git commit -m "feat(db): add LastFmTokens table migration"
 ```
 
 **Typy:**
+
 - `fix(docker)` - opravy Docker configu
 - `feat(deployment)` - nové deployment features
 - `docs(deployment)` - deployment dokumentace

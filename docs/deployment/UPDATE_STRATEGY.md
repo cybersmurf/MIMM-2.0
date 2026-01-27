@@ -364,6 +364,7 @@ echo "✅ 60-minute monitoring completed successfully"
 ```
 
 Run it:
+
 ```bash
 ./monitor-deployment.sh
 ```
@@ -453,6 +454,7 @@ ssh -p 2222 mimm@188.245.68.164 "cd ~/mimm-app && git checkout v26.1.28 && docke
 | **Total** | **110min** | **Safe, tested, reliable** |
 
 **Golden Rules:**
+
 1. ✅ Never deploy without tests passing
 2. ✅ Always use `ARG CACHEBUST=$(date +%s)` in Docker build
 3. ✅ Test endpoint directly with curl (not just health check)

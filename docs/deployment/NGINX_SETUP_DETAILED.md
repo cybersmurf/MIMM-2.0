@@ -31,6 +31,7 @@ sudo systemctl status nginx
 ```
 
 ### Ověření
+
 ```bash
 curl http://localhost
 # Měli byste vidět default Nginx stránku
@@ -327,6 +328,7 @@ sudo certbot certonly --nginx \
 ```
 
 **Průběh:**
+
 1. Certbot se zeptá na email (pro SSL novotnosti + recovery)
 2. Stáhne a ověří domény
 3. Uloží certy do `/etc/letsencrypt/live/`
@@ -481,6 +483,7 @@ sudo journalctl -u nginx -n 100 -f
 ## Chyby, které jsi Udělal (a jak je Opravit)
 
 ### "connect() failed (111: Connection refused)"
+
 ```
 *1 connect() to 127.0.0.1:8080 failed (111: Connection refused)
 ```
@@ -491,6 +494,7 @@ sudo journalctl -u nginx -n 100 -f
 ---
 
 ### "SSL_ERROR_RX_RECORD_TOO_LONG"
+
 V prohlížeči při otevření https://api.example.com
 
 **Příčina:** Nginx se pokouší servírovat HTTP na HTTPS portu.
@@ -499,10 +503,12 @@ V prohlížeči při otevření https://api.example.com
 ---
 
 ### "The Markdown is not readable" ve Frontendu
+
 Vše se načte ale obsah je "blank" nebo "404"
 
 **Příčina:** Cesta k frontend build je špatná v nginx config.
 **Řešení:**
+
 ```bash
 # Najdi správnou cestu
 find /home/mimm/mimm-app -name "index.html" -type f
@@ -513,9 +519,10 @@ root /správná/cesta/zde;
 
 ---
 
-## Hotovo!
+## Hotovo
 
 Pokud všech 8 bodů z checklistu je ✅, měl bys mít:
+
 - ✅ API dostupné na `https://api.example.com`
 - ✅ Frontend dostupný na `https://example.com`
 - ✅ SSL/TLS šifrování
@@ -523,8 +530,8 @@ Pokud všech 8 bodů z checklistu je ✅, měl bys mít:
 - ✅ SignalR WebSocket podpora
 
 **Příští kroky:**
+
 1. Test uživatelskýflow (registrace, login, vytvoření entry, apod.)
 2. Monitoring (logy, uptime check)
 3. Backupy DB
 4. Performance tuning (pokud potřeba)
-

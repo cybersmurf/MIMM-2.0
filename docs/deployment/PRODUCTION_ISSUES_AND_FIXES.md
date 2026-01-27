@@ -9,6 +9,7 @@
 ## 🎯 Executive Summary
 
 Deployment MIMM 2.0 na VPS (Hetzner) byl problematický kvůli:
+
 1. **Docker build cache issues** - multi-stage build nepoužíval nový zdrojový kód
 2. **JWT authentication response structure mismatch** - backend vracíl `UserDto` místo `AuthenticationResponse`
 3. **Frontend deserialization errors** - JsonException kvůli chybné struktuře odpovědi
@@ -68,6 +69,7 @@ docker build --build-arg CACHEBUST=$(date +%s) -t mimm-backend:latest .
 **Proč to funguje:** Docker invaliduje ALL cache layers po ARG změně.
 
 **Výsledek na VPS:**
+
 ```
 #12 [build 6/8] COPY src/ .
 #12 DONE 1.2s              # ← Vidíš že COPY proběhla, ne cached!
@@ -109,12 +111,14 @@ docker compose -f docker-compose.prod.yml up -d
 ### Symptom
 
 **Frontend error:**
+
 ```javascript
 System.Text.Json.JsonException: JsonRequiredPropertiesMissing, 
 MIMM.Shared.Dtos.AuthenticationResponse, 'accessToken'; 'user'
 ```
 
 **Network inspection:**
+
 ```json
 {
   "id": "21e0714c-ee71-4357-8795-716481f024a0",
@@ -128,6 +132,7 @@ MIMM.Shared.Dtos.AuthenticationResponse, 'accessToken'; 'user'
 ❌ Missing: `accessToken`, `refreshToken`, `user` wrapper, `accessTokenExpiresAt`
 
 ✅ Expected:
+
 ```json
 {
   "accessToken": "eyJhbGc...",
@@ -148,6 +153,7 @@ MIMM.Shared.Dtos.AuthenticationResponse, 'accessToken'; 'user'
 Backend `RegisterAsync` vracela `UserDto` místo `AuthenticationResponse`:
 
 **OLD CODE:**
+
 ```csharp
 public async Task<(bool Success, string? ErrorMessage, UserDto? User)> RegisterAsync(
     RegisterRequest request,
@@ -224,6 +230,7 @@ public async Task<ActionResult<AuthenticationResponse>> Register(
 ### Testing
 
 VPS test command:
+
 ```bash
 curl -s -X POST http://127.0.0.1:8080/api/auth/register \
   -H 'Content-Type: application/json' \
@@ -231,6 +238,7 @@ curl -s -X POST http://127.0.0.1:8080/api/auth/register \
 ```
 
 ✅ **Expected Response (VERIFIED):**
+
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -272,6 +280,7 @@ Frontend crashnul, protože se pokusil deserializovat `UserDto` do `Authenticati
 Frontend `AuthApiService` nedělal žádnou validaci Content-Type ani exception handling:
 
 **OLD CODE:**
+
 ```csharp
 public async Task<AuthenticationResponse?> RegisterAsync(RegisterRequest request)
 {
@@ -326,6 +335,7 @@ public async Task<AuthenticationResponse?> RegisterAsync(RegisterRequest request
 ```
 
 **Benefits:**
+
 - ✅ Content-Type validation prevents non-JSON mismatches
 - ✅ Exception handling gracefully handles deserialization errors
 - ✅ Detailed logging (body snippet) helps debugging
@@ -345,6 +355,7 @@ public async Task<AuthenticationResponse?> RegisterAsync(RegisterRequest request
 ### Phase 1: Preparation (0.5 hours)
 
 1. **Code Validation lokálně:**
+
    ```bash
    cd ~/mimm-app
    git status                 # Ensure clean working directory
@@ -353,6 +364,7 @@ public async Task<AuthenticationResponse?> RegisterAsync(RegisterRequest request
    ```
 
 2. **Commit to main:**
+
    ```bash
    git add -A
    git commit -m "feat(auth): update registration endpoint with proper JWT handling"
@@ -482,6 +494,7 @@ curl -s http://localhost:8080/health
 ### Rollback Trigger
 
 Rollback immediately if:
+
 - ❌ Backend won't start (Error in logs)
 - ❌ API returns 500 errors (Internal Server Error)
 - ❌ Database connection fails
@@ -547,6 +560,7 @@ $SSH_CMD 'sleep 30 && curl -s http://localhost:8080/health'
 | SSH session hangs | Use single-line commands with && chaining | ✅ Documented |
 
 **Production status:** ✅ **Ready for users**
+
 - Backend correctly returns JWT tokens
 - Frontend handles responses gracefully
 - Docker deployment reliable with cache-bust

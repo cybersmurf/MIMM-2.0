@@ -337,12 +337,14 @@ docker run --rm \
 ```
 
 **Co tento příkaz dělá:**
+
 - `--env-file .env` - vloží environment proměnné z `.env` souboru
 - `--network mimm-app_default` - připojí se do Docker network, kde běží postgres (KRITICKÉ!)
 - `--env POSTGRES_HOST=postgres` - postgres hostname v Docker networku (NE localhost!)
 - `dotnet ef database update` - aplikuje všechny pending migrations
 
 **Pokud selže:**
+
 ```bash
 # 1. Ověř, že postgres je healthy
 docker compose -f docker-compose.prod.yml logs postgres
@@ -377,6 +379,7 @@ curl http://localhost:8080/health
 ```
 
 **Pokud backend není healthy:**
+
 ```bash
 docker compose -f docker-compose.prod.yml logs backend -f  # Follow logs
 docker ps  # Check container status
@@ -568,35 +571,45 @@ crontab -e
 ## Troubleshooting (když se něco pokazí)
 
 ### Postgres nemůže změnit práva na adresáři
+
 ```
 chmod: /var/lib/postgresql/data: Operation not permitted
 ```
+
 **Řešení:** Už jsme opravili v docker-compose.prod.yml (odebrali `user: "999:999"`). Udělej `git pull origin main`.
 
 ### Backend migrations selžou (dotnet ef not found)
+
 ```
 The application 'ef' does not exist.
 ```
+
 **Řešení:** Použij SDK container command (viz Fáze D, krok 4). Runtime image nemá SDK.
 
 ### Nginx "connect() failed ... refused"
+
 **Příčina:** Backend není spuštěný.
+
 ```bash
 docker compose -f docker-compose.prod.yml logs backend | head -20
 docker compose -f docker-compose.prod.yml restart backend
 ```
 
 ### SSL certificate not found
+
 ```
 SSL_ERROR_RX_RECORD_TOO_LONG
 ```
+
 **Řešení:** Spusť certbot znovu:
+
 ```bash
 sudo certbot certonly --nginx -d your-domain.com
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
 ### Frontend vrací 404
+
 ```bash
 # Ověř cestu k frontend buildu
 find /home/mimm/mimm-app -name "index.html" -type f
@@ -606,12 +619,15 @@ find /home/mimm/mimm-app -name "index.html" -type f
 ```
 
 ### Frontend vrací 500 - Permission Denied
+
 ```
 stat() "/home/mimm/mimm-app/src/MIMM.Frontend/wwwroot/index.html" failed (13: Permission denied)
 ```
+
 **Příčina:** Nginx (běží jako `www-data`) nemá právo traversovat `/home/mimm` adresář.
 
 **Řešení:** Přidej execute bit pro "others" na home directory:
+
 ```bash
 # Zkontroluj aktuální práva
 ls -ld /home/mimm

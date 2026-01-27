@@ -44,6 +44,7 @@ You want to deploy to production with enterprise features.
 **See:** [Azure Deployment Guide](AZURE_DEPLOYMENT_GUIDE.md) – Complete instructions
 
 Quick summary:
+
 ```bash
 # 1. Create Azure resources
 az group create --name mimm-rg --location eastus

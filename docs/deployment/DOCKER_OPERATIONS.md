@@ -31,11 +31,13 @@ docker compose -f docker-compose.prod.yml ps
 ```
 
 **Co zkontrolovat:**
+
 - ✅ Všechny kontejnery mají status `Up`
 - ✅ Postgres a Redis mají `(healthy)` v závorce
 - ✅ Backend běží (žádný error)
 
 **Pokud selhá:**
+
 ```bash
 # Zobrazit chyby
 docker compose -f docker-compose.prod.yml logs -f postgres
@@ -57,6 +59,7 @@ curl -i http://localhost:5001/health
 ```
 
 **Pokud selhá (timeout, connection refused):**
+
 ```bash
 # Zkontrolovat logs backendu
 docker compose -f docker-compose.prod.yml logs -f backend
@@ -86,6 +89,7 @@ docker compose -f docker-compose.prod.yml exec postgres \
 ```
 
 **Pokud selhá (connection refused):**
+
 ```bash
 # Zkontrolovat health check
 docker compose -f docker-compose.prod.yml logs postgres | grep -i health
@@ -117,6 +121,7 @@ curl -v https://api.your-domain.com/health 2>&1 | grep -E "(subject=|issuer=)"
 ```
 
 **Pokud selhá (SSL error, 502 Bad Gateway):**
+
 ```bash
 # Zkontrolovat Nginx config
 sudo nginx -t
@@ -149,6 +154,7 @@ curl -i https://your-domain.com/
 ```
 
 **Pokud selhá (404, assets nenačítají):**
+
 ```bash
 # Zkontrolovat frontend Nginx config
 sudo ls -la /etc/nginx/sites-enabled/

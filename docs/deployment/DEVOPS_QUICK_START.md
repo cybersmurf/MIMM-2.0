@@ -23,6 +23,7 @@ ssh -p 2222 mimm@188.245.68.164 '
 ```
 
 **Očekávaný výsledek:**
+
 ```json
 {"status":"healthy","timestamp":"2026-01-27T..."}
 ```
@@ -325,6 +326,7 @@ ssh -p 2222 mimm@188.245.68.164 'cd ~/mimm-app && git log --oneline -20 | grep -
 ## 🎯 Key Rules
 
 ✅ **DO:**
+
 - Always run tests before deploy
 - Use `--build-arg CACHEBUST=$(date +%s)` in Docker builds
 - Backup database before updates
@@ -332,6 +334,7 @@ ssh -p 2222 mimm@188.245.68.164 'cd ~/mimm-app && git log --oneline -20 | grep -
 - Rollback immediately if anything fails
 
 ❌ **DON'T:**
+
 - Deploy without tests passing
 - Modify code directly on VPS
 - Delete database backups
