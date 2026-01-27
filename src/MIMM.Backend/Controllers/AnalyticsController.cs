@@ -36,7 +36,7 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     {
         try
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrWhiteSpace(userId) || !Guid.TryParse(userId, out var userGuid))
             {
                 _logger.LogWarning("Invalid or missing user ID in JWT claims");
@@ -82,7 +82,7 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     {
         try
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrWhiteSpace(userId) || !Guid.TryParse(userId, out var userGuid))
             {
                 _logger.LogWarning("Invalid or missing user ID in JWT claims");
@@ -126,7 +126,7 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     {
         try
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrWhiteSpace(userId) || !Guid.TryParse(userId, out var userGuid))
             {
                 _logger.LogWarning("Invalid or missing user ID in JWT claims");
@@ -171,7 +171,7 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     {
         try
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrWhiteSpace(userId) || !Guid.TryParse(userId, out var userGuid))
             {
                 _logger.LogWarning("Invalid or missing user ID in JWT claims");
