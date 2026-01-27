@@ -87,17 +87,28 @@
         <MudItem xs="12" sm="12" md="4" lg="5">
             <MudPaper Elevation="2" Class="pa-4 mb-3">
                 <MudText Typo="Typo.h6" Class="mb-3">Quick actions</MudText>
-                <MudStack Spacing="2">
-                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth StartIcon="@Icons.Material.Filled.Edit" OnClick="OpenCreateDialog">
-                        Add mood entry
-                    </MudButton>
-                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth StartIcon="@Icons.Material.Filled.AutoGraph" Href="/analytics">
-                        View analytics
-                    </MudButton>
-                    <MudButton Variant="Variant.Text" Color="Color.Error" FullWidth StartIcon="@Icons.Material.Filled.Logout" OnClick="HandleLogout">
-                        Logout
-                    </MudButton>
-                </MudStack>
+                <MudGrid Spacing="1">
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth StartIcon="@Icons.Material.Filled.Edit" OnClick="OpenCreateDialog">
+                            Add mood entry
+                        </MudButton>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth StartIcon="@Icons.Material.Filled.CloudUpload" Href="/analytics">
+                            Connect Last.fm
+                        </MudButton>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Info" FullWidth StartIcon="@Icons.Material.Filled.AutoGraph" Href="/analytics">
+                            View analytics
+                        </MudButton>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudButton Variant="Variant.Text" Color="Color.Error" FullWidth StartIcon="@Icons.Material.Filled.Logout" OnClick="HandleLogout">
+                            Logout
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
             </MudPaper>
             <MusicSearchBox />
         </MudItem>
