@@ -8,28 +8,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Blazor WASM Core -->
+    <!-- Blazor WASM Core (DO NOT REMOVE) -->
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" PrivateAssets="all" />
     
-    <!-- Authentication -->
+    <!-- Authentication (DO NOT REMOVE) -->
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.0" />
     
-    <!-- HTTP Client -->
-    <PackageReference Include="System.Net.Http.Json" Version="9.0.0" />
+    <!-- HTTP & SignalR (DO NOT REMOVE) -->
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.0" />
     <PackageReference Include="Refit" Version="7.2.22" />
     
-    <!-- UI Component Library (optional - můžeš vybrat jinou nebo vlastní CSS) -->
+    <!-- UI Components (DO NOT REMOVE) -->
     <PackageReference Include="MudBlazor" Version="7.0.0" />
-    
-    <!-- LocalStorage -->
     <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
     
-    <!-- SignalR Client -->
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.0" />
-    
-    <!-- NOTE: System.Text.Json is included in .NET 9.0 runtime - DO NOT add explicit NuGet package -->
+    <!-- NOTE: These are BUILT INTO .NET 9.0 - DO NOT ADD EXPLICITLY:
+         - System.Text.Json (causes duplicate static web assets)
+         - System.Net.Http.Json (causes duplicate static web assets)
+         - System.Collections, System.Linq, System.IO, etc.
+    -->
   </ItemGroup>
 
   <ItemGroup>
