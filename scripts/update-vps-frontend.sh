@@ -14,12 +14,16 @@ echo "=== 2. Pulling latest code from GitHub ==="
 git pull origin main
 
 echo ""
-echo "=== 3. Restoring frontend dependencies with browser-wasm runtime ==="
+echo "=== 3. Cleaning previous build artifacts ==="
+dotnet clean "src/MIMM.Frontend/MIMM.Frontend.csproj" -c Release || echo "Clean had issues, continuing..."
+
+echo ""
+echo "=== 4. Restoring frontend dependencies with browser-wasm runtime ==="
 dotnet restore "src/MIMM.Frontend/MIMM.Frontend.csproj" \
     -r browser-wasm
 
 echo ""
-echo "=== 4. Publishing Blazor WASM frontend (Release) ==="
+echo "=== 5. Publishing Blazor WASM frontend (Release) ==="
 dotnet publish "src/MIMM.Frontend/MIMM.Frontend.csproj" \
     -c Release \
     -o ~/mimm-app/publish/frontend \
@@ -27,15 +31,15 @@ dotnet publish "src/MIMM.Frontend/MIMM.Frontend.csproj" \
     --no-restore
 
 echo ""
-echo "=== 5. Restarting nginx ==="
+echo "=== 6. Restarting nginx ==="
 sudo systemctl restart nginx || echo "Nginx restart may require elevated privileges"
 
 echo ""
-echo "=== 6. Checking nginx status ==="
+echo "=== 7. Checking nginx status ==="
 sudo systemctl status nginx --no-pager | head -10 || echo "Could not check nginx status"
 
 echo ""
-echo "=== 7. Testing frontend endpoint ==="
+echo "=== 8. Testing frontend endpoint ==="
 curl -s -I https://musicinmymind.app/login 2>/dev/null | head -3 || echo "Frontend check - HTTPS may not be ready"
 
 echo ""
