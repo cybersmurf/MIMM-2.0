@@ -29,8 +29,7 @@
     <!-- SignalR Client -->
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.0" />
     
-    <!-- JSON Serialization -->
-    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <!-- NOTE: System.Text.Json is included in .NET 9.0 runtime - DO NOT add explicit NuGet package -->
   </ItemGroup>
 
   <ItemGroup>
