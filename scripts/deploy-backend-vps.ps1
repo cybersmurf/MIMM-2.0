@@ -43,36 +43,39 @@ Write-Host "✅ Upload complete" -ForegroundColor Green
 
 # Step 4: Deploy on VPS
 Write-Host "`n[4/5] Deploying on VPS..." -ForegroundColor Yellow
-$deployCommands = @"
+$deployScript = @'
+#!/bin/bash
 set -e
-echo '>>> Stopping backend container...'
 cd /home/mimm/mimm-app
-docker-compose stop backend
-
-echo '>>> Backing up current backend...'
-sudo cp -r $BACKEND_PATH ${BACKEND_PATH}.backup-$timestamp
-
-echo '>>> Extracting new backend...'
-sudo rm -rf $BACKEND_PATH/*
-sudo tar -xzf /tmp/$packageName -C $BACKEND_PATH
-sudo chown -R 1000:1000 $BACKEND_PATH
-
+echo '>>> Stopping backend container...'
+docker compose stop backend
+echo '>>> Extracting new backend to temp location...'
+mkdir -p /tmp/backend-new
+tar -xzf /tmp/{0} -C /tmp/backend-new
+echo '>>> Replacing backend files...'
+rm -rf {1}/*
+mv /tmp/backend-new/* {1}/
+rmdir /tmp/backend-new
 echo '>>> Starting backend container...'
-docker-compose up -d backend
-
-echo '>>> Waiting for backend to start...'
+docker compose up -d backend
+echo '>>> Waiting for backend...'
 sleep 5
-
-echo '>>> Checking backend health...'
-docker-compose logs --tail=50 backend
-
+echo '>>> Backend logs (last 30 lines):'
+docker compose logs --tail=30 backend
 echo '>>> Cleanup...'
-rm /tmp/$packageName
-
+rm /tmp/{0}
 echo '✅ Deployment complete!'
-"@
+'@ -f $packageName, $BACKEND_PATH
 
-ssh -p $VPS_PORT "${VPS_USER}@${VPS_HOST}" $deployCommands
+# Save script to temp file with LF line endings
+$tempScript = [System.IO.Path]::GetTempFileName() + ".sh"
+[System.IO.File]::WriteAllText($tempScript, $deployScript, [System.Text.UTF8Encoding]::new($false))
+
+scp -P $VPS_PORT $tempScript "${VPS_USER}@${VPS_HOST}:/tmp/deploy.sh"
+ssh -p $VPS_PORT "${VPS_USER}@${VPS_HOST}" "chmod +x /tmp/deploy.sh && /tmp/deploy.sh && rm /tmp/deploy.sh"
+
+Remove-Item $tempScript -Force
+
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Deployment failed!" -ForegroundColor Red
     exit 1
