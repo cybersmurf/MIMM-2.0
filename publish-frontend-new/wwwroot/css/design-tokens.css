@@ -1,0 +1,614 @@
+/**
+ * MIMM 2.0 Design System - Design Tokens
+ * Version: 3.0.0
+ * Date: January 26, 2026
+ * 
+ * Complete design token system for consistent UI/UX
+ * Based on 8px spacing scale and Material Design 3 principles
+ */
+
+/* ============================================
+   TYPOGRAPHY SCALE
+   Based on modular scale (1.25 ratio)
+   ============================================ */
+:root {
+  /* Font sizes */
+  --text-xs: 0.75rem;      /* 12px - captions, metadata */
+  --text-sm: 0.875rem;     /* 14px - body2, secondary text */
+  --text-base: 1rem;       /* 16px - body1, primary text */
+  --text-lg: 1.125rem;     /* 18px - subtitle2 */
+  --text-xl: 1.25rem;      /* 20px - h6, subtitle1 */
+  --text-2xl: 1.5rem;      /* 24px - h5 */
+  --text-3xl: 1.875rem;    /* 30px - h4 */
+  --text-4xl: 2.25rem;     /* 36px - h3 */
+  --text-5xl: 3rem;        /* 48px - h2 */
+  --text-6xl: 3.75rem;     /* 60px - h1, hero titles */
+  
+  /* Font weights */
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  
+  /* Line heights */
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+  
+  /* Letter spacing */
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+}
+
+/* ============================================
+   COLOR SYSTEM
+   Brand colors + semantic colors + mood-specific
+   ============================================ */
+:root {
+  /* Primary Brand Colors */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;   /* Main brand blue */
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  
+  /* Secondary Brand Colors */
+  --color-secondary-50: #faf5ff;
+  --color-secondary-100: #f3e8ff;
+  --color-secondary-200: #e9d5ff;
+  --color-secondary-300: #d8b4fe;
+  --color-secondary-400: #c084fc;
+  --color-secondary-500: #a855f7;  /* Purple accent */
+  --color-secondary-600: #9333ea;
+  --color-secondary-700: #7e22ce;
+  --color-secondary-800: #6b21a8;
+  --color-secondary-900: #581c87;
+  
+  /* Accent/Success */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;   /* Green */
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+  
+  /* Warning */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;   /* Amber */
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+  
+  /* Danger/Error */
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;    /* Red */
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+  
+  /* Info */
+  --color-info-50: #f0f9ff;
+  --color-info-100: #e0f2fe;
+  --color-info-200: #bae6fd;
+  --color-info-300: #7dd3fc;
+  --color-info-400: #38bdf8;
+  --color-info-500: #0ea5e9;     /* Cyan */
+  --color-info-600: #0284c7;
+  --color-info-700: #0369a1;
+  --color-info-800: #075985;
+  --color-info-900: #0c4a6e;
+  
+  /* Mood-Specific Colors (Russell 2D Model) */
+  --mood-happy: #22c55e;          /* High valence, low arousal (green) */
+  --mood-energetic: #f97316;      /* High valence, high arousal (orange) */
+  --mood-calm: #3b82f6;           /* Low arousal, positive (blue) */
+  --mood-sad: #6366f1;            /* Low valence, low arousal (indigo) */
+  --mood-angry: #ef4444;          /* Low valence, high arousal (red) */
+  --mood-neutral: #94a3b8;        /* Center point (gray) */
+  
+  /* Neutrals (Dark Theme) */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+  
+  /* Semantic Aliases - Default (Dark) */
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d1d5db;
+  --color-text-tertiary: #9ca3af;
+  --color-text-disabled: #6b7280;
+  
+  --color-bg-primary: #0f172a;
+  --color-bg-secondary: #1e293b;
+  --color-bg-tertiary: #334155;
+  --color-bg-elevated: #1e293b;
+  
+  --color-border-default: rgba(255, 255, 255, 0.1);
+  --color-border-muted: rgba(255, 255, 255, 0.05);
+  --color-border-emphasis: rgba(255, 255, 255, 0.2);
+  
+  /* Overlay colors */
+  --color-overlay-light: rgba(255, 255, 255, 0.1);
+  --color-overlay-medium: rgba(255, 255, 255, 0.2);
+  --color-overlay-dark: rgba(0, 0, 0, 0.5);
+  --color-overlay-darker: rgba(0, 0, 0, 0.8);
+  
+  /* Theme Name */
+  --theme-name: "dark";
+}
+
+/* ============================================
+   THEME VARIANTS - MIDNIGHT (Ultra Dark)
+   Deep space theme with high contrast
+   ============================================ */
+[data-theme="midnight"] {
+  /* Text colors */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e5e7eb;
+  --color-text-tertiary: #9ca3af;
+  --color-text-disabled: #6b7280;
+  
+  /* Background colors */
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #111827;
+  --color-bg-tertiary: #1f2937;
+  --color-bg-elevated: #111827;
+  
+  /* Primary accent - electric blue */
+  --color-primary-500: #00d9ff;
+  --color-primary-600: #00b8cc;
+  
+  /* Border colors */
+  --color-border-default: rgba(255, 255, 255, 0.15);
+  --color-border-muted: rgba(255, 255, 255, 0.08);
+  --color-border-emphasis: rgba(255, 255, 255, 0.25);
+  
+  --theme-name: "midnight";
+}
+
+/* ============================================
+   THEME VARIANTS - TWILIGHT (Purple Accent)
+   Warm purple theme with cozy feel
+   ============================================ */
+[data-theme="twilight"] {
+  /* Text colors */
+  --color-text-primary: #f3e8ff;
+  --color-text-secondary: #e9d5ff;
+  --color-text-tertiary: #d8b4fe;
+  --color-text-disabled: #c084fc;
+  
+  /* Background colors */
+  --color-bg-primary: #2d1b4e;
+  --color-bg-secondary: #3d2463;
+  --color-bg-tertiary: #4d3078;
+  --color-bg-elevated: #3d2463;
+  
+  /* Primary accent - vibrant purple */
+  --color-primary-500: #e879f9;
+  --color-primary-600: #d946ef;
+  --color-secondary-500: #f472b6;
+  
+  /* Border colors */
+  --color-border-default: rgba(232, 121, 249, 0.15);
+  --color-border-muted: rgba(232, 121, 249, 0.08);
+  --color-border-emphasis: rgba(232, 121, 249, 0.25);
+  
+  --theme-name: "twilight";
+}
+
+/* ============================================
+   THEME VARIANTS - OCEAN (Blue Green)
+   Cool ocean theme with calm colors
+   ============================================ */
+[data-theme="ocean"] {
+  /* Text colors */
+  --color-text-primary: #e0f2fe;
+  --color-text-secondary: #bae6fd;
+  --color-text-tertiary: #7dd3fc;
+  --color-text-disabled: #0284c7;
+  
+  /* Background colors */
+  --color-bg-primary: #0c2d42;
+  --color-bg-secondary: #0f3a52;
+  --color-bg-tertiary: #164863;
+  --color-bg-elevated: #0f3a52;
+  
+  /* Primary accent - ocean cyan */
+  --color-primary-500: #06b6d4;
+  --color-primary-600: #0891b2;
+  --color-secondary-500: #14b8a6;
+  
+  /* Border colors */
+  --color-border-default: rgba(6, 182, 212, 0.15);
+  --color-border-muted: rgba(6, 182, 212, 0.08);
+  --color-border-emphasis: rgba(6, 182, 212, 0.25);
+  
+  --theme-name: "ocean";
+}
+
+/* ============================================
+   THEME VARIANTS - FOREST (Green Nature)
+   Nature-inspired green theme
+   ============================================ */
+[data-theme="forest"] {
+  /* Text colors */
+  --color-text-primary: #f0fdf4;
+  --color-text-secondary: #dcfce7;
+  --color-text-tertiary: #86efac;
+  --color-text-disabled: #4ade80;
+  
+  /* Background colors */
+  --color-bg-primary: #052e16;
+  --color-bg-secondary: #0d3e1f;
+  --color-bg-tertiary: #15803d;
+  --color-bg-elevated: #0d3e1f;
+  
+  /* Primary accent - forest green */
+  --color-primary-500: #10b981;
+  --color-primary-600: #059669;
+  --color-secondary-500: #34d399;
+  
+  /* Border colors */
+  --color-border-default: rgba(16, 185, 129, 0.15);
+  --color-border-muted: rgba(16, 185, 129, 0.08);
+  --color-border-emphasis: rgba(16, 185, 129, 0.25);
+  
+  --theme-name: "forest";
+}
+
+/* ============================================
+   SPACING SYSTEM
+   Based on 8px grid (0.5rem base unit)
+   ============================================ */
+:root {
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;   /* 2px */
+  --space-1: 0.25rem;      /* 4px */
+  --space-1-5: 0.375rem;   /* 6px */
+  --space-2: 0.5rem;       /* 8px */
+  --space-2-5: 0.625rem;   /* 10px */
+  --space-3: 0.75rem;      /* 12px */
+  --space-3-5: 0.875rem;   /* 14px */
+  --space-4: 1rem;         /* 16px */
+  --space-5: 1.25rem;      /* 20px */
+  --space-6: 1.5rem;       /* 24px */
+  --space-7: 1.75rem;      /* 28px */
+  --space-8: 2rem;         /* 32px */
+  --space-9: 2.25rem;      /* 36px */
+  --space-10: 2.5rem;      /* 40px */
+  --space-11: 2.75rem;     /* 44px */
+  --space-12: 3rem;        /* 48px */
+  --space-14: 3.5rem;      /* 56px */
+  --space-16: 4rem;        /* 64px */
+  --space-20: 5rem;        /* 80px */
+  --space-24: 6rem;        /* 96px */
+  --space-28: 7rem;        /* 112px */
+  --space-32: 8rem;        /* 128px */
+  --space-36: 9rem;        /* 144px */
+  --space-40: 10rem;       /* 160px */
+  --space-44: 11rem;       /* 176px */
+  --space-48: 12rem;       /* 192px */
+  --space-52: 13rem;       /* 208px */
+  --space-56: 14rem;       /* 224px */
+  --space-60: 15rem;       /* 240px */
+  --space-64: 16rem;       /* 256px */
+  --space-72: 18rem;       /* 288px */
+  --space-80: 20rem;       /* 320px */
+  --space-96: 24rem;       /* 384px */
+}
+
+/* ============================================
+   BORDER RADIUS SYSTEM
+   ============================================ */
+:root {
+  --radius-none: 0;
+  --radius-sm: 0.25rem;     /* 4px */
+  --radius-base: 0.375rem;  /* 6px */
+  --radius-md: 0.5rem;      /* 8px */
+  --radius-lg: 0.75rem;     /* 12px */
+  --radius-xl: 1rem;        /* 16px */
+  --radius-2xl: 1.25rem;    /* 20px */
+  --radius-3xl: 1.5rem;     /* 24px */
+  --radius-full: 9999px;    /* Pills, circles */
+}
+
+/* ============================================
+   SHADOW SYSTEM
+   Elevation-based shadows
+   ============================================ */
+:root {
+  /* Base shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  --shadow-none: 0 0 #0000;
+  
+  /* Colored shadows (for highlights/emphasis) */
+  --shadow-primary: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+  --shadow-secondary: 0 4px 14px 0 rgba(168, 85, 247, 0.39);
+  --shadow-success: 0 4px 14px 0 rgba(34, 197, 94, 0.39);
+  --shadow-warning: 0 4px 14px 0 rgba(245, 158, 11, 0.39);
+  --shadow-danger: 0 4px 14px 0 rgba(239, 68, 68, 0.39);
+  
+  /* Glassmorphism shadows */
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  --shadow-glass-lg: 0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                     inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   Z-INDEX SCALE
+   Consistent layering system
+   ============================================ */
+:root {
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+  --z-priority: 9999;
+}
+
+/* ============================================
+   TRANSITIONS & ANIMATIONS
+   Duration and easing functions
+   ============================================ */
+:root {
+  /* Duration */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-medium: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 700ms;
+  
+  /* Easing functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-elastic: cubic-bezier(0.68, -0.25, 0.265, 1.25);
+}
+
+/* ============================================
+   BREAKPOINTS
+   Media query reference (use in @media)
+   ============================================ */
+:root {
+  /* Mobile-first breakpoints */
+  --breakpoint-xs: 0px;       /* Extra small devices (portrait phones) */
+  --breakpoint-sm: 600px;     /* Small devices (landscape phones) */
+  --breakpoint-md: 960px;     /* Medium devices (tablets) */
+  --breakpoint-lg: 1280px;    /* Large devices (desktops) */
+  --breakpoint-xl: 1920px;    /* Extra large devices (large desktops) */
+  --breakpoint-xxl: 2560px;   /* Ultra wide screens */
+}
+
+/* ============================================
+   GRADIENTS
+   Reusable gradient patterns
+   ============================================ */
+:root {
+  /* Background gradients */
+  --gradient-bg-primary: radial-gradient(circle at 20% 20%, #1e3a8a 0, transparent 30%),
+                         radial-gradient(circle at 80% 0%, #7c3aed 0, transparent 35%),
+                         linear-gradient(135deg, #0b1120 0%, #0f172a 50%, #111827 100%);
+  
+  --gradient-bg-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* Overlay gradients */
+  --gradient-overlay-dark: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
+  --gradient-overlay-light: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 100%);
+  
+  /* Glass effect */
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  
+  /* Mood gradients */
+  --gradient-mood-happy: linear-gradient(135deg, #22c55e 0%, #86efac 100%);
+  --gradient-mood-energetic: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  --gradient-mood-calm: linear-gradient(135deg, #3b82f6 0%, #93c5fd 100%);
+  --gradient-mood-sad: linear-gradient(135deg, #6366f1 0%, #a5b4fc 100%);
+}
+
+/* ============================================
+   BLUR EFFECTS
+   Backdrop filter values
+   ============================================ */
+:root {
+  --blur-none: 0;
+  --blur-sm: 4px;
+  --blur-base: 8px;
+  --blur-md: 12px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+  --blur-2xl: 40px;
+  --blur-3xl: 64px;
+}
+
+/* ============================================
+   OPACITY SCALE
+   ============================================ */
+:root {
+  --opacity-0: 0;
+  --opacity-5: 0.05;
+  --opacity-10: 0.1;
+  --opacity-20: 0.2;
+  --opacity-25: 0.25;
+  --opacity-30: 0.3;
+  --opacity-40: 0.4;
+  --opacity-50: 0.5;
+  --opacity-60: 0.6;
+  --opacity-70: 0.7;
+  --opacity-75: 0.75;
+  --opacity-80: 0.8;
+  --opacity-90: 0.9;
+  --opacity-95: 0.95;
+  --opacity-100: 1;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   Common patterns using design tokens
+   ============================================ */
+
+/* Glass effect utility */
+.glass-effect {
+  background: var(--gradient-glass);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
+  border: 1px solid var(--color-border-default);
+}
+
+/* Elevation utilities */
+.elevation-0 { box-shadow: var(--shadow-none); }
+.elevation-1 { box-shadow: var(--shadow-sm); }
+.elevation-2 { box-shadow: var(--shadow-md); }
+.elevation-3 { box-shadow: var(--shadow-lg); }
+.elevation-4 { box-shadow: var(--shadow-xl); }
+.elevation-5 { box-shadow: var(--shadow-2xl); }
+
+/* Transition utilities */
+.transition-base {
+  transition-duration: var(--duration-base);
+  transition-timing-function: var(--ease-in-out);
+}
+
+.transition-fast {
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-out);
+}
+
+.transition-slow {
+  transition-duration: var(--duration-slow);
+  transition-timing-function: var(--ease-in-out);
+}
+
+/* Focus ring utility (accessibility) */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-base);
+}
+
+/* Mood color utilities */
+.mood-happy-bg { background-color: var(--mood-happy); }
+.mood-energetic-bg { background-color: var(--mood-energetic); }
+.mood-calm-bg { background-color: var(--mood-calm); }
+.mood-sad-bg { background-color: var(--mood-sad); }
+.mood-angry-bg { background-color: var(--mood-angry); }
+
+/* Text utilities */
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-400) 0%, var(--color-secondary-400) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   LIGHT MODE THEME
+   Override semantic colors for light mode
+   ============================================ */
+[data-theme="light"] {
+  /* Light mode text colors */
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-tertiary: #6b7280;
+  --color-text-disabled: #9ca3af;
+  
+  /* Light mode backgrounds */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-bg-tertiary: #f3f4f6;
+  --color-bg-elevated: #ffffff;
+  
+  /* Light mode borders */
+  --color-border-default: rgba(0, 0, 0, 0.1);
+  --color-border-muted: rgba(0, 0, 0, 0.05);
+  --color-border-emphasis: rgba(0, 0, 0, 0.2);
+  
+  /* Light mode overlays */
+  --color-overlay-light: rgba(0, 0, 0, 0.05);
+  --color-overlay-medium: rgba(0, 0, 0, 0.1);
+  --color-overlay-dark: rgba(0, 0, 0, 0.3);
+  --color-overlay-darker: rgba(0, 0, 0, 0.6);
+  
+  /* Light mode gradients */
+  --gradient-bg-primary: radial-gradient(circle at 20% 20%, #dbeafe 0, transparent 30%),
+                         radial-gradient(circle at 80% 0%, #e9d5ff 0, transparent 35%),
+                         linear-gradient(135deg, #f9fafb 0%, #ffffff 50%, #f3f4f6 100%);
+  
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
+  
+  /* Light mode shadows (stronger for visibility) */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px -1px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -4px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.12);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+  
+  --shadow-glass: 0 8px 32px 0 rgba(100, 116, 139, 0.15);
+  --shadow-glass-lg: 0 8px 32px 0 rgba(100, 116, 139, 0.15),
+                     inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================
+   THEME TRANSITION
+   Smooth theme switching animation
+   ============================================ */
+body {
+  transition: background var(--duration-medium) var(--ease-in-out),
+              color var(--duration-medium) var(--ease-in-out);
+}
+
+.glass-card,
+.glass-bar,
+.page-surface,
+.mood-plane {
+  transition: background var(--duration-medium) var(--ease-in-out),
+              border-color var(--duration-medium) var(--ease-in-out),
+              box-shadow var(--duration-medium) var(--ease-in-out);
+}

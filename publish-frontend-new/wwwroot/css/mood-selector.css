@@ -1,0 +1,162 @@
+/**
+ * MIMM 2.0 - Mood Selector 2D Component Styles
+ * Responsive and touch-optimized CSS for mood selector
+ */
+
+.mood-plane {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    min-height: 280px;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), rgba(0,0,0,0.05)),
+                linear-gradient(135deg, rgba(34,197,94,0.12), rgba(59,130,246,0.12));
+    overflow: hidden;
+    user-select: none;
+    cursor: crosshair;
+    transition: box-shadow 0.2s;
+    touch-action: none;
+}
+
+/* Light mode mood plane */
+[data-theme="light"] .mood-plane {
+    background: radial-gradient(circle at 50% 50%, rgba(59,130,246,0.08), rgba(255,255,255,0.02)),
+                linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.08));
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Responsive sizing for mobile */
+@media (max-width: 599px) {
+    .mood-plane {
+        max-width: 100%;
+        min-height: 260px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 959px) {
+    .mood-plane {
+        max-width: 320px;
+        min-height: 280px;
+    }
+}
+
+.mood-plane:focus-visible {
+    outline: 3px solid var(--mud-palette-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+
+.mood-plane .grid-line {
+    position: absolute;
+    background: rgba(0,0,0,0.06);
+    pointer-events: none;
+}
+
+/* Light mode grid lines */
+[data-theme="light"] .mood-plane .grid-line {
+    background: rgba(0,0,0,0.1);
+}
+
+.mood-plane .grid-line.vertical {
+    top: 0;
+    bottom: 0;
+    width: 1px;
+}
+
+.mood-plane .grid-line.horizontal {
+    left: 0;
+    right: 0;
+    height: 1px;
+}
+
+.mood-plane .cursor {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid var(--mud-palette-primary);
+    background: white;
+    box-shadow: 0 0 6px rgba(0,0,0,0.12);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: transform var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-base) var(--ease-in-out);
+}
+
+/* Larger cursor for touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .mood-plane .cursor {
+        width: 24px;
+        height: 24px;
+        border: 4px solid var(--mud-palette-primary);
+    }
+}
+
+.mood-plane:hover .cursor {
+    transform: translate(-50%, -50%) scale(1.15);
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
+}
+
+.mood-plane:active .cursor {
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+.mood-plane .label-chip {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    pointer-events: none;
+    font-size: 0.75rem;
+}
+
+/* Responsive label chip */
+@media (max-width: 599px) {
+    .mood-plane .label-chip {
+        font-size: 0.7rem;
+    }
+}
+
+.axis-label {
+    position: absolute;
+    font-size: 0.75rem;
+    color: rgba(0,0,0,0.6);
+    pointer-events: none;
+}
+
+/* Light mode axis labels */
+[data-theme="light"] .axis-label {
+    color: rgba(0,0,0,0.7);
+}
+
+/* Hide axis labels on very small screens */
+@media (max-width: 374px) {
+    .axis-label {
+        font-size: 0.65rem;
+    }
+}
+
+.axis-label-x-left {
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.axis-label-x-right {
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: right;
+}
+
+.axis-label-y-top {
+    left: 50%;
+    top: 6px;
+    transform: translateX(-50%);
+}
+
+.axis-label-y-bottom {
+    left: 50%;
+    bottom: 6px;
+    transform: translateX(-50%);
+}

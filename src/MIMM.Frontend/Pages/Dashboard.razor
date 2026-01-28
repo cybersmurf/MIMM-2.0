@@ -13,93 +13,129 @@
 
 <LiveRegion Message="@_liveRegionMessage" AriaLive="polite" />
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6" role="region" aria-label="Dashboard overview">
-    <MudGrid Class="mb-4">
-        <MudItem xs="12" sm="12" md="7">
-            <MudText Typo="Typo.h4" Class="mb-1">Welcome back</MudText>
-            <MudText Typo="Typo.subtitle1" Color="Color.Secondary">
-                Capture today's mood and soundtrack.
+<MudContainer MaxWidth="MaxWidth.Large" Class="py-6" role="region" aria-label="Dashboard overview">
+    <!-- Header Section with Gradient -->
+    <MudPaper Class="mb-6 pa-8" Elevation="2" 
+              Style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #d946ef 100%); border-radius: 16px;">
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.h3" Class="text-white" Style="font-weight: 800;">Welcome back 👋</MudText>
+            <MudText Typo="Typo.subtitle1" Class="text-white" 
+                     Style="opacity: 0.95; letter-spacing: 0.3px;">
+                Capture today's mood and soundtrack. Stay connected to your inner music.
             </MudText>
-        </MudItem>
-        <MudItem xs="12" sm="12" md="5" Class="d-flex justify-sm-start justify-md-end gap-2">
-            <MudButton Variant="Variant.Filled" 
-                       Color="Color.Primary" 
-                       Class="btn-hover-lift" 
-                       Style="min-height: 44px; min-width: 44px;"
-                       StartIcon="@Icons.Material.Filled.AddCircle"
-                       OnClick="OpenCreateDialog">
-                New Entry
-            </MudButton>
-            <MudButton Variant="Variant.Outlined" 
-                       Color="Color.Info" 
-                       Class="btn-hover-lift" 
-                       Style="min-height: 44px; min-width: 44px;"
-                       StartIcon="@Icons.Material.Filled.CloudUpload" 
-                       OnClick="ConnectLastFm">
-                Connect Last.fm
-            </MudButton>
-        </MudItem>
-    </MudGrid>
+            <MudStack Row="true" Spacing="2" Style="flex-wrap: wrap; margin-top: 16px;">
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Surface"
+                           Style="color: #667eea; font-weight: 700; background: rgba(255, 255, 255, 0.95) !important;"
+                           StartIcon="@Icons.Material.Filled.AddCircle"
+                           Size="Size.Large"
+                           OnClick="OpenCreateDialog">
+                    New Entry
+                </MudButton>
+                <MudButton Variant="Variant.Outlined" 
+                           Color="Color.Inherit"
+                           Style="color: white; border-color: rgba(255, 255, 255, 0.5); font-weight: 700;"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           Size="Size.Large"
+                           OnClick="ConnectLastFm">
+                    Connect Last.fm
+                </MudButton>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
 
-    <MudGrid Class="mb-4" Spacing="2">
+    <!-- Stats Grid -->
+    <MudGrid Spacing="3" Class="mb-6">
         @if (_isLoadingStats)
         {
             <MudItem xs="12" sm="6" md="4">
-                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="120px" Class="skeleton-shimmer" />
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="160px" Class="skeleton-shimmer" />
             </MudItem>
             <MudItem xs="12" sm="6" md="4">
-                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="120px" Class="skeleton-shimmer" />
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="160px" Class="skeleton-shimmer" />
             </MudItem>
             <MudItem xs="12" sm="6" md="4">
-                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="120px" Class="skeleton-shimmer" />
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="160px" Class="skeleton-shimmer" />
             </MudItem>
         }
         else if (_moodTrend != null)
         {
             <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="3" Class="pa-4 card-hover-subtle" Style="background: linear-gradient(135deg,#0ea5e9,#38bdf8); color: #0b1120;">
-                    <MudText Typo="Typo.caption" Class="mb-1">Mood balance</MudText>
-                    <MudText Typo="Typo.h5">Valence: @_moodTrend.AverageValence.ToString("F2")</MudText>
-                    <MudText Typo="Typo.body2">Averaged last 7 days</MudText>
+                <MudPaper Elevation="2" Class="pa-6" 
+                          Style="background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); border-radius: 16px; min-height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <MudText Typo="Typo.caption" Class="text-white" Style="font-weight: 700; letter-spacing: 1px; opacity: 0.9;">Mood Balance</MudText>
+                        <MudText Typo="Typo.h4" Class="text-white" Style="font-weight: 800; letter-spacing: -1px; margin-top: 8px;">@_moodTrend.AverageValence.ToString("F1")</MudText>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="text-white" Style="opacity: 0.85;">Valence (averaged last 7 days)</MudText>
                 </MudPaper>
             </MudItem>
+
             <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="3" Class="pa-4 card-hover-subtle" Style="background: linear-gradient(135deg,#a855f7,#c084fc); color: #0b1120;">
-                    <MudText Typo="Typo.caption" Class="mb-1">Energy trend</MudText>
-                    <MudText Typo="Typo.h5">Arousal: @_moodTrend.AverageArousal.ToString("F2")</MudText>
-                    <MudText Typo="Typo.body2">Last @_moodTrend.TotalEntries sessions</MudText>
+                <MudPaper Elevation="2" Class="pa-6" 
+                          Style="background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%); border-radius: 16px; min-height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <MudText Typo="Typo.caption" Class="text-white" Style="font-weight: 700; letter-spacing: 1px; opacity: 0.9;">Energy Trend</MudText>
+                        <MudText Typo="Typo.h4" Class="text-white" Style="font-weight: 800; letter-spacing: -1px; margin-top: 8px;">@_moodTrend.AverageArousal.ToString("F1")</MudText>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="text-white" Style="opacity: 0.85;">Arousal (last @_moodTrend.TotalEntries sessions)</MudText>
                 </MudPaper>
             </MudItem>
+
             <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="3" Class="pa-4 card-hover-subtle" Style="background: linear-gradient(135deg,#22c55e,#86efac); color: #0b1120;">
-                    <MudText Typo="Typo.caption" Class="mb-1">Mood entries</MudText>
-                    <MudText Typo="Typo.h5">Total: @(_moodTrend?.TotalEntries ?? 0)</MudText>
-                    <MudText Typo="Typo.body2">@(_moodTrend?.TotalEntries ?? 0) moods logged</MudText>
+                <MudPaper Elevation="2" Class="pa-6" 
+                          Style="background: linear-gradient(135deg, #22c55e 0%, #84cc16 100%); border-radius: 16px; min-height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <MudText Typo="Typo.caption" Class="text-white" Style="font-weight: 700; letter-spacing: 1px; opacity: 0.9;">Moods Logged</MudText>
+                        <MudText Typo="Typo.h4" Class="text-white" Style="font-weight: 800; letter-spacing: -1px; margin-top: 8px;">@(_moodTrend?.TotalEntries ?? 0)</MudText>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="text-white" Style="opacity: 0.85;">Mood entries tracked</MudText>
                 </MudPaper>
             </MudItem>
         }
     </MudGrid>
 
-    <MudGrid Class="mb-4" Spacing="2">
+    <!-- Main Content Grid -->
+    <MudGrid Spacing="3">
         <MudItem xs="12" sm="12" md="8" lg="7">
             <EntryList @ref="_entryList" OnEditEntry="OpenEditDialog" OnEntryChanged="RefreshData" OnCreateFirstEntry="OpenCreateDialog" />
         </MudItem>
         <MudItem xs="12" sm="12" md="4" lg="5">
-            <MudPaper Elevation="2" Class="pa-4 mb-3">
-                <MudText Typo="Typo.h6" Class="mb-3">Quick actions</MudText>
-                <MudStack Row Spacing="2">
-                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth StartIcon="@Icons.Material.Filled.Edit" OnClick="OpenCreateDialog">
-                        Add mood entry
+            <!-- Quick Actions -->
+            <MudPaper Elevation="1" Class="pa-6 mb-6" Style="border-radius: 16px;">
+                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 700;">⚡ Quick Actions</MudText>
+                <MudStack Spacing="2">
+                    <MudButton Variant="Variant.Filled" 
+                               Color="Color.Primary" 
+                               FullWidth
+                               StartIcon="@Icons.Material.Filled.Edit" 
+                               OnClick="OpenCreateDialog"
+                               Style="font-weight: 600;">
+                        Add Mood Entry
                     </MudButton>
-                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth StartIcon="@Icons.Material.Filled.AutoGraph" Href="/analytics">
-                        View analytics
+                    <MudButton Variant="Variant.Outlined" 
+                               Color="Color.Primary" 
+                               FullWidth 
+                               StartIcon="@Icons.Material.Filled.TrendingUp" 
+                               Href="/analytics"
+                               Style="font-weight: 600;">
+                        View Analytics
                     </MudButton>
-                    <MudButton Variant="Variant.Text" Color="Color.Error" FullWidth StartIcon="@Icons.Material.Filled.Logout" OnClick="HandleLogout">
-                        Logout
+                    <MudButton Variant="Variant.Text" 
+                               Color="Color.Secondary" 
+                               FullWidth 
+                               StartIcon="@Icons.Material.Filled.MoreHoriz"
+                               Style="font-weight: 600;">
+                        More Options
                     </MudButton>
                 </MudStack>
             </MudPaper>
-            <MusicSearchBox />
+
+            <!-- Music Search -->
+            <MudPaper Elevation="1" Class="pa-6" Style="border-radius: 16px;">
+                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 700;">🎵 Find Music</MudText>
+                <MusicSearchBox />
+            </MudPaper>
         </MudItem>
     </MudGrid>
 </MudContainer>

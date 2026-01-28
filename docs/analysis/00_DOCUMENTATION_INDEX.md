@@ -1,103 +1,277 @@
-# 📖 MIMM 2.0 - Analysis Documentation Index
+# 📖 MIMM 2.0 - Documentation Index
 
-## Kompletní Přehled Všech Analýz & Rozhodovacích Dokumentů
+## Kompletní Přehled Všech Dokumentů v Projektu
 
-**Aktualizováno:** 25. ledna 2026 (MVP Complete)  
-**Verze:** 2.0  
-**Status:** ✅ Všechny dokumenty updated s aktuálním stavem
-
----
-
-## 🎯 Navigace - Jaký Dokument Pro Koho (AKTUALIZOVÁNO)
-
-### Jste z Vedení Firmy / Investoři?
-
-**⭐ ZAČNĚTE TADY:** [MANAGEMENT_QUICK_REFERENCE.md](./MANAGEMENT_QUICK_REFERENCE.md) (One-Pager)
-
-- Key metrics, financials, risk assessment
-- Launch timeline & success criteria
-- **⏱️ Čas na čtení: 5-10 minut**
-- Potom: [MANAGEMENT_STATUS_REPORT_JAN_2026.md](./MANAGEMENT_STATUS_REPORT_JAN_2026.md)
+**Aktualizováno:** 28. ledna 2026 (Production Deployed)  
+**Verze:** v2.0.0-production  
+**Status:** 🚀 LIVE IN PRODUCTION
 
 ---
 
-### Jste CFO / Finance Manažer?
+## 🎯 Quick Navigation by Role
 
-👉 **Čtěte:** [EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md](./EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md)
+### 👔 Management / Investors
 
-- **AKTUALIZOVÁNO:** Dosavadní investice (2,510,000 CZK), ROI analýza
-- Měsíční operating costs (85k-224k CZK)
-- Breakeven timeline (8-17 měsíců dle scénáře)
-- Scénáře financování & cost optimization
-- ⏱️ Čas na čtení: **40-60 minut**
-- 🎓 Technické znalosti: Finance basics only
+**START HERE:** [MANAGEMENT_QUICK_REFERENCE.md](./MANAGEMENT_QUICK_REFERENCE.md)
+- One-page overview: metrics, timeline, status
+- Reading time: 5-10 minutes
+
+**Detailed Status:** [MANAGEMENT_STATUS_REPORT_JAN_2026.md](./MANAGEMENT_STATUS_REPORT_JAN_2026.md)
+- MVP complete status, production metrics
+- Business KPIs and success criteria
+- Reading time: 45-60 minutes
+
+### 💰 Finance / CFO
+
+**Financial Analysis:** [EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md](./EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md)
+- Investment breakdown (2,510,000 CZK)
+- Operating costs (85k-224k CZK/month)
+- Breakeven timeline (8-17 months)
+- ROI scenarios
+- Reading time: 40-60 minutes
+
+### 👨‍💼 CEO / Product Owner
+
+**Product Roadmap:** [FEATURE_STATUS_AND_ROADMAP.md](./FEATURE_STATUS_AND_ROADMAP.md)
+- 8/8 MVP features delivered
+- Production deployment status
+- Phase 4 advanced features plan
+- Reading time: 60-90 minutes
+
+**Current Project Status:** [../planning/CURRENT_PROJECT_STATUS_JAN_26_2026.md](../planning/CURRENT_PROJECT_STATUS_JAN_26_2026.md)
+- Complete implementation breakdown
+- Test coverage (45/45 passing)
+- Production readiness checklist
+
+### 🔧 Technical Lead / CTO
+
+**Technical Deep Dive:** [TECHNICAL_ANALYSIS_DEEP_DIVE.md](./TECHNICAL_ANALYSIS_DEEP_DIVE.md)
+- Architecture: .NET 9, ASP.NET Core, Blazor WASM
+- Security: JWT, encryption, CORS
+- Scalability: Redis, EF Core optimization
+- Reading time: 60-90 minutes
+
+**Code Quality:** [../CODE_REVIEW_PLAN.md](../CODE_REVIEW_PLAN.md)
+- EF Core query optimization
+- Security hardening checklist
+- Performance improvements
+
+### 📱 Frontend Developer
+
+**MudBlazor Integration:** [../MUDBLAZOR_GUIDE.md](../MUDBLAZOR_GUIDE.md)
+- Component structure patterns
+- Styling hierarchy (700+ lines)
+- Common UI patterns and best practices
+
+**Integration Summary:** [../MUDBLAZOR_INTEGRATION_SUMMARY.md](../MUDBLAZOR_INTEGRATION_SUMMARY.md)
+- All 7 pages MudBlazor-compliant
+- Golden rules and standards
+
+**Refactoring Checklist:** [../MUDBLAZOR_REFACTORING_CHECKLIST.md](../MUDBLAZOR_REFACTORING_CHECKLIST.md)
+- Page-by-page verification
+- Before/After examples
+
+### 🚀 DevOps / Deployment
+
+**Production Deployment:** [../deployment/DEPLOYMENT_SUMMARY_20260127.md](../deployment/DEPLOYMENT_SUMMARY_20260127.md)
+- Docker containers setup
+- PostgreSQL and Redis configuration
+- Real-world production issues and fixes
+
+**Environment Management:** [../deployment/ENV_MANAGEMENT.md](../deployment/ENV_MANAGEMENT.md)
+- .env file configuration
+- Secrets management
+- Local dev vs VPS setup
+
+**Docker Operations:** [../deployment/DOCKER_OPERATIONS.md](../deployment/DOCKER_OPERATIONS.md)
+- Container management commands
+- Troubleshooting guide
+
+**Nginx Configuration:** [../deployment/NGINX_SETUP_DETAILED.md](../deployment/NGINX_SETUP_DETAILED.md)
+- HTTPS setup with Let's Encrypt
+- WASM content-type configuration
+- Reverse proxy for API
+
+**Production Issues:** [../deployment/PRODUCTION_ISSUES_AND_FIXES.md](../deployment/PRODUCTION_ISSUES_AND_FIXES.md)
+- JWT authentication fixes
+- Docker build cache issues
+- Real-world deployment lessons
+
+### 🧪 QA / Testing
+
+**E2E Testing Guide:** [../testing/E2E_TESTING_GUIDE.md](../testing/E2E_TESTING_GUIDE.md)
+- Playwright test suite (10 scenarios)
+- Authentication flow testing
+- Accessibility testing with screen readers
+
+**Last.fm Scrobbling Tests:** [../TESTING_REPORT_LASTFM_SCROBBLING.md](../TESTING_REPORT_LASTFM_SCROBBLING.md)
+- Integration test results
+- API contract verification
+
+### 📚 General Developer
+
+**Developer Guide:** [../DEVELOPER_GUIDE.md](../DEVELOPER_GUIDE.md)
+- Local setup instructions
+- Build and test commands
+- Common workflows
+
+**Setup Guide:** [../SETUP_GUIDE.md](../SETUP_GUIDE.md)
+- Prerequisites and dependencies
+- First-time project setup
+- Environment configuration
+
+**Migration Guide:** [../MIGRATION_GUIDE.md](../MIGRATION_GUIDE.md)
+- Database migration procedures
+- EF Core migration scripts
+
+### 🎨 Design / Accessibility
+
+**Accessibility Audit:** [../ACCESSIBILITY_AUDIT.md](../ACCESSIBILITY_AUDIT.md)
+- WCAG 2.1 compliance status
+- Screen reader compatibility
+- Keyboard navigation
+
+**UX/UI Implementation:** [../UX_UI_ACTION_PLAN_ANALYSIS.md](../UX_UI_ACTION_PLAN_ANALYSIS.md)
+- Phase 1-3 UX fixes status (15/16 complete)
+- Component implementations
 
 ---
 
-### Jste Výkonný Ředitel (CEO/COO)?
+## 📂 Documentation Structure
 
-👉 **Čtěte:** [MANAGEMENT_STATUS_REPORT_JAN_2026.md](./MANAGEMENT_STATUS_REPORT_JAN_2026.md) (NEW)
+### Root `docs/` Folder
 
-- **MVP Complete Status:** 8 features hotovy, ready to launch
-- Business KPIs & success metrics
-- Production launch plan (4-week timeline)
-- Quarterly roadmap (Q1-Q4 2026)
-- Risk assessment & mitigation
-- ⏱️ Čas na čtení: **45-60 minut**
-- 🎓 Technické znalosti: Business strategy level
+| Document | Purpose | Last Updated |
+|----------|---------|--------------|
+| [ACCESSIBILITY_AUDIT.md](../ACCESSIBILITY_AUDIT.md) | WCAG compliance status | Jan 26 |
+| [ADMIN_ONBOARDING_GUIDE.md](../ADMIN_ONBOARDING_GUIDE.md) | Admin user onboarding | Jan 26 |
+| [CODE_REVIEW_PLAN.md](../CODE_REVIEW_PLAN.md) | Code optimization plan | Jan 28 |
+| [CONTEXT7_DEEP_ANALYSIS.md](../CONTEXT7_DEEP_ANALYSIS.md) | Context7 integration analysis | Jan 25 |
+| [DEVELOPER_GUIDE.md](../DEVELOPER_GUIDE.md) | Developer documentation | Jan 26 |
+| [FINAL_STATUS_REPORT_v26.1.27.md](../FINAL_STATUS_REPORT_v26.1.27.md) | Final MVP status report | Jan 27 |
+| [GITHUB_ACTIONS_REPORT.md](../GITHUB_ACTIONS_REPORT.md) | CI/CD pipeline status | Jan 25 |
+| [MIGRATION_GUIDE.md](../MIGRATION_GUIDE.md) | Database migrations | Jan 26 |
+| [MUDBLAZOR_GUIDE.md](../MUDBLAZOR_GUIDE.md) | MudBlazor usage guide (700+ lines) | Jan 27 |
+| [MUDBLAZOR_INTEGRATION_SUMMARY.md](../MUDBLAZOR_INTEGRATION_SUMMARY.md) | Integration overview | Jan 27 |
+| [MUDBLAZOR_REFACTORING_CHECKLIST.md](../MUDBLAZOR_REFACTORING_CHECKLIST.md) | Page-by-page status | Jan 27 |
+| [PHASE_4_PLANNING.md](../PHASE_4_PLANNING.md) | Advanced features roadmap | Jan 26 |
+| [PROMPTS_CATALOG.md](../PROMPTS_CATALOG.md) | AI agent prompts catalog | Jan 25 |
+| [QUICK_START.md](../QUICK_START.md) | Quick start guide | Jan 26 |
+| [RELEASE_NOTES_MUDBLAZOR_INTEGRATION.md](../RELEASE_NOTES_MUDBLAZOR_INTEGRATION.md) | MudBlazor release notes | Jan 27 |
+| [SETUP_GUIDE.md](../SETUP_GUIDE.md) | Environment setup | Jan 26 |
+| [STATICWEBASSETS_FIX.md](../STATICWEBASSETS_FIX.md) | Static assets troubleshooting | Jan 26 |
+| [TESTING_REPORT_LASTFM_SCROBBLING.md](../TESTING_REPORT_LASTFM_SCROBBLING.md) | Last.fm integration tests | Jan 26 |
+| [USER_GUIDE.md](../USER_GUIDE.md) | End-user documentation | Jan 26 |
+| [UX_UI_ACTION_PLAN_ANALYSIS.md](../UX_UI_ACTION_PLAN_ANALYSIS.md) | UX implementation analysis | Jan 26 |
+
+### `docs/analysis/` - Business & Technical Analysis
+
+| Document | Purpose |
+|----------|---------|
+| [EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md](./EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md) | Management overview with financials |
+| [FEATURE_STATUS_AND_ROADMAP.md](./FEATURE_STATUS_AND_ROADMAP.md) | Feature delivery status |
+| [MANAGEMENT_QUICK_REFERENCE.md](./MANAGEMENT_QUICK_REFERENCE.md) | One-page executive summary |
+| [MANAGEMENT_QUICK_START_CZ.md](./MANAGEMENT_QUICK_START_CZ.md) | Czech management guide |
+| [MANAGEMENT_STATUS_REPORT_JAN_2026.md](./MANAGEMENT_STATUS_REPORT_JAN_2026.md) | Current status report |
+| [PROJECT_ANALYSIS_2026.md](./PROJECT_ANALYSIS_2026.md) | Comprehensive project analysis |
+| [TECHNICAL_ANALYSIS_DEEP_DIVE.md](./TECHNICAL_ANALYSIS_DEEP_DIVE.md) | Technical architecture deep dive |
+
+### `docs/deployment/` - Production Deployment
+
+| Document | Purpose |
+|----------|---------|
+| [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md) | Pre-deployment checklist |
+| [DEPLOYMENT_PLAN.md](./DEPLOYMENT_PLAN.md) | Deployment strategy |
+| [DEPLOYMENT_QUICK_REFERENCE.md](./DEPLOYMENT_QUICK_REFERENCE.md) | Quick deployment commands |
+| [DEPLOYMENT_SUMMARY_20260127.md](./DEPLOYMENT_SUMMARY_20260127.md) | Jan 27 deployment report |
+| [DEPLOYMENT_TROUBLESHOOTING_REALWORLD.md](./DEPLOYMENT_TROUBLESHOOTING_REALWORLD.md) | Real-world troubleshooting |
+| [DEVOPS_QUICK_START.md](./DEVOPS_QUICK_START.md) | DevOps quick start |
+| [DOCKER_COMPOSE_SETUP.md](./DOCKER_COMPOSE_SETUP.md) | Docker Compose configuration |
+| [DOCKER_OPERATIONS.md](./DOCKER_OPERATIONS.md) | Container operations guide |
+| [ENV_MANAGEMENT.md](./ENV_MANAGEMENT.md) | Environment variables |
+| [nginx-wasm-config.md](./nginx-wasm-config.md) | Nginx WASM configuration |
+| [NGINX_SETUP_DETAILED.md](./NGINX_SETUP_DETAILED.md) | Complete nginx setup |
+| [PRODUCTION_ISSUES_AND_FIXES.md](./PRODUCTION_ISSUES_AND_FIXES.md) | Production lessons learned |
+| [ROOTLESS_DOCKER_SETUP.md](./ROOTLESS_DOCKER_SETUP.md) | Rootless Docker guide |
+| [UPDATE_STRATEGY.md](./UPDATE_STRATEGY.md) | Zero-downtime updates |
+
+### `docs/planning/` - Project Planning
+
+| Document | Purpose |
+|----------|---------|
+| [CURRENT_PROJECT_STATUS_JAN_26_2026.md](./CURRENT_PROJECT_STATUS_JAN_26_2026.md) | Detailed status (Jan 26) |
+
+### `docs/testing/` - Quality Assurance
+
+| Document | Purpose |
+|----------|---------|
+| [E2E_TESTING_GUIDE.md](./E2E_TESTING_GUIDE.md) | Playwright E2E test guide |
+| [e2e-auth-flow.sh](./e2e-auth-flow.sh) | Auth flow test script |
+| [frontend-integration-test-plan.sh](./frontend-integration-test-plan.sh) | Frontend test plan |
+
+### `docs/quality/` - Code Quality
+
+| Document | Purpose |
+|----------|---------|
+| [MARKDOWN_LINT_REPORT.md](./MARKDOWN_LINT_REPORT.md) | Markdown linting results |
 
 ---
 
-### Jste Technical Decision Maker (CTO, Tech Lead)?
+## 📊 Document Categories
 
-👉 **Čtěte:** [TECHNICAL_ANALYSIS_DEEP_DIVE.md](./TECHNICAL_ANALYSIS_DEEP_DIVE.md)
+### 🔴 Critical - Read First
+1. [FINAL_STATUS_REPORT_v26.1.27.md](../FINAL_STATUS_REPORT_v26.1.27.md) - **Overall project status**
+2. [MANAGEMENT_QUICK_REFERENCE.md](./MANAGEMENT_QUICK_REFERENCE.md) - **Executive summary**
+3. [DEVELOPER_GUIDE.md](../DEVELOPER_GUIDE.md) - **Developer onboarding**
 
-- Architecture (Controller-based, not minimal API)
-- Security analysis (JWT, encryption, CORS)
-- Scalability approach (Redis cache, EF optimization)
-- Technology stack rationale (.NET 9, Blazor WASM)
-- ⏱️ Čas na čtení: **60-90 minut**
-- 🎓 Technické znalosti: .NET, Blazor, PostgreSQL, DevOps
+### 🟡 Important - Context & Setup
+1. [SETUP_GUIDE.md](../SETUP_GUIDE.md) - Local environment setup
+2. [DEPLOYMENT_SUMMARY_20260127.md](../deployment/DEPLOYMENT_SUMMARY_20260127.md) - Production deployment
+3. [MUDBLAZOR_GUIDE.md](../MUDBLAZOR_GUIDE.md) - Frontend development standards
 
----
-
-### Jste Product Manager / Product Owner?
-
-👉 **Čtěte:** [FEATURE_STATUS_AND_ROADMAP.md](./FEATURE_STATUS_AND_ROADMAP.md) (UPDATED)
-
-- **MVP Feature Matrix:** 8/8 features complete with delivery dates
-- Roadmap (v1.1+): Apple Music, YouTube Music, Mobile PWA
-- Detailed implementation status for each feature
-- Timeline & effort estimates
-- **⏱️ Čas na čtení: 60-90 minut**
-- 🎓 Technické znalosti: Project management
-
-### Potřebujete Rychlý Přehled?
-
-👉 **Čtěte:** [ANALYSIS_SUMMARY.md](./ANALYSIS_SUMMARY.md)
-
-- Jednosloupcový přehled všech analýz
-- Klíčová čísla a metriky
-- Doporučené akční body
-- Referenční tabulky
-- ⏱️ Čas na čtení: **15-20 minut**
-- 🎓 Technické znalosti potřebné: Základní
+### 🟢 Reference - Deep Dives
+1. [TECHNICAL_ANALYSIS_DEEP_DIVE.md](./TECHNICAL_ANALYSIS_DEEP_DIVE.md) - Architecture details
+2. [FEATURE_STATUS_AND_ROADMAP.md](./FEATURE_STATUS_AND_ROADMAP.md) - Product roadmap
+3. [CODE_REVIEW_PLAN.md](../CODE_REVIEW_PLAN.md) - Code quality initiatives
 
 ---
 
-## 📊 Podrobný Obsah Jednotlivých Dokumentů
+## 🗂️ Archived / Superseded Documents
 
-### 1. EXECUTIVE_SUMMARY_MANAGEMENT_REPORT.md
+**Note:** The following categories have been cleaned up:
+- ❌ `docs/actions/` - Sprint completion reports (deleted - superseded by FINAL_STATUS_REPORT)
+- ❌ Old UX/UI planning docs (deleted - features now in production)
+- ❌ Old E2E test execution reports (deleted - tests integrated in CI)
+- ❌ Duplicate "lite" deployment docs (deleted - kept full versions only)
 
-**Pro Management & Business Decisions**
+---
 
-#### Sekce
+## 📅 Document Update Schedule
 
-```text
-✓ Výkonný Souhrn                  Co je MIMM 2.0 pro lidi mimo IT
-✓ Aktuální Stav                   Kolik je hotovo, kolik zbývá
-✓ Investice Dosavadní             Co bylo už uděláno
-✓ Odhady Času                      Junior (440h) vs Senior (170h)
+| Document Type | Update Frequency |
+|---------------|------------------|
+| Status Reports | After each major milestone |
+| Deployment Guides | After production changes |
+| Technical Analysis | Quarterly or when architecture changes |
+| Roadmap Documents | Monthly or when priorities shift |
+| Developer Guides | On significant codebase changes |
+
+---
+
+## 🔍 Search Tips
+
+**Looking for specific information?**
+- **Build errors?** → [CODE_REVIEW_PLAN.md](../CODE_REVIEW_PLAN.md)
+- **Deployment issues?** → [PRODUCTION_ISSUES_AND_FIXES.md](../deployment/PRODUCTION_ISSUES_AND_FIXES.md)
+- **Frontend styling?** → [MUDBLAZOR_GUIDE.md](../MUDBLAZOR_GUIDE.md)
+- **Testing strategies?** → [E2E_TESTING_GUIDE.md](../testing/E2E_TESTING_GUIDE.md)
+- **Business metrics?** → [MANAGEMENT_STATUS_REPORT_JAN_2026.md](./MANAGEMENT_STATUS_REPORT_JAN_2026.md)
+
+---
+
+**Last Cleanup:** January 28, 2026  
+**Documentation Maintainer:** MIMM-Expert-Agent  
+**Project Version:** v2.0.0-production 🚀
 ✓ Porovnání Junior vs Senior       Tabulka efektivity
 ✓ Ekonomická Perspektiva           Náklady v CZK, ROI
 ✓ Co Bylo Zatím Uděláno          5 modulů - hotovost na %

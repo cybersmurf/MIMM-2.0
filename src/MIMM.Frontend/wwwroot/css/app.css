@@ -184,3 +184,53 @@ body {
     padding: var(--space-6);
   }
 }
+
+/* ==================== DASHBOARD PAGE STYLES ==================== */
+
+/* Animation utilities - reusable animations */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+/* Global Utility Classes */
+.skeleton-shimmer {
+    border-radius: var(--radius-2xl);
+    animation: shimmer 2s infinite;
+}
+
