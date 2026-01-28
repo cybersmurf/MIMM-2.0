@@ -61,7 +61,7 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.FromSeconds(10)
     };
 
-    // SignalR support
+    // SignalR support + Detailed JWT validation logging
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
@@ -72,6 +72,20 @@ builder.Services.AddAuthentication(options =>
             {
                 context.Token = accessToken;
             }
+            return Task.CompletedTask;
+        },
+        OnAuthenticationFailed = context =>
+        {
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogWarning("JWT Authentication failed: {Exception}", context.Exception.Message);
+            logger.LogWarning("Token: {Token}", context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "").Substring(0, Math.Min(50, context.Request.Headers["Authorization"].ToString().Length)));
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            var claims = context.Principal?.Claims.Select(c => $"{c.Type}={c.Value}");
+            logger.LogInformation("JWT Token validated successfully. Claims: {Claims}", string.Join(", ", claims ?? new[] { "none" }));
             return Task.CompletedTask;
         }
     };
