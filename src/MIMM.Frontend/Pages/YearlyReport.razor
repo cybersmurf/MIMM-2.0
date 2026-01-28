@@ -5,10 +5,12 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
-<PageTitle>Annual Report - Music & Mood Journal</PageTitle>
+<PageTitle>Annual Report @Year - MIMM</PageTitle>
+
+<LiveRegion Message="@_liveMessage" AriaLive="polite" />
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-8">
-    <MudStack Spacing="3">
+    <MudStack Spacing="4">
         <!-- Header -->
         <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
             <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@GoBack" Color="Color.Default" />
@@ -23,118 +25,160 @@
         @if (_isLoading)
         {
             <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="py-8">
-                <MudProgressCircular Indeterminate />
+                <MudProgressCircular Indeterminate Color="Color.Primary" />
                 <MudText>Loading annual report...</MudText>
             </MudStack>
         }
         <!-- Empty State -->
         else if (_report == null)
         {
-            <MudPaper Class="pa-8" Outlined>
-                <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center">
-                    No data available for @Year
-                </MudText>
-            </MudPaper>
+            <MudCard Elevation="0" Class="glass-card">
+                <MudCardContent Class="pa-8">
+                    <MudStack AlignItems="AlignItems.Center" Spacing="2">
+                        <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Color="Color.Secondary" Size="Size.Large" />
+                        <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center">
+                            No data available for @Year
+                        </MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Secondary" Align="Align.Center">
+                            Create some entries to see your annual report
+                        </MudText>
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
         }
         <!-- Report Content -->
         else if (_report != null)
         {
             <!-- Summary Stats -->
-            <MudGrid>
-                <MudItem xs="12" sm="6" md="3">
-                    <MudPaper Class="pa-4" Outlined>
-                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
-                            <MudIcon Icon="@Icons.Material.Filled.LibraryMusic" Size="Size.Large" Color="Color.Primary" />
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">Total Entries</MudText>
-                            <MudText Typo="Typo.h5">@_report!.TotalEntries</MudText>
-                        </MudStack>
-                    </MudPaper>
+            <MudGrid Spacing="3">
+                <MudItem xs="6" sm="6" md="3">
+                    <MudCard Elevation="0" Class="glass-card card-hover-subtle">
+                        <MudCardContent>
+                            <MudStack Spacing="2" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="@Icons.Material.Filled.LibraryMusic" Size="Size.Large" Color="Color.Primary" />
+                                <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Total Entries</MudText>
+                                    <MudText Typo="Typo.h5">@_report!.TotalEntries</MudText>
+                                </MudStack>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
                 </MudItem>
 
-                <MudItem xs="12" sm="6" md="3">
-                    <MudPaper Class="pa-4" Outlined>
-                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
-                            <MudIcon Icon="@Icons.Material.Filled.SentimentSatisfied" Size="Size.Large" Color="Color.Success" />
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">Avg Valence</MudText>
-                            <MudText Typo="Typo.h5">@_report!.AverageValence.ToString("F2")</MudText>
-                        </MudStack>
-                    </MudPaper>
+                <MudItem xs="6" sm="6" md="3">
+                    <MudCard Elevation="0" Class="glass-card card-hover-subtle">
+                        <MudCardContent>
+                            <MudStack Spacing="2" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="@Icons.Material.Filled.SentimentSatisfied" Size="Size.Large" Color="Color.Success" />
+                                <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Avg Valence</MudText>
+                                    <MudText Typo="Typo.h5">@_report!.AverageValence.ToString("F2")</MudText>
+                                </MudStack>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
                 </MudItem>
 
-                <MudItem xs="12" sm="6" md="3">
-                    <MudPaper Class="pa-4" Outlined>
-                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
-                            <MudIcon Icon="@Icons.Material.Filled.ElectricBolt" Size="Size.Large" Color="Color.Warning" />
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">Avg Arousal</MudText>
-                            <MudText Typo="Typo.h5">@_report!.AverageArousal.ToString("F2")</MudText>
-                        </MudStack>
-                    </MudPaper>
+                <MudItem xs="6" sm="6" md="3">
+                    <MudCard Elevation="0" Class="glass-card card-hover-subtle">
+                        <MudCardContent>
+                            <MudStack Spacing="2" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="@Icons.Material.Filled.ElectricBolt" Size="Size.Large" Color="Color.Warning" />
+                                <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Avg Arousal</MudText>
+                                    <MudText Typo="Typo.h5">@_report!.AverageArousal.ToString("F2")</MudText>
+                                </MudStack>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
                 </MudItem>
 
-                <MudItem xs="12" sm="6" md="3">
-                    <MudPaper Class="pa-4" Outlined>
-                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
-                            <MudIcon Icon="@Icons.Material.Filled.DateRange" Size="Size.Large" Color="Color.Info" />
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">Avg per Month</MudText>
-                            <MudText Typo="Typo.h5">@((_report!.TotalEntries / (double)(_report!.MonthlyStats?.Count ?? 1)).ToString("F1"))</MudText>
-                        </MudStack>
-                    </MudPaper>
+                <MudItem xs="6" sm="6" md="3">
+                    <MudCard Elevation="0" Class="glass-card card-hover-subtle">
+                        <MudCardContent>
+                            <MudStack Spacing="2" AlignItems="AlignItems.Center">
+                                <MudIcon Icon="@Icons.Material.Filled.DateRange" Size="Size.Large" Color="Color.Info" />
+                                <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Avg per Month</MudText>
+                                    <MudText Typo="Typo.h5">@((_report!.TotalEntries / (double)(_report!.MonthlyStats?.Count ?? 1)).ToString("F1"))</MudText>
+                                </MudStack>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
                 </MudItem>
             </MudGrid>
 
             <!-- Top Artists -->
             @if (_report!.TopArtists?.Count > 0)
             {
-                <MudPaper Class="pa-6" Outlined>
-                    <MudText Typo="Typo.h6" Class="mb-4">Top Artists</MudText>
-                    <MudGrid>
-                        @foreach (var artist in _report.TopArtists.Take(10))
-                        {
-                            <MudItem xs="12" sm="6" md="4">
-                                <MudCard>
-                                    <MudCardContent>
-                                        <MudStack Spacing="2">
-                                            <MudText Typo="Typo.body2" Style="font-weight: 600;">@artist.Name</MudText>
-                                            <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
-                                                <MudIcon Icon="@Icons.Material.Filled.LibraryMusic" Size="Size.Small" />
-                                                <MudText Typo="Typo.caption">@artist.Count entries</MudText>
-                                            </MudStack>
-                                            <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
-                                                <MudIcon Icon="@Icons.Material.Filled.SentimentSatisfied" Size="Size.Small" />
-                                                <MudText Typo="Typo.caption">Mood: @artist.AverageMoodValence.ToString("F2")</MudText>
-                                            </MudStack>
-                                        </MudStack>
-                                    </MudCardContent>
-                                </MudCard>
-                            </MudItem>
-                        }
-                    </MudGrid>
-                </MudPaper>
+                <MudCard Elevation="0" Class="glass-card">
+                    <MudCardContent>
+                        <MudStack Spacing="3">
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" Size="Size.Large" />
+                                <MudText Typo="Typo.subtitle1">Top Artists</MudText>
+                                <MudSpacer />
+                                <MudChip T="string" Size="Size.Small" Color="Color.Primary">@_report.TopArtists.Count artists</MudChip>
+                            </MudStack>
+                            <MudGrid Spacing="2">
+                                @foreach (var artist in _report.TopArtists.Take(10))
+                                {
+                                    <MudItem xs="12" sm="6" md="4">
+                                        <MudCard Outlined>
+                                            <MudCardContent>
+                                                <MudStack Spacing="2">
+                                                    <MudText Typo="Typo.body2" Style="font-weight: 600;">@artist.Name</MudText>
+                                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                                                        <MudIcon Icon="@Icons.Material.Filled.LibraryMusic" Size="Size.Small" Color="Color.Primary" />
+                                                        <MudText Typo="Typo.caption">@artist.Count entries</MudText>
+                                                    </MudStack>
+                                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+                                                        <MudIcon Icon="@Icons.Material.Filled.SentimentSatisfied" Size="Size.Small" Color="Color.Success" />
+                                                        <MudText Typo="Typo.caption">Mood: @artist.AverageMoodValence.ToString("F2")</MudText>
+                                                    </MudStack>
+                                                </MudStack>
+                                            </MudCardContent>
+                                        </MudCard>
+                                    </MudItem>
+                                }
+                            </MudGrid>
+                        </MudStack>
+                    </MudCardContent>
+                </MudCard>
             }
 
             <!-- Top Songs -->
             @if (_report.TopSongs?.Count > 0)
             {
-                <MudPaper Class="pa-6" Outlined>
-                    <MudText Typo="Typo.h6" Class="mb-4">Top Songs</MudText>
-                    <MudList T="TopSongDto" Dense>
-                        @foreach (var song in _report.TopSongs.Take(10))
-                        {
-                            <MudListItem T="TopSongDto">
-                                <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Style="width: 100%;">
-                                    <MudIcon Icon="@Icons.Material.Filled.MusicNote" />
-                                    <MudStack Spacing="0" Style="flex: 1;">
-                                        <MudText Typo="Typo.body2">@song.Title</MudText>
-                                        <MudText Typo="Typo.caption" Color="Color.Secondary">@song.Artist</MudText>
-                                    </MudStack>
-                                    <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.LibraryMusic">
-                                        @song.Count plays
-                                    </MudChip>
-                                </MudStack>
-                            </MudListItem>
-                        }
-                    </MudList>
-                </MudPaper>
+                <MudCard Elevation="0" Class="glass-card">
+                    <MudCardContent>
+                        <MudStack Spacing="3">
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.MusicNote" Color="Color.Success" Size="Size.Large" />
+                                <MudText Typo="Typo.subtitle1">Top Songs</MudText>
+                                <MudSpacer />
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success">@_report.TopSongs.Count songs</MudChip>
+                            </MudStack>
+                            <MudList T="TopSongDto" Dense>
+                                @foreach (var song in _report.TopSongs.Take(10))
+                                {
+                                    <MudListItem T="TopSongDto">
+                                        <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Style="width: 100%;">
+                                            <MudIcon Icon="@Icons.Material.Filled.MusicNote" Color="Color.Success" />
+                                            <MudStack Spacing="0" Style="flex: 1;">
+                                                <MudText Typo="Typo.body2">@song.Title</MudText>
+                                                <MudText Typo="Typo.caption" Color="Color.Secondary">@song.Artist</MudText>
+                                            </MudStack>
+                                            <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.PlayArrow" Color="Color.Info">
+                                                @song.Count
+                                            </MudChip>
+                                        </MudStack>
+                                    </MudListItem>
+                                }
+                            </MudList>
+                        </MudStack>
+                    </MudCardContent>
+                </MudCard>
             }
 
             <!-- Generated timestamp -->
@@ -146,6 +190,8 @@
 </MudContainer>
 
 @code {
+    private string? _liveMessage;
+    
     [Parameter]
     public int Year { get; set; } = DateTime.Now.Year;
 
@@ -189,3 +235,20 @@
         NavigationManager.NavigateTo("/analytics");
     }
 }
+
+<style>
+.glass-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+}
+
+.card-hover-subtle {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card-hover-subtle:hover {
+    transform: translateY(-2px);
+}
+</style>
