@@ -327,11 +327,12 @@ public class AuthService : IAuthService
 
         try
         {
-            var jwtKey = _configuration["Jwt:Key"]
+            // Use environment variables first (Docker production), fallback to appsettings
+            var jwtKey = _configuration["JWT_SECRET_KEY"] ?? _configuration["Jwt:Key"]
                 ?? throw new InvalidOperationException("JWT Key not configured");
-            var jwtIssuer = _configuration["Jwt:Issuer"]
+            var jwtIssuer = _configuration["JWT_ISSUER"] ?? _configuration["Jwt:Issuer"]
                 ?? throw new InvalidOperationException("JWT Issuer not configured");
-            var jwtAudience = _configuration["Jwt:Audience"]
+            var jwtAudience = _configuration["JWT_AUDIENCE"] ?? _configuration["Jwt:Audience"]
                 ?? throw new InvalidOperationException("JWT Audience not configured");
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -391,11 +392,12 @@ public class AuthService : IAuthService
     /// </summary>
     private (string AccessToken, DateTime ExpiresAt) GenerateAccessToken(User user)
     {
-        var jwtKey = _configuration["Jwt:Key"]
+        // Use environment variables first (Docker production), fallback to appsettings
+        var jwtKey = _configuration["JWT_SECRET_KEY"] ?? _configuration["Jwt:Key"]
             ?? throw new InvalidOperationException("JWT Key not configured");
-        var jwtIssuer = _configuration["Jwt:Issuer"]
+        var jwtIssuer = _configuration["JWT_ISSUER"] ?? _configuration["Jwt:Issuer"]
             ?? throw new InvalidOperationException("JWT Issuer not configured");
-        var jwtAudience = _configuration["Jwt:Audience"]
+        var jwtAudience = _configuration["JWT_AUDIENCE"] ?? _configuration["Jwt:Audience"]
             ?? throw new InvalidOperationException("JWT Audience not configured");
         var expirationMinutes = _configuration.GetValue<int>("Jwt:AccessTokenExpirationMinutes", 60);
 
