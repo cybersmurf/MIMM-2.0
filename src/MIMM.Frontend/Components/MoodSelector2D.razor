@@ -1,46 +1,61 @@
 @using Microsoft.AspNetCore.Components.Web
-@inject IJSRuntime JSRuntime
 
 <MudStack Spacing="1">
     <MudText Typo="Typo.subtitle2">Mood (Russell 2D)</MudText>
-    <MudPaper Class="mood-plane" 
-              Elevation="2" 
-              style="@($"width:{Size}px;height:{Size}px;")"
-              role="slider"
-              aria-label="Mood selector: valence (left/right) and arousal (up/down)"
-              aria-valuemin="-1"
-              aria-valuemax="1"
-              aria-valuenow="@Valence.ToString("F2")"
-              tabindex="0"
-              @onpointerdown="OnPointerDown"
-              @onpointermove="OnPointerMove"
-              @onpointerup="StopDragging"
-              @onpointerleave="StopDragging"
-              @ontouchstart="OnTouchStart"
-              @ontouchmove="OnTouchMove"
-              @ontouchend="OnTouchEnd"
-              @onkeydown="HandleKeyDown"
-              id="mood-plane-container">
-        <div class="axis-label axis-label-x-left">Negative valence</div>
-        <div class="axis-label axis-label-x-right">Positive valence</div>
-        <div class="axis-label axis-label-y-top">High arousal</div>
-        <div class="axis-label axis-label-y-bottom">Low arousal</div>
-
-        <div class="grid">
-            <div class="grid-line vertical" style="left:25%"></div>
-            <div class="grid-line vertical" style="left:50%"></div>
-            <div class="grid-line vertical" style="left:75%"></div>
-            <div class="grid-line horizontal" style="top:25%"></div>
-            <div class="grid-line horizontal" style="top:50%"></div>
-            <div class="grid-line horizontal" style="top:75%"></div>
-        </div>
-
-        <div class="cursor" style="left:@CursorLeft%; top:@CursorTop%"></div>
-
-        <MudChip T="string" Class="label-chip" Color="Color.Primary" Variant="Variant.Filled">
+    
+    <svg width="@Size" height="@Size" 
+         class="mood-selector-svg"
+         role="slider"
+         aria-label="Mood selector: valence (left/right) and arousal (up/down)"
+         aria-valuemin="-1"
+         aria-valuemax="1"
+         aria-valuenow="@Valence.ToString("F2")"
+         tabindex="0"
+         @onpointerdown="OnSvgPointerDown"
+         @onpointermove="OnSvgPointerMove"
+         @onpointerup="StopDragging"
+         @onpointerleave="StopDragging"
+         @ontouchstart="OnSvgTouchStart"
+         @ontouchmove="OnSvgTouchMove"
+         @ontouchend="OnTouchEnd"
+         @onkeydown="HandleKeyDown"
+         style="cursor: crosshair; border-radius: 12px; overflow: hidden;">
+        
+        <!-- Background -->
+        <defs>
+            <radialGradient id="bgGradient" cx="50%" cy="50%">
+                <stop offset="0%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgba(0,0,0,0.05);stop-opacity:1" />
+            </radialGradient>
+        </defs>
+        <rect width="@Size" height="@Size" fill="url(#bgGradient)" />
+        
+        <!-- Grid lines -->
+        @for (int i = 1; i <= 3; i++)
+        {
+            int x = (Size / 4) * i;
+            int y = (Size / 4) * i;
+            <line x1="@x" y1="0" x2="@x" y2="@Size" stroke="rgba(0,0,0,0.1)" stroke-width="1" />
+            <line x1="0" y1="@y" x2="@Size" y2="@y" stroke="rgba(0,0,0,0.1)" stroke-width="1" />
+        }
+        
+        <!-- Axis labels -->
+        <text x="8" y="@(Size/2 + 4)" font-size="12" fill="rgba(0,0,0,0.6)">Negative</text>
+        <text x="@(Size - 68)" y="@(Size/2 + 4)" font-size="12" fill="rgba(0,0,0,0.6)" text-anchor="end">Positive</text>
+        <text x="@(Size/2)" y="16" font-size="12" fill="rgba(0,0,0,0.6)" text-anchor="middle">High arousal</text>
+        <text x="@(Size/2)" y="@(Size - 8)" font-size="12" fill="rgba(0,0,0,0.6)" text-anchor="middle">Low arousal</text>
+        
+        <!-- Cursor circle -->
+        <circle cx="@CursorX" cy="@CursorY" r="10" fill="white" stroke="rgb(59,130,246)" stroke-width="3" 
+                style="pointer-events: none; filter: drop-shadow(0 0 6px rgba(0,0,0,0.12));" />
+        
+        <!-- Mood label background -->
+        <rect x="8" y="8" width="200" height="28" rx="6" fill="rgb(59,130,246)" opacity="0.9" />
+        <text x="18" y="28" font-size="14" font-weight="bold" fill="white" font-family="Roboto, sans-serif">
             @MoodLabel (V @Valence.ToString("F2"), A @Arousal.ToString("F2"))
-        </MudChip>
-    </MudPaper>
+        </text>
+    </svg>
+    
     <MudText Typo="Typo.caption" Color="Color.Secondary">
         Click or drag to set mood. Use arrow keys: ← → for valence, ↑ ↓ for arousal. Center is neutral; top-right is happy/energized; bottom-left is sad/calm.
     </MudText>
@@ -67,11 +82,42 @@
 
     private bool _isDragging;
 
-    private double CursorLeft => Math.Clamp((Valence + 1) / 2 * 100, 0, 100);
-    private double CursorTop => Math.Clamp(0.5 * (1 - Arousal) * 100, 0, 100);
+    // Direct SVG coordinates (px)
+    private double CursorX => ((Valence + 1) / 2) * Size;
+    private double CursorY => ((1 - Arousal) / 2) * Size;
 
-    // Touch event handlers
-    private async Task OnTouchStart(TouchEventArgs e)
+    private async Task OnSvgPointerDown(PointerEventArgs e)
+    {
+        _isDragging = true;
+        await UpdateFromSvgPointerAsync(e);
+    }
+
+    private async Task OnSvgPointerMove(PointerEventArgs e)
+    {
+        if (!_isDragging)
+            return;
+
+        await UpdateFromSvgPointerAsync(e);
+    }
+
+    private void StopDragging(PointerEventArgs _)
+    {
+        _isDragging = false;
+    }
+
+    private async Task UpdateFromSvgPointerAsync(PointerEventArgs e)
+    {
+        // Blazor SVG events already give us correct offsetX/Y relative to SVG
+        var x = Math.Clamp(e.OffsetX, 0, Size);
+        var y = Math.Clamp(e.OffsetY, 0, Size);
+
+        var valence = Math.Clamp((x / Size) * 2 - 1, -1, 1);
+        var arousal = Math.Clamp(1 - (y / Size) * 2, -1, 1);
+
+        await SetValuesAsync(valence, arousal);
+    }
+
+    private async Task OnSvgTouchStart(TouchEventArgs e)
     {
         if (e.Touches.Length > 0)
         {
@@ -80,7 +126,7 @@
         }
     }
 
-    private async Task OnTouchMove(TouchEventArgs e)
+    private async Task OnSvgTouchMove(TouchEventArgs e)
     {
         if (!_isDragging || e.Touches.Length == 0)
             return;
@@ -91,6 +137,19 @@
     private void OnTouchEnd(TouchEventArgs e)
     {
         _isDragging = false;
+    }
+
+    private async Task UpdateFromTouchAsync(TouchPoint touch)
+    {
+        // For touch, we need to calculate relative position
+        // This is a simplified approach - in production you'd want JS interop for getBoundingClientRect
+        var x = Math.Clamp(touch.ClientX, 0, Size);
+        var y = Math.Clamp(touch.ClientY, 0, Size);
+
+        var valence = Math.Clamp((x / Size) * 2 - 1, -1, 1);
+        var arousal = Math.Clamp(1 - (y / Size) * 2, -1, 1);
+
+        await SetValuesAsync(valence, arousal);
     }
 
     // Keyboard navigation (arrow keys for accessibility)
@@ -125,72 +184,6 @@
         {
             await SetValuesAsync(newValence, newArousal);
         }
-    }
-
-    private async Task OnPointerDown(PointerEventArgs e)
-    {
-        _isDragging = true;
-        await UpdateFromPointerAsync(e);
-    }
-
-    private async Task OnPointerMove(PointerEventArgs e)
-    {
-        if (!_isDragging)
-        {
-            return;
-        }
-
-        await UpdateFromPointerAsync(e);
-    }
-
-    private void StopDragging(PointerEventArgs _)
-    {
-        _isDragging = false;
-    }
-
-    private async Task UpdateFromPointerAsync(PointerEventArgs e)
-    {
-        try
-        {
-            // Get the actual position relative to the mood-plane container using JavaScript
-            var position = await JSRuntime.InvokeAsync<double[]>("getRelativePositionById", "mood-plane-container", e.ClientX, e.ClientY);
-            
-            if (position == null || position.Length < 2)
-                return;
-
-            var x = Math.Clamp(position[0], 0, Size);
-            var y = Math.Clamp(position[1], 0, Size);
-
-            var valence = Math.Clamp((x / Size) * 2 - 1, -1, 1);
-            var arousal = Math.Clamp(1 - (y / Size) * 2, -1, 1);
-
-            await SetValuesAsync(valence, arousal);
-        }
-        catch
-        {
-            // Fallback to OffsetX/Y if JS interop fails
-            var x = Math.Clamp(e.OffsetX, 0, Size);
-            var y = Math.Clamp(e.OffsetY, 0, Size);
-
-            var valence = Math.Clamp((x / Size) * 2 - 1, -1, 1);
-            var arousal = Math.Clamp(1 - (y / Size) * 2, -1, 1);
-
-            await SetValuesAsync(valence, arousal);
-        }
-    }
-
-    private async Task UpdateFromTouchAsync(TouchPoint touch)
-    {
-        // For touch events, we need to handle clientX/Y differently
-        // This is a simplified implementation; in production you'd get the bounding rect
-        var x = touch.ClientX;
-        var y = touch.ClientY;
-
-        // Approximate positioning (would need actual element bounds in production)
-        var valence = Math.Clamp((x / Size) * 2 - 1, -1, 1);
-        var arousal = Math.Clamp(1 - (y / Size) * 2, -1, 1);
-
-        await SetValuesAsync(valence, arousal);
     }
 
     private async Task SetValuesAsync(double valence, double arousal)
@@ -231,3 +224,4 @@
         _ => "Neutral"
     };
 }
+

@@ -9,11 +9,11 @@ window.getRelativePositionById = function(elementId, clientX, clientY) {
     const element = document.getElementById(elementId);
     if (!element) {
         console.error('Element not found:', elementId);
-        return [0, 0];
+        return [0, 0, 0, 0];
     }
     
     const rect = element.getBoundingClientRect();
     const x = clientX - rect.left;
     const y = clientY - rect.top;
-    return [x, y];
+    return [x, y, rect.width, rect.height];
 };
