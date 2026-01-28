@@ -7,9 +7,10 @@
 [![Coverage](https://codecov.io/gh/cybersmurf/MIMM-2.0/branch/main/graph/badge.svg)](https://codecov.io/gh/cybersmurf/MIMM-2.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-9.0-purple)](https://dotnet.microsoft.com/)
+[![Production](https://img.shields.io/badge/Production-LIVE-brightgreen)](https://musicinmymind.app)
 
-**Project Status:** ✅ **97% COMPLETE** – All UX/UI done, CI fixed, E2E ready
-| Build: ✅ 0 errors | Tests: ✅ 45/45 | Markdown: ✅ 0 errors | Target: 6 Feb 2026
+**Project Status:** 🚀 **PRODUCTION v2.0.0** – Deployed and operational on VPS!
+| Build: ✅ 0 errors | Tests: ✅ 45/45 | Deployment: ✅ LIVE | [Demo](https://musicinmymind.app)
 
 ---
 

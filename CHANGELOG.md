@@ -2,6 +2,64 @@
 
 Všechny významné změny v tomto demo projektu budou zaznamenány v tomto souboru.
 
+## [v2.0.0-production] - 28. ledna 2026 🎉 FIRST WORKING PRODUCTION DEPLOYMENT
+
+### 🚀 Major Achievement
+
+**Application successfully deployed and fully operational on VPS!**
+
+- ✅ Backend API running on Docker (PostgreSQL + Redis)
+- ✅ Frontend Blazor WASM served via Nginx with HTTPS
+- ✅ JWT Authentication working end-to-end
+- ✅ All protected API endpoints responding correctly
+- ✅ Database migrations applied automatically
+- ✅ WASM streaming instantiation enabled (nginx optimized)
+
+### Critical Fixes - Authentication Flow (Day 2)
+
+**JWT Configuration Key Mismatch** ✅ RESOLVED
+- **Problem**: AuthService.GenerateAccessToken() used `Jwt:Key` but Program.cs validation used `JWT_SECRET_KEY`
+- **Impact**: Tokens generated with wrong key/issuer → 401 on all authenticated requests
+- **Solution**: Updated AuthService to check environment variables first (Docker production)
+  - `GenerateAccessToken()`: Now uses `JWT_SECRET_KEY` → `Jwt:Key` fallback
+  - `VerifyTokenAsync()`: Same pattern applied
+- **Files**: `src/MIMM.Backend/Services/AuthService.cs`
+- **Commit**: `dedc2e1`
+- **Result**: All protected endpoints (entries, analytics, notifications) now return 200 OK
+
+**Nginx WASM Content-Type** ✅ RESOLVED
+- **Problem**: WASM files served as `text/html` → slower ArrayBuffer instantiation
+- **Solution**: Added explicit `default_type application/wasm` location blocks
+  - Support for `.wasm`, `.wasm.br` (Brotli), `.wasm.gz` (Gzip)
+  - Rules placed before `_framework/` to avoid conflicts
+- **Result**: WebAssembly streaming instantiation enabled, console warnings eliminated
+- **Documentation**: `docs/deployment/nginx-wasm-config.md`
+- **Commit**: `5db99da`
+
+### Production Environment
+
+- **VPS**: Ubuntu 24.04, Docker rootless
+- **Domain**: https://musicinmymind.app (frontend), https://api.musicinmymind.app (backend)
+- **SSL**: Let's Encrypt (auto-renewal configured)
+- **Database**: PostgreSQL 16 (persistent volume)
+- **Cache**: Redis 7
+- **Reverse Proxy**: Nginx 1.24
+
+### Test Results
+
+```bash
+✓ POST /api/auth/login → 200 OK (JWT issued)
+✓ GET  /api/entries → 200 OK (authenticated)
+✓ GET  /api/analytics/music-stats → 200 OK
+✓ GET  /api/analytics/mood-trends → 200 OK
+✓ GET  /api/notification → 200 OK
+✓ GET  /api/friends → 200 OK
+```
+
+### Known Issues
+
+- None critical - application fully operational
+
 ## [v26.1.29] - 27. ledna 2026 (Production Fix - Registration & Docker Cache)
 
 ### Critical Fixes
