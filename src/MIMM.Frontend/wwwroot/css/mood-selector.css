@@ -10,8 +10,9 @@
     min-height: 280px;
     aspect-ratio: 1 / 1;
     border-radius: 12px;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), rgba(0,0,0,0.05)),
-                linear-gradient(135deg, rgba(34,197,94,0.12), rgba(59,130,246,0.12));
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15), rgba(0,0,0,0.08)),
+                linear-gradient(135deg, rgba(34,197,94,0.15), rgba(59,130,246,0.15));
+    border: 1px solid rgba(255,255,255,0.2);
     overflow: hidden;
     user-select: none;
     cursor: crosshair;
@@ -21,9 +22,9 @@
 
 /* Light mode mood plane */
 [data-theme="light"] .mood-plane {
-    background: radial-gradient(circle at 50% 50%, rgba(59,130,246,0.08), rgba(255,255,255,0.02)),
-                linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.08));
-    border: 1px solid rgba(0,0,0,0.08);
+    background: radial-gradient(circle at 50% 50%, rgba(59,130,246,0.12), rgba(255,255,255,0.03)),
+                linear-gradient(135deg, rgba(34,197,94,0.12), rgba(59,130,246,0.12));
+    border: 1px solid rgba(0,0,0,0.12);
 }
 
 /* Responsive sizing for mobile */
@@ -49,13 +50,13 @@
 
 .mood-plane .grid-line {
     position: absolute;
-    background: rgba(0,0,0,0.06);
+    background: rgba(255,255,255,0.15);
     pointer-events: none;
 }
 
 /* Light mode grid lines */
 [data-theme="light"] .mood-plane .grid-line {
-    background: rgba(0,0,0,0.1);
+    background: rgba(0,0,0,0.12);
 }
 
 .mood-plane .grid-line.vertical {
@@ -120,13 +121,13 @@
 .axis-label {
     position: absolute;
     font-size: 0.75rem;
-    color: rgba(0,0,0,0.6);
+    color: var(--color-text-secondary);
     pointer-events: none;
 }
 
 /* Light mode axis labels */
 [data-theme="light"] .axis-label {
-    color: rgba(0,0,0,0.7);
+    color: var(--color-text-secondary);
 }
 
 /* Hide axis labels on very small screens */

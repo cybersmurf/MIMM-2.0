@@ -13,7 +13,7 @@
         <!-- Page Header -->
         <MudStack Spacing="1">
             <MudText Typo="Typo.h4">Friends</MudText>
-            <MudText Typo="Typo.body2" Color="Color.Secondary">
+            <MudText Typo="Typo.body2">
                 Connect with other MIMM users and explore shared musical interests.
             </MudText>
         </MudStack>
@@ -54,7 +54,7 @@
                                 }
                             </MudButton>
 
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                            <MudText Typo="Typo.caption">
                                 <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" />
                                 Enter the email address of another MIMM user to add them as a friend.
                             </MudText>
@@ -80,8 +80,8 @@
                             @if (_pendingRequests.Count == 0)
                             {
                                 <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="pa-4">
-                                    <MudIcon Icon="@Icons.Material.Filled.MarkEmailRead" Color="Color.Secondary" Size="Size.Large" />
-                                    <MudText Typo="Typo.body2" Color="Color.Secondary" Align="Align.Center">
+                                    <MudIcon Icon="@Icons.Material.Filled.MarkEmailRead" Color="Color.Primary" Size="Size.Large" />
+                                    <MudText Typo="Typo.body2" Align="Align.Center">
                                         No pending friend requests.
                                     </MudText>
                                 </MudStack>
@@ -98,7 +98,7 @@
                                                     <MudAvatar Color="Color.Primary">@(request.FriendDisplayName?.FirstOrDefault() ?? 'U')</MudAvatar>
                                                         <MudStack Spacing="0">
                                                             <MudText Typo="Typo.body2">@request.FriendDisplayName</MudText>
-                                                            <MudText Typo="Typo.caption" Color="Color.Secondary">@request.FriendEmail</MudText>
+                                                            <MudText Typo="Typo.caption">@request.FriendEmail</MudText>
                                                         </MudStack>
                                                     </MudStack>
                                                     <MudStack Row Spacing="1">
@@ -152,7 +152,7 @@
                                 <MudText Typo="Typo.body2" Align="Align.Center">
                                 You haven't added any friends yet.
                             </MudText>
-                            <MudText Typo="Typo.caption" Color="Color.Secondary" Align="Align.Center">
+                            <MudText Typo="Typo.caption" Align="Align.Center">
                                 Add your first friend to get started!
                             </MudText>
                         </MudStack>
@@ -170,10 +170,10 @@
                                                     <MudAvatar Color="Color.Primary" Size="Size.Medium">@(friend.FriendDisplayName?.FirstOrDefault() ?? 'U')</MudAvatar>
                                                     <MudStack Spacing="0" Style="flex: 1;">
                                                         <MudText Typo="Typo.body1">@friend.FriendDisplayName</MudText>
-                                                        <MudText Typo="Typo.caption" Color="Color.Secondary">@friend.FriendEmail</MudText>
+                                                        <MudText Typo="Typo.caption">@friend.FriendEmail</MudText>
                                                     </MudStack>
                                                 </MudStack>
-                                                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                                <MudText Typo="Typo.caption">
                                                     <MudIcon Icon="@Icons.Material.Filled.AccessTime" Size="Size.Small" Class="me-1" />
                                                     Since @friend.ConnectedSince.ToString("MMM dd, yyyy")
                                                 </MudText>

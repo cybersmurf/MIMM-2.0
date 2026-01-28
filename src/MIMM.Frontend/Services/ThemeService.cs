@@ -1,4 +1,5 @@
 using Microsoft.JSInterop;
+using MudBlazor;
 
 namespace MIMM.Frontend.Services;
 
@@ -23,6 +24,11 @@ public interface IThemeService
     /// Theme metadata (name, description)
     /// </summary>
     IReadOnlyDictionary<string, ThemeMetadata> ThemeMetadata { get; }
+
+    /// <summary>
+    /// Current MudBlazor theme
+    /// </summary>
+    MudTheme CurrentMudTheme { get; }
     
     /// <summary>
     /// Event raised when theme changes
@@ -114,9 +120,109 @@ public class ThemeService : IThemeService
         }
     };
 
+    private static readonly IReadOnlyDictionary<string, MudTheme> THEMES = new Dictionary<string, MudTheme>
+    {
+        ["dark"] = new MudTheme
+        {
+            PaletteDark = new PaletteDark
+            {
+                Primary = "#3b82f6",
+                Secondary = "#8b5cf6",
+                Background = "#0f172a",
+                Surface = "#111827",
+                AppbarBackground = "#0f172a",
+                DrawerBackground = "#0b1220",
+                TextPrimary = "#f8fafc",
+                TextSecondary = "#d1d5db",
+                TextDisabled = "#6b7280"
+            },
+            LayoutProperties = new LayoutProperties
+            {
+                DefaultBorderRadius = "12px"
+            }
+        },
+        ["midnight"] = new MudTheme
+        {
+            PaletteDark = new PaletteDark
+            {
+                Primary = "#00d9ff",
+                Secondary = "#22d3ee",
+                Background = "#05070f",
+                Surface = "#0b1020",
+                AppbarBackground = "#05070f",
+                DrawerBackground = "#070b16",
+                TextPrimary = "#f1f5f9",
+                TextSecondary = "#cbd5f5",
+                TextDisabled = "#64748b"
+            },
+            LayoutProperties = new LayoutProperties
+            {
+                DefaultBorderRadius = "12px"
+            }
+        },
+        ["twilight"] = new MudTheme
+        {
+            PaletteDark = new PaletteDark
+            {
+                Primary = "#e879f9",
+                Secondary = "#a855f7",
+                Background = "#1a1025",
+                Surface = "#231234",
+                AppbarBackground = "#1a1025",
+                DrawerBackground = "#170d22",
+                TextPrimary = "#f8fafc",
+                TextSecondary = "#e2e8f0",
+                TextDisabled = "#94a3b8"
+            },
+            LayoutProperties = new LayoutProperties
+            {
+                DefaultBorderRadius = "12px"
+            }
+        },
+        ["ocean"] = new MudTheme
+        {
+            PaletteDark = new PaletteDark
+            {
+                Primary = "#06b6d4",
+                Secondary = "#22d3ee",
+                Background = "#08141a",
+                Surface = "#0b1f29",
+                AppbarBackground = "#08141a",
+                DrawerBackground = "#061018",
+                TextPrimary = "#f8fafc",
+                TextSecondary = "#d1d5db",
+                TextDisabled = "#6b7280"
+            },
+            LayoutProperties = new LayoutProperties
+            {
+                DefaultBorderRadius = "12px"
+            }
+        },
+        ["forest"] = new MudTheme
+        {
+            PaletteDark = new PaletteDark
+            {
+                Primary = "#10b981",
+                Secondary = "#22c55e",
+                Background = "#0b1410",
+                Surface = "#0f1f17",
+                AppbarBackground = "#0b1410",
+                DrawerBackground = "#0a120e",
+                TextPrimary = "#f8fafc",
+                TextSecondary = "#d1d5db",
+                TextDisabled = "#6b7280"
+            },
+            LayoutProperties = new LayoutProperties
+            {
+                DefaultBorderRadius = "12px"
+            }
+        }
+    };
+
     public string CurrentTheme => _currentTheme;
     public string[] AvailableThemes => AVAILABLE_THEMES;
     public IReadOnlyDictionary<string, ThemeMetadata> ThemeMetadata => THEME_METADATA.AsReadOnly();
+    public MudTheme CurrentMudTheme => THEMES.TryGetValue(_currentTheme, out var theme) ? theme : new MudTheme();
     public event EventHandler<string>? ThemeChanged;
 
     public ThemeService(IJSRuntime jsRuntime)
@@ -150,6 +256,7 @@ public class ThemeService : IThemeService
 
             // Apply theme to document
             await ApplyThemeAsync(_currentTheme);
+            ThemeChanged?.Invoke(this, _currentTheme);
         }
         catch
         {

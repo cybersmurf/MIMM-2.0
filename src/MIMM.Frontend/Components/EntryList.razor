@@ -40,7 +40,7 @@
                 No entries yet
             </MudText>
             
-            <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">
+            <MudText Typo="Typo.body1" Align="Align.Center">
                 Start tracking your mood and music journey.<br />
                 Your first entry is just a click away!
             </MudText>
@@ -83,12 +83,12 @@
                                     </MudTooltip>
                                 }
                             </MudStack>
-                            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                            <MudText Typo="Typo.body2">
                                 @(entry.ArtistName ?? "Unknown artist") • @entry.CreatedAt.ToString("MMM d, HH:mm")
                             </MudText>
                             @if (!string.IsNullOrWhiteSpace(entry.AlbumName))
                             {
-                                <MudText Typo="Typo.caption" Color="Color.Secondary">Album: @entry.AlbumName</MudText>
+                                <MudText Typo="Typo.caption">Album: @entry.AlbumName</MudText>
                             }
                         </MudStack>
 

@@ -1,4 +1,8 @@
-<MudThemeProvider />
+@using MIMM.Frontend.Services
+@implements IDisposable
+@inject IThemeService ThemeService
+
+<MudThemeProvider Theme="@_currentTheme" IsDarkMode="true" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -24,3 +28,24 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    private MudBlazor.MudTheme _currentTheme = new();
+
+    protected override void OnInitialized()
+    {
+        _currentTheme = ThemeService.CurrentMudTheme;
+        ThemeService.ThemeChanged += OnThemeChanged;
+    }
+
+    private void OnThemeChanged(object? sender, string theme)
+    {
+        _currentTheme = ThemeService.CurrentMudTheme;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeService.ThemeChanged -= OnThemeChanged;
+    }
+}

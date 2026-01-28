@@ -11,7 +11,7 @@
         </MudIconButton>
     </ActivatorContent>
     <ChildContent>
-        <MudText Typo="Typo.caption" Class="px-4 pt-2">Select Theme</MudText>
+        <MudText Typo="Typo.body2" Class="px-4 pt-2" Style="font-weight: 500;">Select Theme</MudText>
         <MudDivider Class="my-2" />
         
         @foreach (var theme in ThemeService.AvailableThemes)
@@ -24,7 +24,7 @@
                     <MudIcon Icon="@metadata.Icon" />
                     <MudStack Spacing="0" Style="flex: 1;">
                         <MudText Typo="Typo.body2">@metadata.Name</MudText>
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">@metadata.Description</MudText>
+                        <MudText Typo="Typo.body2" Style="opacity: 0.8;">@metadata.Description</MudText>
                     </MudStack>
                     @if (isActive)
                     {

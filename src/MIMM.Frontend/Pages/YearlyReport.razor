@@ -35,11 +35,11 @@
             <MudCard Elevation="0" Class="glass-card">
                 <MudCardContent Class="pa-8">
                     <MudStack AlignItems="AlignItems.Center" Spacing="2">
-                        <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Color="Color.Secondary" Size="Size.Large" />
-                        <MudText Typo="Typo.h6" Color="Color.Secondary" Align="Align.Center">
+                        <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Color="Color.Primary" Size="Size.Large" />
+                        <MudText Typo="Typo.h6" Align="Align.Center">
                             No data available for @Year
                         </MudText>
-                        <MudText Typo="Typo.caption" Color="Color.Secondary" Align="Align.Center">
+                        <MudText Typo="Typo.body2" Align="Align.Center">
                             Create some entries to see your annual report
                         </MudText>
                     </MudStack>
@@ -167,7 +167,7 @@
                                             <MudIcon Icon="@Icons.Material.Filled.MusicNote" Color="Color.Success" />
                                             <MudStack Spacing="0" Style="flex: 1;">
                                                 <MudText Typo="Typo.body2">@song.Title</MudText>
-                                                <MudText Typo="Typo.caption" Color="Color.Secondary">@song.Artist</MudText>
+                                                <MudText Typo="Typo.caption">@song.Artist</MudText>
                                             </MudStack>
                                             <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.PlayArrow" Color="Color.Info">
                                                 @song.Count
@@ -182,7 +182,7 @@
             }
 
             <!-- Generated timestamp -->
-            <MudText Typo="Typo.caption" Color="Color.Secondary" Align="Align.Center">
+            <MudText Typo="Typo.caption" Align="Align.Center">
                 Generated: @_report.GeneratedAt.ToString("g")
             </MudText>
         }
