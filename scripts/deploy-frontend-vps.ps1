@@ -5,7 +5,7 @@ param(
     [string]$VpsHost = "188.245.68.164",
     [int]$VpsPort = 2222,
     [string]$VpsUser = "mimm",
-    [string]$RemoteWwwroot = "/home/mimm/mimm-app/src/MIMM.Frontend/wwwroot"
+    [string]$RemoteWwwroot = "/var/www/mimm-frontend"
 )
 
 Write-Host "MIMM Frontend Deployment to VPS" -ForegroundColor Cyan
