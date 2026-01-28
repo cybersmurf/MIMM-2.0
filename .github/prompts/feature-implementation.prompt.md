@@ -1,5 +1,35 @@
 # Prompt: Implement Feature (MIMM Pattern)
 
+## ⚠️ CRITICAL: Branch Policy
+
+**NEVER commit directly to `main` branch.**
+
+All changes MUST follow this workflow:
+
+```bash
+# 1. Create feature branch
+git checkout -b feature/your-feature-name
+
+# 2. Make changes locally
+# ... edit files ...
+
+# 3. Test thoroughly
+dotnet build MIMM.sln --configuration Release
+dotnet test MIMM.sln --configuration Release
+
+# 4. Commit to feature branch (NOT main)
+git add .
+git commit -m "type(scope): description"
+
+# 5. Push to feature branch
+git push origin feature/your-feature-name
+
+# 6. Create Pull Request on GitHub
+# Wait for code review before merging to main
+```
+
+**Branch naming:** `feature/descriptive-name` (not `feature/wip` or `feature/test`)
+
 ## Input
 
 - Feature summary (one paragraph)

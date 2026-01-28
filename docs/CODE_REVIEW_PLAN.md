@@ -6,6 +6,23 @@
 
 ---
 
+## ⚠️ BRANCH POLICY
+
+**All code changes MUST follow feature branch workflow:**
+
+1. Create feature branch: `git checkout -b feature/your-feature`
+2. Make changes and test locally
+3. Push to feature branch: `git push origin feature/your-feature`
+4. Create Pull Request on GitHub
+5. Wait for code review and CI checks
+6. Merge to main ONLY after approval
+
+**NEVER commit directly to main branch.**
+
+See [AGENTS.md § Branch Management](../AGENTS.md#-branch-management--code-safety) for detailed workflow.
+
+---
+
 ## 📋 PLÁN IMPLEMENTACE
 
 ### Fáze 1: EF Core Query Optimization (High Impact)

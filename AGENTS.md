@@ -20,6 +20,125 @@
   - markdown-linting.prompt.md
 - `.markdownlint.json` - konfigurace pro markdownlint v0.40.0
 
+## 🔐 Branch Management & Code Safety
+
+### ⚠️ CRITICAL RULE: NEVER commit directly to `main`
+
+**All changes MUST go through feature branches and pull request review.**
+
+```bash
+# ❌ NEVER DO THIS
+git commit -m "..." && git push origin main
+
+# ✅ ALWAYS DO THIS
+git checkout -b feature/your-feature-name
+git commit -m "..."
+git push origin feature/your-feature-name
+# Then create Pull Request on GitHub
+```
+
+### Branch Naming Convention
+
+**Pattern:** `<type>/<descriptive-name>`
+
+- `feature/ui-refinement` - New features
+- `fix/dashboard-text-color` - Bug fixes
+- `docs/mudblazor-guide` - Documentation
+- `refactor/entryservice-optimization` - Code refactoring
+- `chore/update-dependencies` - Dependencies, maintenance
+
+### Workflow for Major Changes
+
+1. **Create branch** from `main`:
+   ```bash
+   git checkout main
+   git pull origin main
+   git checkout -b feature/your-feature
+   ```
+
+2. **Make changes locally** and test thoroughly:
+   ```bash
+   dotnet build MIMM.sln --configuration Release
+   dotnet test MIMM.sln --configuration Release
+   ```
+
+3. **Commit with meaningful messages**:
+   ```bash
+   git add <specific-files>
+   git commit -m "type(scope): description"
+   ```
+   (See [Conventional Commits](https://www.conventionalcommits.org/) for format)
+
+4. **Push to feature branch** (NOT main):
+   ```bash
+   git push origin feature/your-feature
+   ```
+
+5. **Create Pull Request on GitHub**:
+   - Describe changes
+   - Link related issues
+   - Request review if needed
+
+6. **Code Review** (if applicable):
+   - Wait for feedback
+   - Address comments
+   - Re-run tests
+
+7. **Merge to main** only after approval:
+   - Squash or rebase as needed
+   - Delete feature branch after merge
+
+### What Qualifies as "Major"?
+
+These ALWAYS require feature branches:
+- ✅ Any new feature
+- ✅ Refactoring affecting multiple files
+- ✅ Database schema changes
+- ✅ API contract changes
+- ✅ Frontend component overhauls
+- ✅ Security changes
+- ✅ Performance optimizations
+
+### What Can Be Direct?
+
+Only these minimal changes can be direct to main (rare):
+- Typos in README or documentation
+- CI workflow fixes (if urgent)
+- Emergency hotfixes (use `hotfix/*` branch instead)
+
+### Protected Branches
+
+`main` branch has GitHub protection rules:
+- Require pull request reviews before merging
+- Require CI checks to pass
+- Restrict who can push directly (admin only)
+
+### Examples
+
+**Feature Branch (Dashboard UI Refinement):**
+```bash
+git checkout -b feature/ui-refinement
+# ... make changes ...
+git push origin feature/ui-refinement
+# Create PR: "refactor(frontend): use MudBlazor components for Dashboard"
+```
+
+**Fix Branch (Bug in EntryService):**
+```bash
+git checkout -b fix/entry-service-null-reference
+# ... fix the bug ...
+git push origin fix/entry-service-null-reference
+# Create PR: "fix(backend): handle null entries in EntryService"
+```
+
+**Docs Branch (Update Guide):**
+```bash
+git checkout -b docs/mudblazor-guide
+# ... write documentation ...
+git push origin docs/mudblazor-guide
+# Create PR: "docs: add comprehensive MudBlazor integration guide"
+```
+
 ## Markdown Linting (Documentation Quality)
 
 - Tool: `markdownlint-cli` (v0.40.0)
