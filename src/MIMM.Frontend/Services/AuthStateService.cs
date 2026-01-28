@@ -1,4 +1,5 @@
 using Microsoft.JSInterop;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 namespace MIMM.Frontend.Services;
@@ -18,22 +19,27 @@ public interface IAuthStateService
 public class AuthStateService : IAuthStateService
 {
     private readonly IJSRuntime _jsRuntime;
+    private readonly ILogger<AuthStateService>? _logger;
     private const string AccessTokenKey = "mimm_access_token";
     private const string RefreshTokenKey = "mimm_refresh_token";
 
-    public AuthStateService(IJSRuntime jsRuntime)
+    public AuthStateService(IJSRuntime jsRuntime, ILogger<AuthStateService>? logger = null)
     {
         _jsRuntime = jsRuntime;
+        _logger = logger;
     }
 
     public async Task<string?> GetAccessTokenAsync()
     {
         try
         {
-            return await _jsRuntime.InvokeAsync<string?>("localStorage.getItem", AccessTokenKey);
+            var token = await _jsRuntime.InvokeAsync<string?>("localStorage.getItem", AccessTokenKey);
+            _logger?.LogDebug("AuthStateService: Retrieved token, present = {HasToken}", !string.IsNullOrEmpty(token));
+            return token;
         }
-        catch
+        catch (Exception ex)
         {
+            _logger?.LogError(ex, "AuthStateService: Error retrieving access token from localStorage");
             return null;
         }
     }
@@ -44,8 +50,9 @@ public class AuthStateService : IAuthStateService
         {
             return await _jsRuntime.InvokeAsync<string?>("localStorage.getItem", RefreshTokenKey);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger?.LogError(ex, "AuthStateService: Error retrieving refresh token from localStorage");
             return null;
         }
     }
