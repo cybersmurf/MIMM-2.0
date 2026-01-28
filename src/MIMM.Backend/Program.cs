@@ -213,13 +213,18 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = Dat
 // Error endpoint
 app.MapGet("/error", () => Results.Problem("An error occurred."));
 
-// === DATABASE MIGRATION (optional auto-migrate on startup) ===
-if (app.Environment.IsDevelopment())
+// === DATABASE MIGRATION (auto-migrate on startup in all environments) ===
+try
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await dbContext.Database.MigrateAsync();
-    Log.Information("Database migrations applied");
+    Log.Information("Database migrations applied successfully");
+}
+catch (Exception ex)
+{
+    Log.Error(ex, "Error applying database migrations");
+    // Don't crash on migration failure, backend might still serve read-only
 }
 
 Log.Information("MIMM Backend starting...");
