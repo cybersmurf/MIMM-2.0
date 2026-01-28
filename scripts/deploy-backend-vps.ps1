@@ -43,43 +43,29 @@ Write-Host "✅ Upload complete" -ForegroundColor Green
 
 # Step 4: Deploy on VPS
 Write-Host "`n[4/5] Deploying on VPS..." -ForegroundColor Yellow
-$deployScript = @'
-#!/bin/bash
-set -e
-cd /home/mimm/mimm-app
-echo '>>> Stopping backend container...'
-docker compose stop backend
-echo '>>> Extracting new backend to temp location...'
-mkdir -p /tmp/backend-new
-tar -xzf /tmp/{0} -C /tmp/backend-new
-echo '>>> Replacing backend files...'
-rm -rf {1}/*
-mv /tmp/backend-new/* {1}/
-rmdir /tmp/backend-new
-echo '>>> Starting backend container...'
-docker compose up -d backend
-echo '>>> Waiting for backend...'
-sleep 5
-echo '>>> Backend logs (last 30 lines):'
-docker compose logs --tail=30 backend
-echo '>>> Cleanup...'
-rm /tmp/{0}
-echo '✅ Deployment complete!'
-'@ -f $packageName, $BACKEND_PATH
 
-# Save script to temp file with LF line endings
-$tempScript = [System.IO.Path]::GetTempFileName() + ".sh"
-[System.IO.File]::WriteAllText($tempScript, $deployScript, [System.Text.UTF8Encoding]::new($false))
+# Execute commands one by one
+Write-Host "  > Stopping backend container..." -ForegroundColor Gray
+ssh -p $VPS_PORT "${VPS_USER}@${VPS_HOST}" "cd /home/mimm/mimm-app && docker compose stop backend"
 
-scp -P $VPS_PORT $tempScript "${VPS_USER}@${VPS_HOST}:/tmp/deploy.sh"
-ssh -p $VPS_PORT "${VPS_USER}@${VPS_HOST}" "chmod +x /tmp/deploy.sh && /tmp/deploy.sh && rm /tmp/deploy.sh"
+Write-Host "  > Extracting new backend..." -ForegroundColor Gray
+ssh -p $VPS_PORT "${VPS_USER}@${VPS_HOST}" "mkdir -p /tmp/backend-new && tar -xzf /tmp/$packageName -C /tmp/backend-new"
 
-Remove-Item $tempScript -Force
+Write-Host "  > Replacing backend files..." -ForegroundColor Gray
+ssh -p $VPS_PORT "${VPS_USER}@${VPS_HOST}" "rm -rf $BACKEND_PATH/* && mv /tmp/backend-new/* $BACKEND_PATH/ && rmdir /tmp/backend-new"
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Deployment failed!" -ForegroundColor Red
-    exit 1
-}
+Write-Host "  > Starting backend container..." -ForegroundColor Gray
+ssh -p $VPS_PORT "${VPS_USER}@${VPS_HOST}" "cd /home/mimm/mimm-app && docker compose up -d backend"
+
+Write-Host "  > Waiting for backend..." -ForegroundColor Gray
+Start-Sleep -Seconds 5
+
+Write-Host "  > Checking logs..." -ForegroundColor Gray
+ssh -p $VPS_PORT "${VPS_USER}@${VPS_HOST}" "cd /home/mimm/mimm-app && docker compose logs --tail=30 backend"
+
+Write-Host "  > Cleanup..." -ForegroundColor Gray
+ssh -p $VPS_PORT "${VPS_USER}@${VPS_HOST}" "rm /tmp/$packageName"
+
 Write-Host "✅ Deployment complete" -ForegroundColor Green
 
 # Step 5: Verify deployment
