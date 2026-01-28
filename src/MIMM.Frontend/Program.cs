@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MIMM.Frontend;
 using MIMM.Frontend.Services;
@@ -24,6 +25,8 @@ builder.Services.AddSingleton<IThemeService, ThemeService>();
 
 // HTTP client with auth handler
 builder.Services.AddScoped<AuthorizationMessageHandler>();
+
+// Configure HttpClient with AuthorizationMessageHandler as primary handler
 builder.Services.AddScoped(sp =>
 {
     var authHandler = sp.GetRequiredService<AuthorizationMessageHandler>();
@@ -37,7 +40,7 @@ builder.Services.AddScoped(sp =>
     return httpClient;
 });
 
-// API services
+// API services (all use the same HttpClient instance with auth handler)
 builder.Services.AddScoped<IAuthApiService, AuthApiService>();
 builder.Services.AddScoped<IEntryApiService, EntryApiService>();
 builder.Services.AddScoped<IMusicSearchApiService, MusicSearchApiService>();
