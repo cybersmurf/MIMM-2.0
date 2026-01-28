@@ -57,7 +57,7 @@
                             <MudStack Spacing="2" AlignItems="AlignItems.Center">
                                 <MudIcon Icon="@Icons.Material.Filled.LibraryMusic" Size="Size.Large" Color="Color.Primary" />
                                 <MudStack Spacing="1" AlignItems="AlignItems.Center">
-                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Total Entries</MudText>
+                                    <MudText Typo="Typo.caption">Total Entries</MudText>
                                     <MudText Typo="Typo.h5">@_report!.TotalEntries</MudText>
                                 </MudStack>
                             </MudStack>
@@ -71,7 +71,7 @@
                             <MudStack Spacing="2" AlignItems="AlignItems.Center">
                                 <MudIcon Icon="@Icons.Material.Filled.SentimentSatisfied" Size="Size.Large" Color="Color.Success" />
                                 <MudStack Spacing="1" AlignItems="AlignItems.Center">
-                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Avg Valence</MudText>
+                                    <MudText Typo="Typo.caption">Avg Valence</MudText>
                                     <MudText Typo="Typo.h5">@_report!.AverageValence.ToString("F2")</MudText>
                                 </MudStack>
                             </MudStack>
@@ -85,7 +85,7 @@
                             <MudStack Spacing="2" AlignItems="AlignItems.Center">
                                 <MudIcon Icon="@Icons.Material.Filled.ElectricBolt" Size="Size.Large" Color="Color.Warning" />
                                 <MudStack Spacing="1" AlignItems="AlignItems.Center">
-                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Avg Arousal</MudText>
+                                    <MudText Typo="Typo.caption">Avg Arousal</MudText>
                                     <MudText Typo="Typo.h5">@_report!.AverageArousal.ToString("F2")</MudText>
                                 </MudStack>
                             </MudStack>
@@ -99,7 +99,7 @@
                             <MudStack Spacing="2" AlignItems="AlignItems.Center">
                                 <MudIcon Icon="@Icons.Material.Filled.DateRange" Size="Size.Large" Color="Color.Info" />
                                 <MudStack Spacing="1" AlignItems="AlignItems.Center">
-                                    <MudText Typo="Typo.caption" Color="Color.Secondary">Avg per Month</MudText>
+                                    <MudText Typo="Typo.caption">Avg per Month</MudText>
                                     <MudText Typo="Typo.h5">@((_report!.TotalEntries / (double)(_report!.MonthlyStats?.Count ?? 1)).ToString("F1"))</MudText>
                                 </MudStack>
                             </MudStack>

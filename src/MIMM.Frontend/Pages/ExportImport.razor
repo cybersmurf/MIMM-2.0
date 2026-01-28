@@ -30,7 +30,7 @@
                                 <MudText Typo="Typo.subtitle1">Export Your Data</MudText>
                             </MudStack>
 
-                            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                            <MudText Typo="Typo.body2">
                                 Download all your entries in CSV or JSON format. Perfect for backups and analysis.
                             </MudText>
 
@@ -90,7 +90,7 @@
                                 <MudText Typo="Typo.subtitle1">Import Your Data</MudText>
                             </MudStack>
 
-                            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                            <MudText Typo="Typo.body2">
                                 Restore entries from a CSV or JSON file. Invalid entries will be skipped.
                             </MudText>
 
@@ -165,8 +165,8 @@
                                 <MudCard Outlined>
                                     <MudCardContent>
                                         <MudStack Spacing="1" AlignItems="AlignItems.Center">
-                                            <MudIcon Icon="@Icons.Material.Filled.List" Size="Size.Medium" Color="Color.Secondary" />
-                                            <MudText Typo="Typo.caption" Color="Color.Secondary">Total Processed</MudText>
+                                            <MudIcon Icon="@Icons.Material.Filled.List" Size="Size.Medium" Color="Color.Default" />
+                                            <MudText Typo="Typo.caption">Total Processed</MudText>
                                             <MudText Typo="Typo.h5">@_lastImportResult.TotalProcessed</MudText>
                                         </MudStack>
                                     </MudCardContent>
@@ -199,7 +199,7 @@
                                     <MudCardContent>
                                         <MudStack Spacing="1" AlignItems="AlignItems.Center">
                                             <MudIcon Icon="@Icons.Material.Filled.Percent" Size="Size.Medium" Color="Color.Info" />
-                                            <MudText Typo="Typo.caption" Color="Color.Secondary">Success Rate</MudText>
+                                            <MudText Typo="Typo.caption">Success Rate</MudText>
                                             <MudText Typo="Typo.h5">
                                                 @if (_lastImportResult.TotalProcessed > 0)
                                                 {

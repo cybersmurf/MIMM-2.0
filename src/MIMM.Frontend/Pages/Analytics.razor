@@ -28,7 +28,7 @@
                         <MudStack Spacing="2">
                             <MudIcon Icon="@Icons.Material.Filled.LibraryMusic" Color="Color.Primary" Size="Size.Large" />
                             <MudStack Spacing="1">
-                                <MudText Typo="Typo.caption" Color="Color.Secondary">Total Entries</MudText>
+                                <MudText Typo="Typo.caption">Total Entries</MudText>
                                 @if (_isLoading)
                                 {
                                     <MudSkeleton Width="100px" Height="32px" Class="skeleton-shimmer" />
@@ -49,7 +49,7 @@
                         <MudStack Spacing="2">
                             <MudIcon Icon="@Icons.Material.Filled.ElectricBolt" Color="Color.Warning" Size="Size.Large" />
                             <MudStack Spacing="1">
-                                <MudText Typo="Typo.caption" Color="Color.Secondary">Avg. Arousal</MudText>
+                                <MudText Typo="Typo.caption">Avg. Arousal</MudText>
                                 @if (_isLoading)
                                 {
                                     <MudSkeleton Width="100px" Height="32px" Class="skeleton-shimmer" />
@@ -70,7 +70,7 @@
                         <MudStack Spacing="2">
                             <MudIcon Icon="@Icons.Material.Filled.SentimentSatisfied" Color="Color.Success" Size="Size.Large" />
                             <MudStack Spacing="1">
-                                <MudText Typo="Typo.caption" Color="Color.Secondary">Avg. Valence</MudText>
+                                <MudText Typo="Typo.caption">Avg. Valence</MudText>
                                 @if (_isLoading)
                                 {
                                     <MudSkeleton Width="100px" Height="32px" Class="skeleton-shimmer" />
@@ -91,7 +91,7 @@
                         <MudStack Spacing="2">
                             <MudIcon Icon="@Icons.Material.Filled.MusicNote" Color="Color.Info" Size="Size.Large" />
                             <MudStack Spacing="1">
-                                <MudText Typo="Typo.caption" Color="Color.Secondary">Top Genre</MudText>
+                                <MudText Typo="Typo.caption">Top Genre</MudText>
                                 @if (_isLoading)
                                 {
                                     <MudSkeleton Width="100px" Height="32px" />
@@ -133,11 +133,11 @@
                                 else
                                 {
                                     <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="pa-6">
-                                        <MudIcon Icon="@Icons.Material.Filled.DonutSmall" Color="Color.Secondary" Size="Size.Large" />
-                                        <MudText Typo="Typo.body2" Color="Color.Secondary" Align="Align.Center">
+                                        <MudIcon Icon="@Icons.Material.Filled.DonutSmall" Color="Color.Default" Size="Size.Large" />
+                                        <MudText Typo="Typo.body2" Align="Align.Center">
                                             No mood distribution data available
                                         </MudText>
-                                        <MudText Typo="Typo.caption" Color="Color.Secondary" Align="Align.Center">
+                                        <MudText Typo="Typo.caption" Align="Align.Center">
                                             Create entries to see your emotional patterns
                                         </MudText>
                                     </MudStack>
@@ -170,11 +170,11 @@
                                 else
                                 {
                                     <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="pa-6">
-                                        <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Secondary" Size="Size.Large" />
-                                        <MudText Typo="Typo.body2" Color="Color.Secondary" Align="Align.Center">
+                                        <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Default" Size="Size.Large" />
+                                        <MudText Typo="Typo.body2" Align="Align.Center">
                                             No artist data available
                                         </MudText>
-                                        <MudText Typo="Typo.caption" Color="Color.Secondary" Align="Align.Center">
+                                        <MudText Typo="Typo.caption" Align="Align.Center">
                                             Start scrobbling music to track your top artists
                                         </MudText>
                                     </MudStack>
@@ -207,11 +207,11 @@
                                 else
                                 {
                                     <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="pa-6">
-                                        <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Color="Color.Secondary" Size="Size.Large" />
-                                        <MudText Typo="Typo.body2" Color="Color.Secondary" Align="Align.Center">
+                                        <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Color="Color.Default" Size="Size.Large" />
+                                        <MudText Typo="Typo.body2" Align="Align.Center">
                                             No mood trend data available
                                         </MudText>
-                                        <MudText Typo="Typo.caption" Color="Color.Secondary" Align="Align.Center">
+                                        <MudText Typo="Typo.caption" Align="Align.Center">
                                             Track your moods over time to see trends emerge
                                         </MudText>
                                     </MudStack>
@@ -337,8 +337,8 @@
                             else if (!_moodCorrelationLoading)
                             {
                                 <MudStack AlignItems="AlignItems.Center" Spacing="2" Class="pa-6">
-                                    <MudIcon Icon="@Icons.Material.Filled.InsertChart" Color="Color.Secondary" Size="Size.Large" />
-                                    <MudText Typo="Typo.body2" Color="Color.Secondary" Align="Align.Center">
+                                    <MudIcon Icon="@Icons.Material.Filled.InsertChart" Color="Color.Default" Size="Size.Large" />
+                                    <MudText Typo="Typo.body2" Align="Align.Center">
                                         No mood correlation data available. Create more entries to see patterns.
                                     </MudText>
                                 </MudStack>
