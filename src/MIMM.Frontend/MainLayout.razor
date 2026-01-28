@@ -2,6 +2,7 @@
 @using MIMM.Frontend.Services
 @using MIMM.Frontend.Components
 @inject IThemeService ThemeService
+@inject IAuthStateService AuthStateService
 
 <SkipNavigation />
 
@@ -31,12 +32,15 @@
         <MudSpacer />
         <ThemeSelector />
         <ThemeToggle />
-        <NotificationBell />
-        <MudIconButton Icon="@Icons.Material.Filled.Person" 
-                       Color="Color.Inherit" 
-                       Style="min-height: 48px; min-width: 48px;"
-                       aria-label="User profile"
-                       Href="/profile" />
+        @if (_isAuthenticated)
+        {
+            <NotificationBell />
+            <MudIconButton Icon="@Icons.Material.Filled.Person" 
+                           Color="Color.Inherit" 
+                           Style="min-height: 48px; min-width: 48px;"
+                           aria-label="User profile"
+                           Href="/profile" />
+        }
     </MudAppBar>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium" Class="page-container">
@@ -53,11 +57,16 @@
 
 @code {
     private bool _drawerOpen;
+    private bool _isAuthenticated;
 
     protected override async Task OnInitializedAsync()
     {
         // Initialize theme service on app start
         await ThemeService.InitializeAsync();
+        
+        // Check if user is authenticated
+        _isAuthenticated = await AuthStateService.IsAuthenticatedAsync();
+        
         await base.OnInitializedAsync();
     }
 
