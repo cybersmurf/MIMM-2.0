@@ -7,228 +7,281 @@
 
 <PageTitle>Export & Import - MIMM</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
-    <MudGrid>
-        <MudItem xs="12">
-            <MudText Typo="Typo.h4" Class="mb-2">Export & Import</MudText>
-            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-6">
+<LiveRegion Message="@_liveMessage" AriaLive="polite" />
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="py-8">
+    <MudStack Spacing="4">
+        <!-- Page Header -->
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.h4">Export & Import</MudText>
+            <MudText Typo="Typo.body2">
                 Backup your entries or restore from a previous backup. Data portability for your music & mood journal.
             </MudText>
-        </MudItem>
-    </MudGrid>
-
-    <MudGrid Spacing="2" Class="mb-6">
-        <!-- EXPORT SECTION -->
-        <MudItem xs="12" md="6">
-            <MudPaper Class="pa-6" Elevation="1">
-                <MudText Typo="Typo.h6" Class="mb-4">
-                    <MudIcon Icon="@Icons.Material.Filled.FileDownload" Class="me-2" />
-                    Export Your Data
-                </MudText>
-
-                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
-                    Download all your entries in CSV or JSON format. Perfect for backups and analysis.
-                </MudText>
-
-                <MudStack Spacing="2">
-                    <MudButton 
-                        Variant="Variant.Filled"
-                        Color="Color.Primary"
-                        FullWidth="true"
-                        StartIcon="@Icons.Material.Filled.FileDownload"
-                        OnClick="ExportAsCsv"
-                        Disabled="@_isExporting">
-                        @if (_isExporting)
-                        {
-                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
-                            <span>Exporting...</span>
-                        }
-                        else
-                        {
-                            <span>Export as CSV</span>
-                        }
-                    </MudButton>
-
-                    <MudButton 
-                        Variant="Variant.Filled"
-                        Color="Color.Secondary"
-                        FullWidth="true"
-                        StartIcon="@Icons.Material.Filled.FileDownload"
-                        OnClick="ExportAsJson"
-                        Disabled="@_isExporting">
-                        @if (_isExporting)
-                        {
-                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
-                            <span>Exporting...</span>
-                        }
-                        else
-                        {
-                            <span>Export as JSON</span>
-                        }
-                    </MudButton>
-
-                    <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mt-2">
-                        <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" />
-                        CSV is great for spreadsheets. JSON preserves all metadata.
-                    </MudText>
-                </MudStack>
-            </MudPaper>
-        </MudItem>
-
-        <!-- IMPORT SECTION -->
-        <MudItem xs="12" md="6">
-            <MudPaper Class="pa-6" Elevation="1">
-                <MudText Typo="Typo.h6" Class="mb-4">
-                    <MudIcon Icon="@Icons.Material.Filled.FileUpload" Class="me-2" />
-                    Import Your Data
-                </MudText>
-
-                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
-                    Restore entries from a CSV or JSON file. Invalid entries will be skipped.
-                </MudText>
-
-                <MudStack Spacing="2">
-                    <input type="file" accept=".csv" id="csvFileInput" @onchange="OnCsvSelected" style="display:none" />
-                    <MudButton HtmlTag="label" 
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               FullWidth="true"
-                               StartIcon="@Icons.Material.Filled.FileUpload"
-                               for="csvFileInput"
-                               Disabled="@_isImporting"
-                               Style="cursor: pointer">
-                        @if (_isImporting && _currentImportType == "csv")
-                        {
-                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
-                            <span>Importing...</span>
-                        }
-                        else
-                        {
-                            <span>Import CSV</span>
-                        }
-                    </MudButton>
-
-                    <input type="file" accept=".json" id="jsonFileInput" @onchange="OnJsonSelected" style="display:none" />
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Secondary"
-                               FullWidth="true"
-                               StartIcon="@Icons.Material.Filled.FileUpload"
-                               for="jsonFileInput"
-                               Disabled="@_isImporting"
-                               Style="cursor: pointer">
-                        @if (_isImporting && _currentImportType == "json")
-                        {
-                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
-                            <span>Importing...</span>
-                        }
-                        else
-                        {
-                            <span>Import JSON</span>
-                        }
-                    </MudButton>
-
-                    <MudCheckBox @bind-Value="@_continueOnError" 
-                                 Label="Skip invalid entries (continue on error)"
-                                 Color="Color.Primary" />
-
-                    <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mt-2">
-                        <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" />
-                        Files must match the export format for best results.
-                    </MudText>
-                </MudStack>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
-
-    <!-- IMPORT RESULTS -->
-    @if (_lastImportResult != null)
-    {
-        <MudPaper Class="pa-6" Elevation="1" Style="margin-bottom: 2rem;">
-            <MudText Typo="Typo.h6" Class="mb-4">Import Results</MudText>
-
-            <MudGrid Spacing="2" Class="mb-4">
-                <MudItem xs="12" sm="6" md="3">
-                    <MudText Typo="Typo.caption" Color="Color.Secondary">Total Processed</MudText>
-                    <MudText Typo="Typo.h5">@_lastImportResult.TotalProcessed</MudText>
-                </MudItem>
-                <MudItem xs="12" sm="6" md="3">
-                    <MudText Typo="Typo.caption" Color="Color.Success">Successfully Imported</MudText>
-                    <MudText Typo="Typo.h5" Color="Color.Success">@_lastImportResult.SuccessfullyImported</MudText>
-                </MudItem>
-                <MudItem xs="12" sm="6" md="3">
-                    <MudText Typo="Typo.caption" Color="@(_lastImportResult.FailedCount > 0 ? Color.Error : Color.Success)">
-                        Failed Count
-                    </MudText>
-                    <MudText Typo="Typo.h5" Color="@(_lastImportResult.FailedCount > 0 ? Color.Error : Color.Success)">
-                        @_lastImportResult.FailedCount
-                    </MudText>
-                </MudItem>
-                <MudItem xs="12" sm="6" md="3">
-                    <MudText Typo="Typo.caption" Color="Color.Secondary">Success Rate</MudText>
-                    <MudText Typo="Typo.h5">
-                        @if (_lastImportResult.TotalProcessed > 0)
-                        {
-                            @($"{(decimal)_lastImportResult.SuccessfullyImported / _lastImportResult.TotalProcessed * 100:F0}%")
-                        }
-                        else
-                        {
-                            @("0%")
-                        }
-                    </MudText>
-                </MudItem>
-            </MudGrid>
-
-            @if (_lastImportResult.Errors.Count > 0)
-            {
-                <MudExpansionPanels>
-                    <MudExpansionPanel Text="@($"Errors ({_lastImportResult.Errors.Count})")">
-                        <MudStack Spacing="2">
-                            @foreach (var error in _lastImportResult.Errors)
-                            {
-                                <MudStack Row="true" Spacing="2">
-                                    <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Small" />
-                                    <MudStack Spacing="0">
-                                        @if (error.LineNumber.HasValue)
-                                        {
-                                            <MudText Typo="Typo.caption">Line @error.LineNumber</MudText>
-                                        }
-                                        <MudText Typo="Typo.body2" Color="Color.Error">@error.ErrorMessage</MudText>
-                                    </MudStack>
-                                </MudStack>
-                            }
-                        </MudStack>
-                    </MudExpansionPanel>
-                </MudExpansionPanels>
-            }
-        </MudPaper>
-    }
-
-    <!-- INFO SECTION -->
-    <MudPaper Class="pa-6" Elevation="0" Style="background-color: var(--color-bg-secondary);">
-        <MudText Typo="Typo.h6" Class="mb-2">Information</MudText>
-        <MudStack Spacing="2">
-            <MudStack Row="true" Spacing="2">
-                <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
-                <MudText Typo="Typo.body2">All exports are private and stay on your device.</MudText>
-            </MudStack>
-            <MudStack Row="true" Spacing="2">
-                <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
-                <MudText Typo="Typo.body2">CSV format is compatible with Excel, Google Sheets, and most databases.</MudText>
-            </MudStack>
-            <MudStack Row="true" Spacing="2">
-                <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
-                <MudText Typo="Typo.body2">JSON format preserves all metadata including tags and timestamps.</MudText>
-            </MudStack>
-            <MudStack Row="true" Spacing="2">
-                <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
-                <MudText Typo="Typo.body2">Import safely skips invalid entries without losing valid data.</MudText>
-            </MudStack>
         </MudStack>
-    </MudPaper>
+
+        <MudGrid Spacing="3">
+            <!-- EXPORT SECTION -->
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="0" Class="glass-card">
+                    <MudCardContent>
+                        <MudStack Spacing="3">
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.FileDownload" Color="Color.Primary" Size="Size.Large" />
+                                <MudText Typo="Typo.subtitle1">Export Your Data</MudText>
+                            </MudStack>
+
+                            <MudText Typo="Typo.body2">
+                                Download all your entries in CSV or JSON format. Perfect for backups and analysis.
+                            </MudText>
+
+                            <MudStack Spacing="2">
+                                <MudButton 
+                                    Variant="Variant.Filled"
+                                    Color="Color.Primary"
+                                    FullWidth="true"
+                                    StartIcon="@Icons.Material.Filled.FileDownload"
+                                    OnClick="ExportAsCsv"
+                                    Disabled="@_isExporting">
+                                    @if (_isExporting)
+                                    {
+                                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
+                                        <span>Exporting...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Export as CSV</span>
+                                    }
+                                </MudButton>
+
+                                <MudButton 
+                                    Variant="Variant.Filled"
+                                    Color="Color.Secondary"
+                                    FullWidth="true"
+                                    StartIcon="@Icons.Material.Filled.FileDownload"
+                                    OnClick="ExportAsJson"
+                                    Disabled="@_isExporting">
+                                    @if (_isExporting)
+                                    {
+                                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
+                                        <span>Exporting...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Export as JSON</span>
+                                    }
+                                </MudButton>
+
+                                <MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true" Class="mt-2">
+                                    CSV is great for spreadsheets. JSON preserves all metadata.
+                                </MudAlert>
+                            </MudStack>
+                        </MudStack>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <!-- IMPORT SECTION -->
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="0" Class="glass-card">
+                    <MudCardContent>
+                        <MudStack Spacing="3">
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.FileUpload" Color="Color.Success" Size="Size.Large" />
+                                <MudText Typo="Typo.subtitle1">Import Your Data</MudText>
+                            </MudStack>
+
+                            <MudText Typo="Typo.body2">
+                                Restore entries from a CSV or JSON file. Invalid entries will be skipped.
+                            </MudText>
+
+                            <MudStack Spacing="2">
+                                <input type="file" accept=".csv" id="csvFileInput" @onchange="OnCsvSelected" style="display:none" />
+                                <MudButton HtmlTag="label" 
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           FullWidth="true"
+                                           StartIcon="@Icons.Material.Filled.FileUpload"
+                                           for="csvFileInput"
+                                           Disabled="@_isImporting"
+                                           Style="cursor: pointer">
+                                    @if (_isImporting && _currentImportType == "csv")
+                                    {
+                                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
+                                        <span>Importing...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Import CSV</span>
+                                    }
+                                </MudButton>
+
+                                <input type="file" accept=".json" id="jsonFileInput" @onchange="OnJsonSelected" style="display:none" />
+                                <MudButton HtmlTag="label"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Secondary"
+                                           FullWidth="true"
+                                           StartIcon="@Icons.Material.Filled.FileUpload"
+                                           for="jsonFileInput"
+                                           Disabled="@_isImporting"
+                                           Style="cursor: pointer">
+                                    @if (_isImporting && _currentImportType == "json")
+                                    {
+                                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
+                                        <span>Importing...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Import JSON</span>
+                                    }
+                                </MudButton>
+
+                                <MudCheckBox @bind-Value="@_continueOnError" 
+                                             Label="Skip invalid entries (continue on error)"
+                                             Color="Color.Primary" />
+
+                                <MudAlert Severity="Severity.Info" Variant="Variant.Text" Dense="true" Class="mt-2">
+                                    Files must match the export format for best results.
+                                </MudAlert>
+                            </MudStack>
+                        </MudStack>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+        <!-- IMPORT RESULTS -->
+        @if (_lastImportResult != null)
+        {
+            <MudCard Elevation="0" Class="glass-card">
+                <MudCardContent>
+                    <MudStack Spacing="3">
+                        <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                            <MudIcon Icon="@Icons.Material.Filled.Assessment" Color="Color.Info" Size="Size.Large" />
+                            <MudText Typo="Typo.subtitle1">Import Results</MudText>
+                        </MudStack>
+
+                        <MudGrid Spacing="2">
+                            <MudItem xs="6" sm="3">
+                                <MudCard Outlined>
+                                    <MudCardContent>
+                                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                                            <MudIcon Icon="@Icons.Material.Filled.List" Size="Size.Medium" Color="Color.Default" />
+                                            <MudText Typo="Typo.caption">Total Processed</MudText>
+                                            <MudText Typo="Typo.h5">@_lastImportResult.TotalProcessed</MudText>
+                                        </MudStack>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudItem>
+                            <MudItem xs="6" sm="3">
+                                <MudCard Outlined>
+                                    <MudCardContent>
+                                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Medium" Color="Color.Success" />
+                                            <MudText Typo="Typo.caption" Color="Color.Success">Imported</MudText>
+                                            <MudText Typo="Typo.h5" Color="Color.Success">@_lastImportResult.SuccessfullyImported</MudText>
+                                        </MudStack>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudItem>
+                            <MudItem xs="6" sm="3">
+                                <MudCard Outlined>
+                                    <MudCardContent>
+                                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Medium" Color="@(_lastImportResult.FailedCount > 0 ? Color.Error : Color.Success)" />
+                                            <MudText Typo="Typo.caption" Color="@(_lastImportResult.FailedCount > 0 ? Color.Error : Color.Success)">Failed</MudText>
+                                            <MudText Typo="Typo.h5" Color="@(_lastImportResult.FailedCount > 0 ? Color.Error : Color.Success)">@_lastImportResult.FailedCount</MudText>
+                                        </MudStack>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudItem>
+                            <MudItem xs="6" sm="3">
+                                <MudCard Outlined>
+                                    <MudCardContent>
+                                        <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                                            <MudIcon Icon="@Icons.Material.Filled.Percent" Size="Size.Medium" Color="Color.Info" />
+                                            <MudText Typo="Typo.caption">Success Rate</MudText>
+                                            <MudText Typo="Typo.h5">
+                                                @if (_lastImportResult.TotalProcessed > 0)
+                                                {
+                                                    @($"{(decimal)_lastImportResult.SuccessfullyImported / _lastImportResult.TotalProcessed * 100:F0}%")
+                                                }
+                                                else
+                                                {
+                                                    @("0%")
+                                                }
+                                            </MudText>
+                                        </MudStack>
+                                    </MudCardContent>
+                                </MudCard>
+                            </MudItem>
+                        </MudGrid>
+
+                        @if (_lastImportResult.Errors.Count > 0)
+                        {
+                            <MudExpansionPanels>
+                                <MudExpansionPanel>
+                                    <TitleContent>
+                                        <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                            <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" />
+                                            <MudText>Errors (@_lastImportResult.Errors.Count)</MudText>
+                                        </MudStack>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        <MudStack Spacing="2" Class="pa-2">
+                                            @foreach (var error in _lastImportResult.Errors)
+                                            {
+                                                <MudAlert Severity="Severity.Error" Dense="true">
+                                                    @if (error.LineNumber.HasValue)
+                                                    {
+                                                        <strong>Line @error.LineNumber:</strong>
+                                                    }
+                                                    @error.ErrorMessage
+                                                </MudAlert>
+                                            }
+                                        </MudStack>
+                                    </ChildContent>
+                                </MudExpansionPanel>
+                            </MudExpansionPanels>
+                        }
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
+        }
+
+        <!-- INFO SECTION -->
+        <MudCard Elevation="0" Class="glass-card">
+            <MudCardContent>
+                <MudStack Spacing="3">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                        <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Info" Size="Size.Large" />
+                        <MudText Typo="Typo.subtitle1">Information</MudText>
+                    </MudStack>
+                    <MudStack Spacing="2">
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start">
+                            <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
+                            <MudText Typo="Typo.body2">All exports are private and stay on your device.</MudText>
+                        </MudStack>
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start">
+                            <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
+                            <MudText Typo="Typo.body2">CSV format is compatible with Excel, Google Sheets, and most databases.</MudText>
+                        </MudStack>
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start">
+                            <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
+                            <MudText Typo="Typo.body2">JSON format preserves all metadata including tags and timestamps.</MudText>
+                        </MudStack>
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Start">
+                            <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" />
+                            <MudText Typo="Typo.body2">Import safely skips invalid entries without losing valid data.</MudText>
+                        </MudStack>
+                    </MudStack>
+                </MudStack>
+            </MudCardContent>
+        </MudCard>
+    </MudStack>
 </MudContainer>
 
 @code {
+    private string? _liveMessage;
     private bool _isExporting = false;
     private bool _isImporting = false;
     private string? _currentImportType;
@@ -345,3 +398,12 @@
         }
     }
 }
+
+<style>
+.glass-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+}
+</style>

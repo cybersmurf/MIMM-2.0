@@ -17,10 +17,10 @@
             style="display: block; width: @(Size)px; height: @(Size)px; cursor: crosshair; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1);">
     </canvas>
     
-    <MudText Typo="Typo.caption" Color="Color.Secondary">
+    <MudText Typo="Typo.caption">
         @MoodLabel (V @Valence.ToString("F2", CultureInfo.InvariantCulture), A @Arousal.ToString("F2", CultureInfo.InvariantCulture))
     </MudText>
-    <MudText Typo="Typo.caption" Color="Color.Secondary">
+    <MudText Typo="Typo.caption">
         Click or drag to set mood. Center is neutral; top-right is happy/energized; bottom-left is sad/calm.
     </MudText>
 </MudStack>
