@@ -15,108 +15,125 @@
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-6" role="region" aria-label="Dashboard overview">
     <!-- Header Section with Gradient -->
-    <div class="dashboard-header">
-        <div class="dashboard-header-content">
-            <MudText Typo="Typo.h3" Class="dashboard-title text-white">Welcome back 👋</MudText>
-            <MudText Typo="Typo.subtitle1" Class="dashboard-subtitle text-white">
+    <MudPaper Class="mb-6 pa-8" Elevation="2" 
+              Style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #d946ef 100%); border-radius: 16px;">
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.h3" Class="text-white" Style="font-weight: 800;">Welcome back 👋</MudText>
+            <MudText Typo="Typo.subtitle1" Class="text-white" 
+                     Style="opacity: 0.95; letter-spacing: 0.3px;">
                 Capture today's mood and soundtrack. Stay connected to your inner music.
             </MudText>
-            <div class="dashboard-actions">
+            <MudStack Row="true" Spacing="2" Style="flex-wrap: wrap; margin-top: 16px;">
                 <MudButton Variant="Variant.Filled" 
-                           Color="Color.Secondary" 
-                           Class="dashboard-action-btn" 
+                           Color="Color.Surface"
+                           Style="color: #667eea; font-weight: 700; background: rgba(255, 255, 255, 0.95) !important;"
                            StartIcon="@Icons.Material.Filled.AddCircle"
                            Size="Size.Large"
                            OnClick="OpenCreateDialog">
                     New Entry
                 </MudButton>
                 <MudButton Variant="Variant.Outlined" 
-                           Color="Color.Tertiary" 
-                           Class="dashboard-action-btn" 
+                           Color="Color.Inherit"
+                           Style="color: white; border-color: rgba(255, 255, 255, 0.5); font-weight: 700;"
                            StartIcon="@Icons.Material.Filled.CloudUpload"
                            Size="Size.Large"
                            OnClick="ConnectLastFm">
                     Connect Last.fm
                 </MudButton>
-            </div>
-        </div>
-    </div>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
 
     <!-- Stats Grid -->
-    <div class="dashboard-stats-grid">
+    <MudGrid Spacing="3" Class="mb-6">
         @if (_isLoadingStats)
         {
-            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="160px" Class="skeleton-shimmer" />
-            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="160px" Class="skeleton-shimmer" />
-            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="160px" Class="skeleton-shimmer" />
+            <MudItem xs="12" sm="6" md="4">
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="160px" Class="skeleton-shimmer" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="160px" Class="skeleton-shimmer" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="160px" Class="skeleton-shimmer" />
+            </MudItem>
         }
         else if (_moodTrend != null)
         {
-            <MudPaper Elevation="0" Class="stat-card" Style="background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white;">
-                <div>
-                    <MudText Class="stat-card-label">Mood Balance</MudText>
-                    <MudText Class="stat-card-value">@_moodTrend.AverageValence.ToString("F1")</MudText>
-                </div>
-                <MudText Class="stat-card-detail">Valence (averaged last 7 days)</MudText>
-            </MudPaper>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Elevation="2" Class="pa-6" 
+                          Style="background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); border-radius: 16px; min-height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <MudText Typo="Typo.caption" Class="text-white" Style="font-weight: 700; letter-spacing: 1px; opacity: 0.9;">Mood Balance</MudText>
+                        <MudText Typo="Typo.h4" Class="text-white" Style="font-weight: 800; letter-spacing: -1px; margin-top: 8px;">@_moodTrend.AverageValence.ToString("F1")</MudText>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="text-white" Style="opacity: 0.85;">Valence (averaged last 7 days)</MudText>
+                </MudPaper>
+            </MudItem>
 
-            <MudPaper Elevation="0" Class="stat-card" Style="background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%); color: white;">
-                <div>
-                    <MudText Class="stat-card-label">Energy Trend</MudText>
-                    <MudText Class="stat-card-value">@_moodTrend.AverageArousal.ToString("F1")</MudText>
-                </div>
-                <MudText Class="stat-card-detail">Arousal (last @_moodTrend.TotalEntries sessions)</MudText>
-            </MudPaper>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Elevation="2" Class="pa-6" 
+                          Style="background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%); border-radius: 16px; min-height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <MudText Typo="Typo.caption" Class="text-white" Style="font-weight: 700; letter-spacing: 1px; opacity: 0.9;">Energy Trend</MudText>
+                        <MudText Typo="Typo.h4" Class="text-white" Style="font-weight: 800; letter-spacing: -1px; margin-top: 8px;">@_moodTrend.AverageArousal.ToString("F1")</MudText>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="text-white" Style="opacity: 0.85;">Arousal (last @_moodTrend.TotalEntries sessions)</MudText>
+                </MudPaper>
+            </MudItem>
 
-            <MudPaper Elevation="0" Class="stat-card" Style="background: linear-gradient(135deg, #22c55e 0%, #84cc16 100%); color: white;">
-                <div>
-                    <MudText Class="stat-card-label">Moods Logged</MudText>
-                    <MudText Class="stat-card-value">@(_moodTrend?.TotalEntries ?? 0)</MudText>
-                </div>
-                <MudText Class="stat-card-detail">Mood entries tracked</MudText>
-            </MudPaper>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Elevation="2" Class="pa-6" 
+                          Style="background: linear-gradient(135deg, #22c55e 0%, #84cc16 100%); border-radius: 16px; min-height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <MudText Typo="Typo.caption" Class="text-white" Style="font-weight: 700; letter-spacing: 1px; opacity: 0.9;">Moods Logged</MudText>
+                        <MudText Typo="Typo.h4" Class="text-white" Style="font-weight: 800; letter-spacing: -1px; margin-top: 8px;">@(_moodTrend?.TotalEntries ?? 0)</MudText>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="text-white" Style="opacity: 0.85;">Mood entries tracked</MudText>
+                </MudPaper>
+            </MudItem>
         }
-    </div>
+    </MudGrid>
 
     <!-- Main Content Grid -->
-    <MudGrid Spacing="3" Class="dashboard-spacing-lg">
+    <MudGrid Spacing="3">
         <MudItem xs="12" sm="12" md="8" lg="7">
             <EntryList @ref="_entryList" OnEditEntry="OpenEditDialog" OnEntryChanged="RefreshData" OnCreateFirstEntry="OpenCreateDialog" />
         </MudItem>
         <MudItem xs="12" sm="12" md="4" lg="5">
             <!-- Quick Actions -->
-            <MudPaper Elevation="1" Class="quick-actions-panel mb-4">
-                <MudText Typo="Typo.h6" Class="mb-4" style="font-weight: 700;">⚡ Quick Actions</MudText>
+            <MudPaper Elevation="1" Class="pa-6 mb-6" Style="border-radius: 16px;">
+                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 700;">⚡ Quick Actions</MudText>
                 <MudStack Spacing="2">
                     <MudButton Variant="Variant.Filled" 
                                Color="Color.Primary" 
-                               FullWidth 
-                               Class="quick-action-btn"
+                               FullWidth
                                StartIcon="@Icons.Material.Filled.Edit" 
-                               OnClick="OpenCreateDialog">
+                               OnClick="OpenCreateDialog"
+                               Style="font-weight: 600;">
                         Add Mood Entry
                     </MudButton>
                     <MudButton Variant="Variant.Outlined" 
                                Color="Color.Primary" 
                                FullWidth 
-                               Class="quick-action-btn"
                                StartIcon="@Icons.Material.Filled.TrendingUp" 
-                               Href="/analytics">
+                               Href="/analytics"
+                               Style="font-weight: 600;">
                         View Analytics
                     </MudButton>
                     <MudButton Variant="Variant.Text" 
                                Color="Color.Secondary" 
                                FullWidth 
-                               Class="quick-action-btn"
-                               StartIcon="@Icons.Material.Filled.MoreHoriz">
+                               StartIcon="@Icons.Material.Filled.MoreHoriz"
+                               Style="font-weight: 600;">
                         More Options
                     </MudButton>
                 </MudStack>
             </MudPaper>
 
             <!-- Music Search -->
-            <MudPaper Elevation="1" Class="quick-actions-panel">
-                <MudText Typo="Typo.h6" Class="mb-4" style="font-weight: 700;">🎵 Find Music</MudText>
+            <MudPaper Elevation="1" Class="pa-6" Style="border-radius: 16px;">
+                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 700;">🎵 Find Music</MudText>
                 <MusicSearchBox />
             </MudPaper>
         </MudItem>
