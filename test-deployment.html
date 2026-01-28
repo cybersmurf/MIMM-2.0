@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIMM Frontend Deployment Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 MIMM Frontend Deployment Test</h1>
+        
+        <h2>Checking mood-selector.js</h2>
+        <div id="result"></div>
+        
+        <h2>Testing Function</h2>
+        <div id="test-result"></div>
+        
+        <h2>Next Steps</h2>
+        <ol>
+            <li>If ✅ appears above, deployment was successful!</li>
+            <li>Open https://musicinmymind.app</li>
+            <li>Press Ctrl+Shift+R to hard refresh (clear cache)</li>
+            <li>Create a new entry and test the MoodSelector2D component</li>
+            <li>The circular selector should now move smoothly across the entire plane</li>
+        </ol>
+    </div>
+
+    <script src="https://musicinmymind.app/js/mood-selector.js"></script>
+    <script>
+        const resultDiv = document.getElementById('result');
+        const testResultDiv = document.getElementById('test-result');
+        
+        // Check if function exists
+        if (typeof window.getRelativePositionById === 'function') {
+            resultDiv.innerHTML = '<div class="status success">✅ <strong>SUCCESS!</strong> mood-selector.js is loaded!</div>';
+            resultDiv.innerHTML += '<p>Function <code>getRelativePositionById</code> is available.</p>';
+            
+            // Test the function
+            try {
+                // Create a fake container
+                const fakeContainer = {
+                    getBoundingClientRect: () => ({
+                        left: 100,
+                        top: 200
+                    })
+                };
+                document.getElementById = (id) => {
+                    if (id === 'test-element') return fakeContainer;
+                    return null;
+                };
+                
+                const result = window.getRelativePositionById('test-element', 150, 250);
+                
+                if (Array.isArray(result) && result[0] === 50 && result[1] === 50) {
+                    testResultDiv.innerHTML = '<div class="status success">✅ Function works correctly!</div>';
+                    testResultDiv.innerHTML += '<p>Test coordinates: [150, 250] - container [100, 200] = [50, 50] ✓</p>';
+                } else {
+                    testResultDiv.innerHTML = '<div class="status info">⚠️ Function returned unexpected result: [' + result + ']</div>';
+                }
+            } catch (e) {
+                testResultDiv.innerHTML = '<div class="status error">❌ Error testing function: ' + e.message + '</div>';
+            }
+        } else {
+            resultDiv.innerHTML = '<div class="status error">❌ <strong>FAILED!</strong> mood-selector.js not loaded</div>';
+            resultDiv.innerHTML += '<p>Function <code>getRelativePositionById</code> is NOT available.</p>';
+            resultDiv.innerHTML += '<p><strong>Possible causes:</strong></p>';
+            resultDiv.innerHTML += '<ul>';
+            resultDiv.innerHTML += '<li>File not deployed to VPS</li>';
+            resultDiv.innerHTML += '<li>Wrong path on VPS web server</li>';
+            resultDiv.innerHTML += '<li>Browser cache (try Ctrl+Shift+R)</li>';
+            resultDiv.innerHTML += '</ul>';
+        }
+    </script>
+</body>
+</html>
