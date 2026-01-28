@@ -3,20 +3,8 @@
 @inject IJSRuntime JSRuntime
 @implements IAsyncDisposable
 
-<style>
-    #@_canvasId {
-        background: #FFB6C1 !important;
-        display: block !important;
-        width: @(Size)px !important;
-        height: @(Size)px !important;
-        cursor: crosshair !important;
-        border-radius: 12px !important;
-        border: 2px solid red !important;
-    }
-</style>
-
 <MudStack Spacing="1">
-    <MudText Typo="Typo.subtitle2">Mood (Russell 2D) - VERSION: PINK CANVAS</MudText>
+    <MudText Typo="Typo.subtitle2">Mood (Russell 2D)</MudText>
     
     <canvas id="@_canvasId"
             width="@Size" height="@Size"
@@ -25,14 +13,15 @@
             aria-valuemin="-1"
             aria-valuemax="1"
             aria-valuenow="@Valence.ToString("F2", CultureInfo.InvariantCulture)"
-            tabindex="0">
+            tabindex="0"
+            style="display: block; cursor: crosshair; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1);">
     </canvas>
     
     <MudText Typo="Typo.caption" Color="Color.Secondary">
         @MoodLabel (V @Valence.ToString("F2", CultureInfo.InvariantCulture), A @Arousal.ToString("F2", CultureInfo.InvariantCulture))
     </MudText>
     <MudText Typo="Typo.caption" Color="Color.Secondary">
-        Click anywhere - NEW VERSION with pink background
+        Click or drag to set mood. Center is neutral; top-right is happy/energized; bottom-left is sad/calm.
     </MudText>
 </MudStack>
 

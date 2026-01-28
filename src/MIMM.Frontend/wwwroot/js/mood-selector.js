@@ -97,8 +97,8 @@ class MoodSelectorJS {
         // Clear
         ctx.clearRect(0, 0, this.size, this.size);
         
-        // Background - RŮŽOVÉ PRO IDENTIFIKACI NOVÉ VERZE
-        ctx.fillStyle = 'rgba(255, 182, 193, 1)';
+        // Background
+        ctx.fillStyle = 'rgba(230, 245, 250, 1)';
         ctx.fillRect(0, 0, this.size, this.size);
         
         // Grid lines
