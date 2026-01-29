@@ -97,14 +97,6 @@
                                     Mood: @GetMoodLabel(entry.Valence, entry.Arousal)
                                 </MudChip>
 
-                            @if (!string.IsNullOrWhiteSpace(entry.SongId))
-                            {
-                                <MudTooltip Text="@($"MusicBrainz ID: {entry.SongId}")" Arrow ShowOnHover Duration="500">
-                                        <MudChip T="string" Size="Size.Small" Color="Color.Tertiary" Icon="@Icons.Material.Filled.MusicNote" Variant="Variant.Filled">
-                                            MB ID
-                                        </MudChip>
-                                </MudTooltip>
-                            }
                             
                             <MudSpacer />
 
@@ -310,11 +302,11 @@
     {
         return source?.ToLowerInvariant() switch
         {
-            "musicbrainz" => "Source: MusicBrainz",
-            "itunes" => "Source: iTunes",
-            "lastfm" => "Source: Last.fm",
-            "deezer" => "Source: Deezer",
-            "manual" => "Source: Manual",
+            "musicbrainz" => "🎵 MusicBrainz",
+            "itunes" => "🎵 iTunes",
+            "lastfm" => "🎵 Last.fm",
+            "deezer" => "🎵 Deezer",
+            "manual" => "✍️ Manual",
             _ => source ?? "Unknown"
         };
     }
