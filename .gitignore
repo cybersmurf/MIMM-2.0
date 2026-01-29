@@ -3,6 +3,14 @@ bin/
 obj/
 out/
 publish/
+publish-*/
+
+## Deployment artifacts
+*.tar.gz
+*.pdf
+*.html
+!index.html
+!wwwroot/**/*.html
 
 ## User-specific files
 *.suo

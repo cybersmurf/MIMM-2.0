@@ -2,6 +2,32 @@
 
 Všechny významné změny v tomto demo projektu budou zaznamenány v tomto souboru.
 
+## [v2.0.1] - 29. ledna 2026 🎨 UI/UX Improvements
+
+### Frontend Enhancements
+
+**Entry Card Layout Redesign** ✅ COMPLETE
+- **Problem**: Entry cards showed chips (Source, Mood, MB ID) in single horizontal row → chips overflowed and were invisible on smaller screens
+- **Solution**: 
+  - Implemented two-row layout: Row 1 (track info) + Row 2 (chips + action buttons)
+  - Added `flex-wrap: wrap` with `gap: 4px` for responsive chip wrapping
+  - Changed Source chip from `Variant.Outlined` to `Variant.Filled` (visibility fix on dark theme)
+  - Simplified chip labels: Removed "Source:" prefix, kept emoji indicators
+  - Removed MB ID chip (not useful for end users)
+- **Files**: `src/MIMM.Frontend/Components/EntryList.razor`
+- **Commits**: `c949326`, `5e7f8b3`, `29b8b74`
+- **Result**: Clean, responsive card layout with clear visual hierarchy
+
+**Accessibility Improvements** ✅ MERGED (PR #1)
+- WCAG AA compliance enhancements
+- Improved keyboard navigation and ARIA labels
+
+### Git Workflow
+
+- ✅ Feature branch workflow enforced (all changes via PRs)
+- ✅ Merged `feature/analytics-ui-refinement` → main
+- ✅ Merged `fix/entry-card-layout` → main
+
 ## [v2.0.0-production] - 28. ledna 2026 🎉 FIRST WORKING PRODUCTION DEPLOYMENT
 
 ### 🚀 Major Achievement
