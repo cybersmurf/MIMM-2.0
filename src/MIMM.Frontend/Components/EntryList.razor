@@ -89,20 +89,20 @@
                         </MudStack>
                         
                         <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Style="flex-wrap: wrap; gap: 4px;">
-                            <MudChip T="string" Size="Size.Small" Color="@GetSourceColor(entry.Source)" Variant="Variant.Outlined">
+                            <MudChip T="string" Size="Size.Small" Color="@GetSourceColor(entry.Source)" Variant="Variant.Filled">
                                 @GetSourceBadge(entry.Source)
                             </MudChip>
 
-                            <MudChip T="string" Size="Size.Small" Color="@GetMoodColor(entry.Valence)">
-                                @GetMoodLabel(entry.Valence, entry.Arousal)
-                            </MudChip>
+                                <MudChip T="string" Size="Size.Small" Color="@GetMoodColor(entry.Valence)">
+                                    Mood: @GetMoodLabel(entry.Valence, entry.Arousal)
+                                </MudChip>
 
                             @if (!string.IsNullOrWhiteSpace(entry.SongId))
                             {
                                 <MudTooltip Text="@($"MusicBrainz ID: {entry.SongId}")" Arrow ShowOnHover Duration="500">
-                                    <MudChip T="string" Size="Size.Small" Color="Color.Tertiary" Icon="@Icons.Material.Filled.MusicNote" Variant="Variant.Filled">
-                                        MB
-                                    </MudChip>
+                                        <MudChip T="string" Size="Size.Small" Color="Color.Tertiary" Icon="@Icons.Material.Filled.MusicNote" Variant="Variant.Filled">
+                                            MB ID
+                                        </MudChip>
                                 </MudTooltip>
                             }
                             
@@ -310,11 +310,11 @@
     {
         return source?.ToLowerInvariant() switch
         {
-            "musicbrainz" => "🎵 MB",
-            "itunes" => "🎵 iTunes",
-            "lastfm" => "🎵 Last.fm",
-            "deezer" => "🎵 Deezer",
-            "manual" => "✍️ Manual",
+            "musicbrainz" => "Source: MusicBrainz",
+            "itunes" => "Source: iTunes",
+            "lastfm" => "Source: Last.fm",
+            "deezer" => "Source: Deezer",
+            "manual" => "Source: Manual",
             _ => source ?? "Unknown"
         };
     }
