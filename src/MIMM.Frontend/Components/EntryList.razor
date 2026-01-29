@@ -61,38 +61,34 @@
             @foreach (var entry in Entries)
             {
                 <MudListItem T="string" Class="list-item-stagger transition-colors">
-                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
-                        @if (!string.IsNullOrEmpty(entry.CoverUrl))
-                        {
-                            <MudAvatar src="@entry.CoverUrl" Size="Size.Medium" Class="rounded" />
-                        }
-                        else
-                        {
-                            <MudAvatar Color="Color.Primary" Size="Size.Medium">
-                                <MudIcon Icon="@Icons.Material.Filled.MusicNote" />
-                            </MudAvatar>
-                        }
-                        
-                        <MudStack Spacing="0" Style="flex: 1;">
-                            <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
-                                <MudText Typo="Typo.body1">@entry.SongTitle</MudText>
-                                @if (!string.IsNullOrWhiteSpace(entry.SongId))
+                    <MudStack Spacing="2">
+                        <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                            @if (!string.IsNullOrEmpty(entry.CoverUrl))
+                            {
+                                <MudAvatar src="@entry.CoverUrl" Size="Size.Medium" Class="rounded" />
+                            }
+                            else
+                            {
+                                <MudAvatar Color="Color.Primary" Size="Size.Medium">
+                                    <MudIcon Icon="@Icons.Material.Filled.MusicNote" />
+                                </MudAvatar>
+                            }
+                            
+                            <MudStack Spacing="0" Style="flex: 1; min-width: 0;">
+                                <MudText Typo="Typo.body1" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    @entry.SongTitle
+                                </MudText>
+                                <MudText Typo="Typo.body2">
+                                    @(entry.ArtistName ?? "Unknown artist") • @entry.CreatedAt.ToString("MMM d, HH:mm")
+                                </MudText>
+                                @if (!string.IsNullOrWhiteSpace(entry.AlbumName))
                                 {
-                                    <MudTooltip Text="@($"MusicBrainz ID: {entry.SongId}")" Arrow ShowOnHover Duration="500">
-                                        <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Color="Color.Secondary" />
-                                    </MudTooltip>
+                                    <MudText Typo="Typo.caption">Album: @entry.AlbumName</MudText>
                                 }
                             </MudStack>
-                            <MudText Typo="Typo.body2">
-                                @(entry.ArtistName ?? "Unknown artist") • @entry.CreatedAt.ToString("MMM d, HH:mm")
-                            </MudText>
-                            @if (!string.IsNullOrWhiteSpace(entry.AlbumName))
-                            {
-                                <MudText Typo="Typo.caption">Album: @entry.AlbumName</MudText>
-                            }
                         </MudStack>
-
-                        <MudStack Row Spacing="1">
+                        
+                        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Style="flex-wrap: wrap; gap: 4px;">
                             <MudChip T="string" Size="Size.Small" Color="@GetSourceColor(entry.Source)" Variant="Variant.Outlined">
                                 @GetSourceBadge(entry.Source)
                             </MudChip>
@@ -109,27 +105,29 @@
                                     </MudChip>
                                 </MudTooltip>
                             }
-                        </MudStack>
+                            
+                            <MudSpacer />
 
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" 
-                                       Size="Size.Small" 
-                                       Style="min-height: 44px; min-width: 44px;"
-                                       OnClick="@(() => OnEditEntry.InvokeAsync(entry))" />
-                        @if (!entry.ScrobbledToLastFm)
-                        {
-                            <MudIconButton Icon="@Icons.Material.Filled.MusicNote" 
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" 
                                            Size="Size.Small" 
-                                           Color="Color.Secondary"
                                            Style="min-height: 44px; min-width: 44px;"
-                                           OnClick="@(() => HandleScrobbleAsync(entry))"
-                                           aria-label="Scrobble to Last.fm"
-                                           title="Scrobble to Last.fm" />
-                        }
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                                       Size="Size.Small"
-                                       Style="min-height: 44px; min-width: 44px;" 
-                                       Color="Color.Error"
-                                       OnClick="@(() => HandleDeleteAsync(entry.Id))" />
+                                           OnClick="@(() => OnEditEntry.InvokeAsync(entry))" />
+                            @if (!entry.ScrobbledToLastFm)
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.MusicNote" 
+                                               Size="Size.Small" 
+                                               Color="Color.Secondary"
+                                               Style="min-height: 44px; min-width: 44px;"
+                                               OnClick="@(() => HandleScrobbleAsync(entry))"
+                                               aria-label="Scrobble to Last.fm"
+                                               title="Scrobble to Last.fm" />
+                            }
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                           Size="Size.Small"
+                                           Style="min-height: 44px; min-width: 44px;" 
+                                           Color="Color.Error"
+                                           OnClick="@(() => HandleDeleteAsync(entry.Id))" />
+                        </MudStack>
                     </MudStack>
                 </MudListItem>
                 <MudDivider />
